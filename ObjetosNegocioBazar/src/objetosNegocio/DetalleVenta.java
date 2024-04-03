@@ -38,10 +38,7 @@ public class DetalleVenta implements Serializable {
     private Producto producto;
     
     private float precioProducto;
-    
-    //@ManyToOne
-    //@JoinColumn(name = "venta_id")
-    private Venta venta;
+
 
     public DetalleVenta() {
 
@@ -52,13 +49,11 @@ public class DetalleVenta implements Serializable {
      * @param precioProducto Precio del producto en ese momento.
      * @param cantidad Cantidad de unidades vendidas.
      * @param producto Producto vendido.
-     * @param venta Venta a la cual pertenece dicho detalle de venta.
      */
-    public DetalleVenta(float precioProducto, Integer cantidad, Producto producto, Venta venta) {
+    public DetalleVenta(float precioProducto, Integer cantidad, Producto producto) {
         this.precioProducto = precioProducto;
         this.cantidad = cantidad;
         this.producto = producto;
-        this.venta = venta;
     }
 
     public Long getId() {
@@ -85,14 +80,6 @@ public class DetalleVenta implements Serializable {
         this.producto = producto;
     }
 
-    public Venta getVenta() {
-        return venta;
-    }
-
-    public void setVenta(Venta venta) {
-        this.venta = venta;
-    }
-
     public void setPrecioProducto(float precio) {
         this.precioProducto = precio;
     }
@@ -103,7 +90,7 @@ public class DetalleVenta implements Serializable {
 
     @Override
     public String toString() {
-        return "DetalleVenta{" + "id=" + id + ", cantidad=" + cantidad + ", producto=" + producto + ", venta=" + venta + '}';
+        return "DetalleVenta{" + "id=" + id + ", cantidad=" + cantidad + ", producto=" + producto + '}';
     }
 
 }

@@ -46,6 +46,8 @@ public class Venta implements Serializable {
     //@JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
+    //@OneToMany(cascade = CascadeType.ALL)
+    //@JoinColumn(name = "venta_id", referencedColumnName = "id")
     private List<DetalleVenta> productosVendidos;
     
     public Venta() {
