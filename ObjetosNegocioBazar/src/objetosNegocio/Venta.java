@@ -5,6 +5,7 @@
 package objetosNegocio;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /*
@@ -49,6 +50,8 @@ public class Venta implements Serializable {
     //@OneToMany(cascade = CascadeType.ALL)
     //@JoinColumn(name = "venta_id", referencedColumnName = "id")
     private List<DetalleVenta> productosVendidos;
+
+    private LocalDateTime fechaVenta;
     
     public Venta() {
         
@@ -62,14 +65,17 @@ public class Venta implements Serializable {
      * @param metodoPago Metodo de pago realizado.
      * @param usuario Usuario a cargo de la transaccion.
      * @param productosVendidos Lista de los productos vendidos.
+     * @param fecha Fecha en la que se realizo la venta
+     * 
      */
-    public Venta(String nombreCliente, String apellidoCliente, float montoTotal, MetodoPago metodoPago, Usuario usuario, List<DetalleVenta> productosVendidos) {
+    public Venta(String nombreCliente, String apellidoCliente, float montoTotal, MetodoPago metodoPago, Usuario usuario, List<DetalleVenta> productosVendidos, LocalDateTime fecha) {
         this.nombreCliente = nombreCliente;
         this.apellidoCliente = apellidoCliente;
         this.montoTotal = montoTotal;
         this.metodoPago = metodoPago;
         this.productosVendidos = productosVendidos;
         this.usuario = usuario;
+        this.fechaVenta = fecha;
     }
 
     public Long getId() {
@@ -127,10 +133,36 @@ public class Venta implements Serializable {
     public List<DetalleVenta> getProductosVendidos() {
         return this.productosVendidos;
     }
+    
+    public void setFechaVenta(LocalDateTime fecha) {
+        this.fechaVenta = fecha;
+    }
+    
+    public LocalDateTime getFechaVenta() {
+        return this.fechaVenta;
+    }
 
     public enum MetodoPago {
         EFECTIVO,
         TARJETA
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Venta))
+        {
+            return false;
+        }
+        Venta other = (Venta) object;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
