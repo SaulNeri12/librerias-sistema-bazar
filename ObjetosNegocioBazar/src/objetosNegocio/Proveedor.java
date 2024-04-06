@@ -92,7 +92,7 @@ public class Proveedor implements Serializable {
         return fechaRegistro;
     }
 
-    public void setFecha_registro(LocalDateTime fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 

@@ -2,6 +2,7 @@
 package dao;
 
 import excepciones.DAOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -67,12 +68,16 @@ public class GestorProductos implements IGestorProductos {
         }
         
         Optional<Producto> productoEnCatalogo = this.productos.stream()
-                .filter(prdct -> producto.getId().equals(producto.getId()) || producto.getCodigo().equals(producto.getCodigo()))
+                .filter(prdct -> prdct.getId().equals(producto.getId()) || prdct.getCodigo().equals(producto.getCodigo()))
                 .findFirst();
         
         if (productoEnCatalogo.isPresent()) {
             throw new DAOException("El producto dado ya se encuentra registrado");
         }
+        
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+        
+        producto.setFechaRegistro(fechaHoraActual);
         
         boolean agregado = this.productos.add(producto);
         
@@ -134,6 +139,8 @@ public class GestorProductos implements IGestorProductos {
         if (index < 0) {
             throw new DAOException("No se pudo actualizar el producto debido a un error");
         }
+        
+        producto.setFechaRegistro(productoEnCatalogo.get().getFechaRegistro());
         
         this.productos.set(index, producto);
     }
