@@ -3,11 +3,13 @@ package dao;
 
 import excepciones.DAOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import objetosNegocio.DetalleVenta;
 import objetosNegocio.Venta;
 import ventas.IGestorVentas;
 
@@ -98,6 +100,19 @@ public class GestorVentas implements IGestorVentas {
         Optional<Venta> ventaEnSistema = this.ventas.stream().filter(v -> v.equals(venta)).findFirst();
         
         if (!ventaEnSistema.isPresent()) {
+            
+            Float totalVenta = 0.0f;
+            
+            for (DetalleVenta productoVendido: venta.getProductosVendidos()) {
+                totalVenta += productoVendido.getPrecioProducto();
+            }
+            
+            venta.setMontoTotal(totalVenta);
+            
+            LocalDateTime fechaHoraActual = LocalDateTime.now();
+            
+            venta.setFechaVenta(fechaHoraActual);
+            
             boolean agregado = this.ventas.add(venta);
             
             if (agregado) {
