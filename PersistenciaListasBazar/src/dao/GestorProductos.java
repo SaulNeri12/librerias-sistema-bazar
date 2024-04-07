@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import objetosNegocio.Producto;
@@ -22,6 +23,105 @@ public class GestorProductos implements IGestorProductos {
     
     public GestorProductos() {
         this.productos = new ArrayList<>();
+        
+        // NOTE: DATOS DE PRUEBA
+        Random random = new Random();
+        
+        Proveedor proveedorGamesa = new Proveedor();
+        proveedorGamesa.setId(random.nextLong() & Long.MAX_VALUE);
+        proveedorGamesa.setNombre("GAMESA");
+        proveedorGamesa.setDescripcion("Venta amplia variedad de galletas y productos de panadería");
+        proveedorGamesa.setEmail("grupogamesa1921@gamesa.co.mx");
+        proveedorGamesa.setTelefono("6441292556");
+        
+        Proveedor proveedorRopa = new Proveedor();
+        proveedorRopa.setId(random.nextLong() & Long.MAX_VALUE);
+        proveedorRopa.setNombre("CottonRey Textiles S.A. de C.V");
+        proveedorRopa.setDescripcion("Vende una amplia gama de productos textiles, incluyendo ropa casual, ropa interior, ropa de cama, y accesorios de moda.");
+        proveedorRopa.setEmail("contacto@cottonreytextiles.com.mx");
+        proveedorRopa.setTelefono("55 1234 5678");
+        
+        // DATOS DE PRUEBA...
+        Producto producto1 = new Producto();
+        producto1.setId(random.nextLong() & Long.MAX_VALUE);
+        producto1.setCodigo("GL1111");
+        producto1.setNombre("Galletas Marías");
+        producto1.setPrecio(17.50f);
+        producto1.agregarProveedor(proveedorGamesa);
+
+        Producto producto2 = new Producto();
+        producto2.setId(random.nextLong() & Long.MAX_VALUE);
+        producto2.setCodigo("PE2222");
+        producto2.setNombre("Playera estampada de calavera");
+        producto2.setPrecio(120.00f);
+        producto2.agregarProveedor(proveedorRopa);
+
+        Producto producto3 = new Producto();
+        producto3.setId(random.nextLong() & Long.MAX_VALUE);
+        producto3.setCodigo("BTM3333");
+        producto3.setNombre("Bufanda tejida a mano");
+        producto3.setPrecio(80.00f);
+        producto3.agregarProveedor(proveedorRopa);
+
+        Producto producto4 = new Producto();
+        producto4.setId(random.nextLong() & Long.MAX_VALUE);
+        producto4.setCodigo("JM4444");
+        producto4.setNombre("Jeans de mezclilla desgastados");
+        producto4.setPrecio(250.00f);
+        producto4.agregarProveedor(proveedorRopa);
+
+        Producto producto5 = new Producto();
+        producto5.setId(random.nextLong() & Long.MAX_VALUE);
+        producto5.setCodigo("CHMAI5555");
+        producto5.setNombre("Chamarra acolchada para el invierno");
+        producto5.setPrecio(350.00f);
+        producto5.agregarProveedor(proveedorRopa);
+
+        Producto producto6 = new Producto();
+        producto6.setId(random.nextLong() & Long.MAX_VALUE);
+        producto6.setCodigo("VB6666");
+        producto6.setNombre("Vestido bordado estilo oaxaqueño");
+        producto6.setPrecio(180.00f);
+        producto6.agregarProveedor(proveedorRopa);
+
+        Producto producto7 = new Producto();
+        producto7.setId(random.nextLong() & Long.MAX_VALUE);
+        producto7.setCodigo("CFML7777");
+        producto7.setNombre("Camisa formal de manga larga");
+        producto7.setPrecio(150.00f);
+        producto7.agregarProveedor(proveedorRopa);
+
+        Producto producto8 = new Producto();
+        producto8.setId(random.nextLong() & Long.MAX_VALUE);
+        producto8.setCodigo("GBMX8888");
+        producto8.setNombre("Gorras con bordados típicos mexicanos");
+        producto8.setPrecio(50.00f);
+        producto8.agregarProveedor(proveedorRopa);
+
+        Producto producto9 = new Producto();
+        producto9.setId(random.nextLong() & Long.MAX_VALUE);
+        producto9.setCodigo("CRIH9999");
+        producto9.setNombre("Conjunto de ropa interior para hombre");
+        producto9.setPrecio(100.00f);
+        producto9.agregarProveedor(proveedorRopa);
+
+        Producto producto10 = new Producto();
+        producto10.setId(random.nextLong() & Long.MAX_VALUE);
+        producto10.setCodigo("TBM1010");
+        producto10.setNombre("Traje de baño de dos piezas para mujer");
+        producto10.setPrecio(200.00f);
+        producto10.agregarProveedor(proveedorRopa);
+        
+        this.productos.add(producto1);
+        this.productos.add(producto2);
+        this.productos.add(producto3);
+        this.productos.add(producto4);
+        this.productos.add(producto5);
+        this.productos.add(producto6);
+        this.productos.add(producto7);
+        this.productos.add(producto8);
+        this.productos.add(producto9);
+        this.productos.add(producto10);
     }
     
     @Override

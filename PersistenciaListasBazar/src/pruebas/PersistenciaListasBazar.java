@@ -1,5 +1,5 @@
 
-package persistencialistasbazar;
+package pruebas;
 
 import dao.GestorProductos;
 import dao.GestorProveedores;
