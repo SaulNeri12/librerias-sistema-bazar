@@ -97,14 +97,14 @@ public class GestorVentas implements IGestorVentas {
             throw new DAOException("La venta dada es null");
         }
         
-        Optional<Venta> ventaEnSistema = this.ventas.stream().filter(v -> v.equals(venta)).findFirst();
+        Optional<Venta> ventaEnSistema = this.ventas.stream().filter(v -> v.getId().equals(venta.getId())).findFirst();
         
         if (!ventaEnSistema.isPresent()) {
             
             Float totalVenta = 0.0f;
             
             for (DetalleVenta productoVendido: venta.getProductosVendidos()) {
-                totalVenta += productoVendido.getPrecioProducto();
+                totalVenta += productoVendido.getPrecioProducto() * productoVendido.getCantidad();
             }
             
             venta.setMontoTotal(totalVenta);
@@ -115,12 +115,12 @@ public class GestorVentas implements IGestorVentas {
             
             boolean agregado = this.ventas.add(venta);
             
-            if (agregado) {
-                return;
+            if (!agregado) {
+                throw new DAOException("No se pudo registrar la venta debido a un error");
             }
+        } else {
+            throw new DAOException("Ya existe una venta con el ID dado");
         }
-        
-        throw new DAOException("No se pudo registrar la venta");
     }
 
     @Override
@@ -134,7 +134,22 @@ public class GestorVentas implements IGestorVentas {
         if (!ventaEnSistema.isPresent()) {
             throw new DAOException("No se encontro la venta especificada");
         }
-            
+        
+        Float totalVenta = 0.0f;
+
+        if (venta.getProductosVendidos().isEmpty() || venta.getProductosVendidos() == null) {
+            throw new DAOException("Ningun producto presente en la venta");
+        }
+        
+        for (DetalleVenta productoVendido: venta.getProductosVendidos()) {
+            totalVenta += productoVendido.getPrecioProducto() * productoVendido.getCantidad();
+        }
+
+        venta.setMontoTotal(totalVenta);
+
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+        venta.setFechaVenta(ventaEnSistema.get().getFechaVenta());
+        
         int index = this.ventas.indexOf(ventaEnSistema.get());
 
         if (index < 0) {

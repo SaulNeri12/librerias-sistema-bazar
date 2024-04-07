@@ -2,6 +2,7 @@
 package dao;
 
 import excepciones.DAOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,24 @@ public class GestorUsuarios implements IGestorUsuarios {
     public GestorUsuarios() {
         this.usuarios = new ArrayList<>();
         
-        // datos de prueba...
+        Usuario admin = new Usuario();
+        
+        admin.setId(1l);
+        admin.setNombre("ADMINISTRADOR");
+        admin.setPuesto(Usuario.Puesto.ADMIN);
+        admin.setTelefono("1000000000");
+        admin.setContrasena("admin");
+         
+        this.usuarios.add(admin);
+        
+        Usuario nuevoUsuario = new Usuario();
+        nuevoUsuario.setId(1l);
+        nuevoUsuario.setNombre("Saul Armando Neri Escarcega");
+        nuevoUsuario.setPuesto(Usuario.Puesto.CAJERO);
+        nuevoUsuario.setTelefono("6442269619");
+        nuevoUsuario.setContrasena("saulneri12");
+        
+        this.usuarios.add(nuevoUsuario);
     }
     
     @Override
@@ -72,6 +90,10 @@ public class GestorUsuarios implements IGestorUsuarios {
             throw new DAOException("El usuario ya esta registrado en el sistema");
         }
         
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+        
+        usuario.setFechaContratacion(fechaHoraActual);
+        
         this.usuarios.add(usuario);
     }
 
@@ -94,6 +116,8 @@ public class GestorUsuarios implements IGestorUsuarios {
         if (index < 0) {
             throw new DAOException("No se pudo actualizar la informacion del usuario debido a un error");
         }
+        
+        usuario.setFechaContratacion(usuarioEnSistema.get().getFechaContratacion());
         
         this.usuarios.set(index, usuario);
     }

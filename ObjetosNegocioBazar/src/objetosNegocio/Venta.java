@@ -6,6 +6,7 @@ package objetosNegocio;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -54,7 +55,7 @@ public class Venta implements Serializable {
     private LocalDateTime fechaVenta;
     
     public Venta() {
-        
+        this.productosVendidos = new ArrayList<>();
     }
         
     /**
