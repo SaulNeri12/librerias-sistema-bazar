@@ -13,6 +13,10 @@ import persistencia.excepciones.PersistenciaBazarException;
  */
 public interface IPersistenciaBazar {
     
+    public Producto consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException;;
+    
+    public Producto consultarProductoPorCodigoBarras(Long codigoBarras) throws PersistenciaBazarException;;
+    
     public List<Producto> consultarProductosTodos() throws PersistenciaBazarException;
     
     public List<Producto> consultarProductosPorNombre(String nombreProducto) throws PersistenciaBazarException;

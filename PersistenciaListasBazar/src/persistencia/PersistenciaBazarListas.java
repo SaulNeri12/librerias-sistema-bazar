@@ -6,6 +6,8 @@ import dao.GestorUsuarios;
 import dao.GestorVentas;
 import excepciones.DAOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import objetosNegocio.Producto;
 import objetosNegocio.Usuario;
 import objetosNegocio.Venta;
@@ -89,6 +91,28 @@ public class PersistenciaBazarListas implements IPersistenciaBazar {
             return usuarioEnSistema;
         } catch (DAOException ex) {
             throw new PersistenciaBazarException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public Producto consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException {
+        try {
+            Producto producto = this.productos.consultarProducto(codigoInterno);
+            
+            return producto;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException("Ha ocurrido un error al buscar el producto, intente de nuevo mas tarde");
+        }
+    }
+
+    @Override
+    public Producto consultarProductoPorCodigoBarras(Long codigoBarras) throws PersistenciaBazarException {
+        try {
+            Producto producto = this.productos.consultarProducto(codigoBarras);
+            
+            return producto;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException("Ha ocurrido un error al buscar el producto, intente de nuevo mas tarde");
         }
     }
     
