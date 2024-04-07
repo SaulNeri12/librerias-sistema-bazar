@@ -115,12 +115,12 @@ public class GestorVentas implements IGestorVentas {
             
             boolean agregado = this.ventas.add(venta);
             
-            if (agregado) {
-                return;
+            if (!agregado) {
+                throw new DAOException("No se pudo registrar la venta debido a un error");
             }
         }
         
-        throw new DAOException("No se pudo registrar la venta");
+        throw new DAOException("Ya existe una venta con el ID dado");
     }
 
     @Override

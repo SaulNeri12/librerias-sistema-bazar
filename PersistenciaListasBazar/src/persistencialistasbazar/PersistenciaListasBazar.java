@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
+
 package persistencialistasbazar;
 
 import dao.GestorProductos;
@@ -117,6 +114,25 @@ public class PersistenciaListasBazar {
             productos.registrarProducto(tercerProducto);
             //tercerProducto = productos.consultarProducto(tercerProducto.getCodigo());
             System.out.println("PRODUCTO REGISTRADO (TERCERO: " + tercerProducto);
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        try {
+            System.out.println(productos.consultarTodos());
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        try {
+            productos.eliminarProducto(codigoPrimerProducto);
+            System.out.println("ELIMINADO!!!");
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        try {
+            System.out.println(productos.consultarTodos());
         } catch (DAOException ex) {
             System.out.println("### ERROR: " + ex.getMessage());
         }
