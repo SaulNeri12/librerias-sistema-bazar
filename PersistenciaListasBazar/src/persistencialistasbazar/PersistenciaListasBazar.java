@@ -3,12 +3,23 @@ package persistencialistasbazar;
 
 import dao.GestorProductos;
 import dao.GestorProveedores;
+import dao.GestorUsuarios;
+import dao.GestorVentas;
 import excepciones.DAOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import objetosNegocio.DetalleVenta;
 import objetosNegocio.Producto;
 import objetosNegocio.Proveedor;
+import objetosNegocio.Usuario;
+import objetosNegocio.Venta;
 import productos.IGestorProductos;
 import proveedores.IGestorProveedores;
+import usuarios.IGestorUsuarios;
+import ventas.IGestorVentas;
 
 /**
  *
@@ -22,6 +33,8 @@ public class PersistenciaListasBazar {
     public static void main(String[] args) {
         IGestorProductos productos = new GestorProductos();
         IGestorProveedores proveedores = new GestorProveedores();
+        IGestorVentas ventas = new GestorVentas();
+        IGestorUsuarios usuarios = new GestorUsuarios();
         
         Random random = new Random();
         
@@ -136,5 +149,160 @@ public class PersistenciaListasBazar {
         } catch (DAOException ex) {
             System.out.println("### ERROR: " + ex.getMessage());
         }
+        
+        Usuario usuario = null;
+        try {
+            usuario = usuarios.consultarUsuarioPorNumeroTelefono("1000000000");
+            System.out.println("USUARIO : " + usuario);
+        } catch (DAOException ex) {
+            Logger.getLogger(PersistenciaListasBazar.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        Venta primeraVenta = new Venta();
+        primeraVenta.setId(101001l);
+        primeraVenta.setNombreCliente("Miguel");
+        primeraVenta.setApellidoCliente("Perez");
+        primeraVenta.setUsuario(usuario);
+        primeraVenta.setMetodoPago(Venta.MetodoPago.EFECTIVO);
+        
+        List<DetalleVenta> productosVendidos = new ArrayList<>();
+        
+        DetalleVenta detalle = new DetalleVenta();
+        id = random.nextLong() & Long.MAX_VALUE;
+        detalle.setId(id);
+        
+        Producto productoObjetivo = null;
+        
+        try {
+            productoObjetivo = productos.consultarProducto("GL0101");
+            //detalle.setPrecioProducto();
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        detalle.setPrecioProducto(productoObjetivo.getPrecio());
+        detalle.setProducto(productoObjetivo);
+        detalle.setCantidad(2);
+        
+        productosVendidos.add(detalle);
+        
+        primeraVenta.setProductosVendidos(productosVendidos);
+        
+        try {
+            ventas.registrarVenta(primeraVenta);
+            System.out.println("Venta registrada!!! " + primeraVenta);
+        } catch (DAOException ex) {
+            System.out.println("### ERROR " + ex.getMessage());
+        }
+        
+        productosVendidos.clear();
+        
+        detalle.setPrecioProducto(productoObjetivo.getPrecio());
+        detalle.setProducto(productoObjetivo);
+        detalle.setCantidad(5);
+        
+        productosVendidos.add(detalle);
+        
+        primeraVenta.setProductosVendidos(productosVendidos);
+        
+        try {
+            ventas.actualizarVenta(primeraVenta);
+            System.out.println("Se actualizo la venta");
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        try {
+            Venta ventaObjetivo = ventas.consultarVenta(primeraVenta.getId());
+            System.out.println("VENTA ACTUALIZADA: " + ventaObjetivo);
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        
+        try {
+            ventas.eliminarVenta(primeraVenta.getId());
+            System.out.println("SE ELIMINO LA VENTA!!!");
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        try {
+            Venta ventaObjetivo = ventas.consultarVenta(primeraVenta.getId());
+            
+            if (ventaObjetivo == null) {
+                System.out.println("SE ELIMINO CORRECTAMENTE!!!: " + ventaObjetivo);
+            }
+            
+            //System.out.println("NO SE ELIMINO " + ventaObjetivo);
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        // SUBSISTEMA VENTAS FUNCIONA...
+        
+        Usuario usuarioLogeado;
+        
+        String telefonoUsuario = "1000000000";
+        String contrasenaUsuario = "admin";
+        
+        try {
+            usuarioLogeado = usuarios.iniciarSesion(telefonoUsuario, contrasenaUsuario);   
+            System.out.println("USUARIO LOGGEADO: " + usuarioLogeado);
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        Usuario nuevoUsuario = new Usuario();
+        id = random.nextLong() & Long.MAX_VALUE;
+        nuevoUsuario.setId(id);
+        nuevoUsuario.setNombre("Saul Armando Neri Escarcega");
+        nuevoUsuario.setPuesto(Usuario.Puesto.CAJERO);
+        nuevoUsuario.setTelefono("6441269619");
+        nuevoUsuario.setContrasena("12345");
+        
+        try {
+            usuarios.registrarUsuario(nuevoUsuario);
+            
+            System.out.println("USUARIO REGISTRADO: " + nuevoUsuario);
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        //telefonoUsuario = "21929129219";
+        telefonoUsuario = nuevoUsuario.getTelefono();
+        
+        try {
+            Usuario usuarioObjetivo = usuarios.consultarUsuarioPorNumeroTelefono(telefonoUsuario);
+            
+            if (usuarioObjetivo == null) {
+                System.out.println("NO SE ENCONTRO EL USUARIO CON EL TELEFONO: " + telefonoUsuario);
+            } else {
+                System.out.println("USUARIO REGISTRADO: " + usuarioObjetivo);
+            }
+            
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        nuevoUsuario.setContrasena("perrozhet");
+        
+        try {
+            usuarios.actualizarUsuario(nuevoUsuario);
+            System.out.println("CONTRASENA USUARIO ACTUALIZADA");
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
+        telefonoUsuario = nuevoUsuario.getTelefono();
+        contrasenaUsuario = nuevoUsuario.getContrasena();
+        
+        try {
+            usuarioLogeado = usuarios.iniciarSesion(telefonoUsuario, contrasenaUsuario);   
+            System.out.println("USUARIO 2 LOGEADO: " + usuarioLogeado);
+        } catch (DAOException ex) {
+            System.out.println("### ERROR: " + ex.getMessage());
+        }
+        
     }   
 }
