@@ -27,7 +27,11 @@ public class Producto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @Id
+    @Column(name = "codigo_interno")
+    private String codigoInterno;
+    
     @Column(name = "nombre")
     private String nombre;
     
@@ -37,15 +41,6 @@ public class Producto implements Serializable {
     @Column(name = "fecha_registro")
     private Date fechaRegistro;
     
-    @OneToOne(mappedBy = "producto")
-    private InventarioProducto inventario;
-    
-    @OneToMany(mappedBy = "producto")
-    private List<DetalleCompra> detalleCompras;
-    
-    @OneToMany(mappedBy = "producto")
-    private List<DetalleVenta> detalleVentas;
-
     public Producto() {
     }
     
@@ -57,9 +52,17 @@ public class Producto implements Serializable {
         this.id = id;
     }
 
+    public void setCodigoInterno(String codigo) {
+        this.codigoInterno = codigo;
+    }
+
+    public String getCodigoInterno() {
+        return this.codigoInterno;
+    }
+    
     @Override
     public String toString() {
-        return "entidades.Producto[ id=" + id + " ]";
+        return "entidades.Producto[ id=" + id + ", codigo=" + codigoInterno + " ]";
     }
 
     public String getNombre() {
@@ -85,29 +88,4 @@ public class Producto implements Serializable {
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-
-    public InventarioProducto getInventario() {
-        return inventario;
-    }
-
-    public void setInventario(InventarioProducto inventario) {
-        this.inventario = inventario;
-    }
-
-    public List<DetalleCompra> getDetalleCompras() {
-        return detalleCompras;
-    }
-
-    public void setDetalleCompras(List<DetalleCompra> detalleCompras) {
-        this.detalleCompras = detalleCompras;
-    }
-
-    public List<DetalleVenta> getDetalleVentas() {
-        return detalleVentas;
-    }
-
-    public void setDetalleVentas(List<DetalleVenta> detalleVentas) {
-        this.detalleVentas = detalleVentas;
-    }
-
 }
