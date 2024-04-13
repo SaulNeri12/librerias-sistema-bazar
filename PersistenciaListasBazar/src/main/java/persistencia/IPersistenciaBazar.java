@@ -2,9 +2,9 @@
 package persistencia;
 
 import java.util.List;
-import objetosNegocio.Producto;
-import objetosNegocio.Usuario;
-import objetosNegocio.Venta;
+import objetosNegocio.ProductoDTO;
+import objetosNegocio.UsuarioDTO;
+import objetosNegocio.VentaDTO;
 import persistencia.excepciones.PersistenciaBazarException;
 
 /**
@@ -13,15 +13,15 @@ import persistencia.excepciones.PersistenciaBazarException;
  */
 public interface IPersistenciaBazar {
     
-    public Producto consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException;;
+    public ProductoDTO consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException;;
     
-    public Producto consultarProductoPorCodigoBarras(Long codigoBarras) throws PersistenciaBazarException;;
+    public ProductoDTO consultarProductoPorCodigoBarras(Long codigoBarras) throws PersistenciaBazarException;;
     
-    public List<Producto> consultarProductosTodos() throws PersistenciaBazarException;
+    public List<ProductoDTO> consultarProductosTodos() throws PersistenciaBazarException;
     
-    public List<Producto> consultarProductosPorNombre(String nombreProducto) throws PersistenciaBazarException;
+    public List<ProductoDTO> consultarProductosPorNombre(String nombreProducto) throws PersistenciaBazarException;
     
-    public void registrarVenta(Venta venta) throws PersistenciaBazarException;
+    public void registrarVenta(VentaDTO venta) throws PersistenciaBazarException;
     
-    public Usuario iniciarSesionUsuario(Usuario usuario) throws PersistenciaBazarException;
+    public UsuarioDTO iniciarSesionUsuario(UsuarioDTO usuario) throws PersistenciaBazarException;
 }

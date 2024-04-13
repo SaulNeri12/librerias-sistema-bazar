@@ -7,15 +7,18 @@ import dao.GestorUsuarios;
 import dao.GestorVentas;
 import excepciones.DAOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import objetosNegocio.DetalleVenta;
-import objetosNegocio.Producto;
-import objetosNegocio.Proveedor;
-import objetosNegocio.Usuario;
-import objetosNegocio.Venta;
+import javax.persistence.Persistence;
+import objetosNegocio.DetalleVentaDTO;
+import objetosNegocio.ProductoDTO;
+import objetosNegocio.ProveedorDTO;
+import objetosNegocio.UsuarioDTO;
+import objetosNegocio.VentaDTO;
 import productos.IGestorProductos;
 import proveedores.IGestorProveedores;
 import usuarios.IGestorUsuarios;
@@ -31,6 +34,8 @@ public class PersistenciaListasBazar {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Map mapa = new HashMap();
+        Persistence.generateSchema("PersistenciaBazar", mapa);
         IGestorProductos productos = new GestorProductos();
         IGestorProveedores proveedores = new GestorProveedores();
         IGestorVentas ventas = new GestorVentas();
@@ -38,7 +43,7 @@ public class PersistenciaListasBazar {
         
         Random random = new Random();
         
-        Proveedor primerProveedor = new Proveedor();
+        ProveedorDTO primerProveedor = new ProveedorDTO();
         primerProveedor.setId(random.nextLong() & Long.MAX_VALUE);
         primerProveedor.setNombre("Fruteria 'El Guero'");
         primerProveedor.setEmail("fruteriaelguero@gmail.com");
@@ -56,14 +61,14 @@ public class PersistenciaListasBazar {
         Long proveedorId = primerProveedor.getId();
         
         try {
-            Proveedor encontrado = proveedores.consultarProveedor(proveedorId);
+            ProveedorDTO encontrado = proveedores.consultarProveedor(proveedorId);
             System.out.println("ENCONTRADO: " + encontrado);
         } catch (DAOException ex) {
             System.out.println("No se encontro al proveedor con ID: " + proveedorId.toString());
         }
             
         
-        Producto primerProducto = new Producto();
+        ProductoDTO primerProducto = new ProductoDTO();
         primerProducto.setId(random.nextLong() & Long.MAX_VALUE);
         primerProducto.setCodigo("AX1111");
         primerProducto.setNombre("Galletas Marias");
@@ -78,7 +83,7 @@ public class PersistenciaListasBazar {
         }
         
         String codigoPrimerProducto = primerProducto.getCodigo();
-        Producto segundoProducto = new Producto();
+        ProductoDTO segundoProducto = new ProductoDTO();
         segundoProducto.setId(random.nextLong() & Long.MAX_VALUE);
         segundoProducto.setCodigo(codigoPrimerProducto);
         segundoProducto.setNombre("Chips Habaneras");
@@ -111,7 +116,7 @@ public class PersistenciaListasBazar {
         
         Long id = random.nextLong() & Long.MAX_VALUE;
         
-        Producto tercerProducto = new Producto();
+        ProductoDTO tercerProducto = new ProductoDTO();
         tercerProducto.setId(id);
         tercerProducto.setCodigo("GL0101");
         tercerProducto.setNombre("Galletas Chookies");
@@ -150,7 +155,7 @@ public class PersistenciaListasBazar {
             System.out.println("### ERROR: " + ex.getMessage());
         }
         
-        Usuario usuario = null;
+        UsuarioDTO usuario = null;
         try {
             usuario = usuarios.consultarUsuarioPorNumeroTelefono("1000000000");
             System.out.println("USUARIO : " + usuario);
@@ -158,20 +163,18 @@ public class PersistenciaListasBazar {
             Logger.getLogger(PersistenciaListasBazar.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        Venta primeraVenta = new Venta();
+        VentaDTO primeraVenta = new VentaDTO();
         primeraVenta.setId(101001l);
         primeraVenta.setNombreCliente("Miguel");
         primeraVenta.setApellidoCliente("Perez");
         primeraVenta.setUsuario(usuario);
-        primeraVenta.setMetodoPago(Venta.MetodoPago.EFECTIVO);
+        primeraVenta.setMetodoPago(VentaDTO.MetodoPago.EFECTIVO);
         
-        List<DetalleVenta> productosVendidos = new ArrayList<>();
+        List<DetalleVentaDTO> productosVendidos = new ArrayList<>();
         
-        DetalleVenta detalle = new DetalleVenta();
-        id = random.nextLong() & Long.MAX_VALUE;
-        detalle.setId(id);
+        DetalleVentaDTO detalle = new DetalleVentaDTO();
         
-        Producto productoObjetivo = null;
+        ProductoDTO productoObjetivo = null;
         
         try {
             productoObjetivo = productos.consultarProducto("GL0101");
@@ -213,7 +216,7 @@ public class PersistenciaListasBazar {
         }
         
         try {
-            Venta ventaObjetivo = ventas.consultarVenta(primeraVenta.getId());
+            VentaDTO ventaObjetivo = ventas.consultarVenta(primeraVenta.getId());
             System.out.println("VENTA ACTUALIZADA: " + ventaObjetivo);
         } catch (DAOException ex) {
             System.out.println("### ERROR: " + ex.getMessage());
@@ -228,7 +231,7 @@ public class PersistenciaListasBazar {
         }
         
         try {
-            Venta ventaObjetivo = ventas.consultarVenta(primeraVenta.getId());
+            VentaDTO ventaObjetivo = ventas.consultarVenta(primeraVenta.getId());
             
             if (ventaObjetivo == null) {
                 System.out.println("SE ELIMINO CORRECTAMENTE!!!: " + ventaObjetivo);
@@ -241,7 +244,7 @@ public class PersistenciaListasBazar {
         
         // SUBSISTEMA VENTAS FUNCIONA...
         
-        Usuario usuarioLogeado;
+        UsuarioDTO usuarioLogeado;
         
         String telefonoUsuario = "1000000000";
         String contrasenaUsuario = "admin";
@@ -253,11 +256,11 @@ public class PersistenciaListasBazar {
             System.out.println("### ERROR: " + ex.getMessage());
         }
         
-        Usuario nuevoUsuario = new Usuario();
+        UsuarioDTO nuevoUsuario = new UsuarioDTO();
         id = random.nextLong() & Long.MAX_VALUE;
         nuevoUsuario.setId(id);
         nuevoUsuario.setNombre("Saul Armando Neri Escarcega");
-        nuevoUsuario.setPuesto(Usuario.Puesto.CAJERO);
+        nuevoUsuario.setPuesto(UsuarioDTO.Puesto.CAJERO);
         nuevoUsuario.setTelefono("6441269619");
         nuevoUsuario.setContrasena("12345");
         
@@ -273,7 +276,7 @@ public class PersistenciaListasBazar {
         telefonoUsuario = nuevoUsuario.getTelefono();
         
         try {
-            Usuario usuarioObjetivo = usuarios.consultarUsuarioPorNumeroTelefono(telefonoUsuario);
+            UsuarioDTO usuarioObjetivo = usuarios.consultarUsuarioPorNumeroTelefono(telefonoUsuario);
             
             if (usuarioObjetivo == null) {
                 System.out.println("NO SE ENCONTRO EL USUARIO CON EL TELEFONO: " + telefonoUsuario);

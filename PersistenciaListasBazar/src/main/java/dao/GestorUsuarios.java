@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import objetosNegocio.Usuario;
+import objetosNegocio.UsuarioDTO;
 import usuarios.IGestorUsuarios;
 
 /**
@@ -14,7 +14,7 @@ import usuarios.IGestorUsuarios;
  * @author saul
  */
 public class GestorUsuarios implements IGestorUsuarios {
-    private final List<Usuario> usuarios;
+    private final List<UsuarioDTO> usuarios;
     
     /**
      * Crea una instancia del subsistema Usuarios
@@ -22,20 +22,20 @@ public class GestorUsuarios implements IGestorUsuarios {
     public GestorUsuarios() {
         this.usuarios = new ArrayList<>();
         
-        Usuario admin = new Usuario();
+        UsuarioDTO admin = new UsuarioDTO();
         
         admin.setId(1l);
         admin.setNombre("ADMINISTRADOR");
-        admin.setPuesto(Usuario.Puesto.ADMIN);
+        admin.setPuesto(UsuarioDTO.Puesto.ADMIN);
         admin.setTelefono("1000000000");
         admin.setContrasena("admin");
          
         this.usuarios.add(admin);
         
-        Usuario nuevoUsuario = new Usuario();
+        UsuarioDTO nuevoUsuario = new UsuarioDTO();
         nuevoUsuario.setId(1l);
         nuevoUsuario.setNombre("Saul Armando Neri Escarcega");
-        nuevoUsuario.setPuesto(Usuario.Puesto.CAJERO);
+        nuevoUsuario.setPuesto(UsuarioDTO.Puesto.CAJERO);
         nuevoUsuario.setTelefono("6442269619");
         nuevoUsuario.setContrasena("saulneri12");
         
@@ -43,12 +43,12 @@ public class GestorUsuarios implements IGestorUsuarios {
     }
     
     @Override
-    public Usuario consultarUsuario(Long id) {
+    public UsuarioDTO consultarUsuario(Long id) {
         if (id == null) {
             return null;
         }
         
-        Optional<Usuario> usuario = this.usuarios.stream()
+        Optional<UsuarioDTO> usuario = this.usuarios.stream()
                 .filter(usr -> usr.getId().equals(id))
                 .findFirst();
         
@@ -60,12 +60,12 @@ public class GestorUsuarios implements IGestorUsuarios {
     }
 
     @Override
-    public Usuario consultarUsuarioPorNumeroTelefono(String telefono) {
+    public UsuarioDTO consultarUsuarioPorNumeroTelefono(String telefono) {
         if (telefono == null) {
             return null;
         }
         
-        Optional<Usuario> usuario = this.usuarios.stream()
+        Optional<UsuarioDTO> usuario = this.usuarios.stream()
                 .filter(usr -> usr.getTelefono().equals(telefono))
                 .findFirst();
         
@@ -77,12 +77,12 @@ public class GestorUsuarios implements IGestorUsuarios {
     }
 
     @Override
-    public void registrarUsuario(Usuario usuario) throws DAOException {
+    public void registrarUsuario(UsuarioDTO usuario) throws DAOException {
         if (usuario == null) {
             throw new DAOException("El usuario especificado es null");
         }
         
-        Optional<Usuario> usuarioEnSistema = this.usuarios.stream()
+        Optional<UsuarioDTO> usuarioEnSistema = this.usuarios.stream()
                 .filter(usr -> usr.equals(usuario))
                 .findFirst();
         
@@ -98,12 +98,12 @@ public class GestorUsuarios implements IGestorUsuarios {
     }
 
     @Override
-    public void actualizarUsuario(Usuario usuario) throws DAOException {
+    public void actualizarUsuario(UsuarioDTO usuario) throws DAOException {
         if (usuario == null) {
             throw new DAOException("El usuario especificado es null");
         }
         
-        Optional<Usuario> usuarioEnSistema = this.usuarios.stream()
+        Optional<UsuarioDTO> usuarioEnSistema = this.usuarios.stream()
                 .filter(usr -> usr.equals(usuario))
                 .findFirst();
         
@@ -128,7 +128,7 @@ public class GestorUsuarios implements IGestorUsuarios {
             throw new DAOException("El ID de usuario dado es null");
         }
         
-        Optional<Usuario> usuarioEnSistema = this.usuarios.stream()
+        Optional<UsuarioDTO> usuarioEnSistema = this.usuarios.stream()
                 .filter(usr -> usr.getId().equals(idUsuario))
                 .findFirst();
         
@@ -144,7 +144,7 @@ public class GestorUsuarios implements IGestorUsuarios {
     }
 
     @Override
-    public Usuario iniciarSesion(String telefono, String contrasena) throws DAOException {
+    public UsuarioDTO iniciarSesion(String telefono, String contrasena) throws DAOException {
         if (telefono == null) {
             throw new DAOException("El telefono dado es null");
         }
@@ -153,7 +153,7 @@ public class GestorUsuarios implements IGestorUsuarios {
             throw new DAOException("La contrasena dada es null");
         }
         
-        Optional<Usuario> usuarioEnSistema = this.usuarios.stream()
+        Optional<UsuarioDTO> usuarioEnSistema = this.usuarios.stream()
                 .filter(usr -> usr.getTelefono().equals(telefono))
                 .findFirst();
         

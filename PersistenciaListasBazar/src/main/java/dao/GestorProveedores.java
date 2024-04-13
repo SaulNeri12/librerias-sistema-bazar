@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import objetosNegocio.Proveedor;
+import objetosNegocio.ProveedorDTO;
 import proveedores.IGestorProveedores;
 
 /**
@@ -16,27 +16,27 @@ import proveedores.IGestorProveedores;
  */
 public class GestorProveedores implements IGestorProveedores {
 
-    private final List<Proveedor> proveedores;
+    private final List<ProveedorDTO> proveedores;
     
     public GestorProveedores() {
         this.proveedores = new ArrayList<>();
     }
     
     @Override
-    public List<Proveedor> consultarTodos() throws DAOException {
-        List<Proveedor> proveedoresTodos = this.proveedores.stream().collect(Collectors.toList());
+    public List<ProveedorDTO> consultarTodos() throws DAOException {
+        List<ProveedorDTO> proveedoresTodos = this.proveedores.stream().collect(Collectors.toList());
         
         return proveedoresTodos;
     }
 
     @Override
-    public List<Proveedor> consultarProveedoresPorNombre(String nombreProveedor) throws DAOException {
+    public List<ProveedorDTO> consultarProveedoresPorNombre(String nombreProveedor) throws DAOException {
         
         if (nombreProveedor == null) {
             throw new DAOException("El nombre del proveedor dado es null");
         }
         
-        List<Proveedor> proveedoresTodos = this.proveedores.stream()
+        List<ProveedorDTO> proveedoresTodos = this.proveedores.stream()
                 .filter(p -> p.getNombre().toLowerCase().contains(nombreProveedor))
                 .collect(Collectors.toList());
         
@@ -44,13 +44,13 @@ public class GestorProveedores implements IGestorProveedores {
     }
 
     @Override
-    public Proveedor consultarProveedor(Long idProveedor) throws DAOException {
+    public ProveedorDTO consultarProveedor(Long idProveedor) throws DAOException {
         
         if (idProveedor == null) {
             throw new DAOException("El ID del proveedor dado es null");
         }
         
-        Optional<Proveedor> proveedorEnSistema = this.proveedores.stream()
+        Optional<ProveedorDTO> proveedorEnSistema = this.proveedores.stream()
                 .filter(p -> p.getId().equals(idProveedor))
                 .findFirst();
         
@@ -62,13 +62,13 @@ public class GestorProveedores implements IGestorProveedores {
     }
 
     @Override
-    public Proveedor consultarProveedorPorNumeroTelefono(String telefono) throws DAOException {
+    public ProveedorDTO consultarProveedorPorNumeroTelefono(String telefono) throws DAOException {
         
         if (telefono == null) {
             throw new DAOException("El telefono del proveedor dado es null");
         }
         
-        Optional<Proveedor> proveedorEnSistema = this.proveedores.stream()
+        Optional<ProveedorDTO> proveedorEnSistema = this.proveedores.stream()
                 .filter(p -> p.getTelefono().equals(telefono))
                 .findFirst();
         
@@ -80,13 +80,13 @@ public class GestorProveedores implements IGestorProveedores {
     }
 
     @Override
-    public void registrarProveedor(Proveedor proveedor) throws DAOException {
+    public void registrarProveedor(ProveedorDTO proveedor) throws DAOException {
         
         if (proveedor == null) {
             throw new DAOException("El proveedor dado es null");
         }
         
-        Optional<Proveedor> proveedorEnSistema = this.proveedores.stream()
+        Optional<ProveedorDTO> proveedorEnSistema = this.proveedores.stream()
                 .filter(p -> p.getId().equals(proveedor.getId()) || p.getNombre().equals(proveedor.getNombre()) || p.getEmail().equals(proveedor.getEmail()))
                 .findFirst();
         
@@ -106,13 +106,13 @@ public class GestorProveedores implements IGestorProveedores {
     }
 
     @Override
-    public void actualizarProveedor(Proveedor proveedor) throws DAOException {
+    public void actualizarProveedor(ProveedorDTO proveedor) throws DAOException {
         
         if (proveedor == null) {
             throw new DAOException("El proveedor dado es null");
         }
         
-        Optional<Proveedor> proveedorEnSistema = this.proveedores.stream()
+        Optional<ProveedorDTO> proveedorEnSistema = this.proveedores.stream()
                 .filter(p -> p.getId().equals(proveedor.getId()) || p.getNombre().equals(proveedor.getNombre()) || p.getEmail().equals(proveedor.getEmail()))
                 .findFirst();
         
@@ -136,7 +136,7 @@ public class GestorProveedores implements IGestorProveedores {
             throw new DAOException("El ID del proveedor dado es null");
         }
         
-        Optional<Proveedor> proveedorEnSistema = this.proveedores.stream()
+        Optional<ProveedorDTO> proveedorEnSistema = this.proveedores.stream()
                 .filter(p -> p.getId().equals(idProveedor))
                 .findFirst();
         

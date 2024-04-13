@@ -6,11 +6,9 @@ import dao.GestorUsuarios;
 import dao.GestorVentas;
 import excepciones.DAOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import objetosNegocio.Producto;
-import objetosNegocio.Usuario;
-import objetosNegocio.Venta;
+import objetosNegocio.ProductoDTO;
+import objetosNegocio.UsuarioDTO;
+import objetosNegocio.VentaDTO;
 import persistencia.excepciones.PersistenciaBazarException;
 import productos.IGestorProductos;
 import usuarios.IGestorUsuarios;
@@ -33,9 +31,9 @@ public class PersistenciaBazarListas implements IPersistenciaBazar {
     }
     
     @Override
-    public List<Producto> consultarProductosTodos() throws PersistenciaBazarException {
+    public List<ProductoDTO> consultarProductosTodos() throws PersistenciaBazarException {
         try {
-            List<Producto> productosTodos = productos.consultarTodos();
+            List<ProductoDTO> productosTodos = productos.consultarTodos();
             
             if (productosTodos == null) {
                 throw new PersistenciaBazarException("Ha ocurrido un error al consultar los productos, intente de nuevo mas tarde");
@@ -52,9 +50,9 @@ public class PersistenciaBazarListas implements IPersistenciaBazar {
     }
 
     @Override
-    public List<Producto> consultarProductosPorNombre(String nombreProducto) throws PersistenciaBazarException {
+    public List<ProductoDTO> consultarProductosPorNombre(String nombreProducto) throws PersistenciaBazarException {
         try {
-            List<Producto> productosTodos = productos.consultarProductosPorNombre(nombreProducto);
+            List<ProductoDTO> productosTodos = productos.consultarProductosPorNombre(nombreProducto);
             
             if (productosTodos == null) {
                 throw new PersistenciaBazarException("Ha ocurrido un error al consultar los productos, intente de nuevo mas tarde");
@@ -71,7 +69,7 @@ public class PersistenciaBazarListas implements IPersistenciaBazar {
     }
 
     @Override
-    public void registrarVenta(Venta venta) throws PersistenciaBazarException {
+    public void registrarVenta(VentaDTO venta) throws PersistenciaBazarException {
         try {
             ventas.registrarVenta(venta);
         } catch (DAOException ex) {
@@ -80,9 +78,9 @@ public class PersistenciaBazarListas implements IPersistenciaBazar {
     }
 
     @Override
-    public Usuario iniciarSesionUsuario(Usuario usuario) throws PersistenciaBazarException {
+    public UsuarioDTO iniciarSesionUsuario(UsuarioDTO usuario) throws PersistenciaBazarException {
         try {
-            Usuario usuarioEnSistema = usuarios.iniciarSesion(usuario.getTelefono(), usuario.getContrasena());
+            UsuarioDTO usuarioEnSistema = usuarios.iniciarSesion(usuario.getTelefono(), usuario.getContrasena());
             
             if (usuarioEnSistema == null) {
                 throw new PersistenciaBazarException("Ha ocurrido un problema al intentar iniciar sesion, intente de nuevo mas tarde");
@@ -95,9 +93,9 @@ public class PersistenciaBazarListas implements IPersistenciaBazar {
     }
 
     @Override
-    public Producto consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException {
+    public ProductoDTO consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException {
         try {
-            Producto producto = this.productos.consultarProducto(codigoInterno);
+            ProductoDTO producto = this.productos.consultarProducto(codigoInterno);
             
             return producto;
         } catch (DAOException ex) {
@@ -106,9 +104,9 @@ public class PersistenciaBazarListas implements IPersistenciaBazar {
     }
 
     @Override
-    public Producto consultarProductoPorCodigoBarras(Long codigoBarras) throws PersistenciaBazarException {
+    public ProductoDTO consultarProductoPorCodigoBarras(Long codigoBarras) throws PersistenciaBazarException {
         try {
-            Producto producto = this.productos.consultarProducto(codigoBarras);
+            ProductoDTO producto = this.productos.consultarProducto(codigoBarras);
             
             return producto;
         } catch (DAOException ex) {

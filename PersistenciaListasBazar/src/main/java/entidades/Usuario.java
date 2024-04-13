@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -29,6 +30,7 @@ public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -58,6 +60,7 @@ public class Usuario implements Serializable {
     @OneToMany(mappedBy = "usuario")
     private List<Venta> ventas;
     
+    @Embedded
     @OneToOne(mappedBy = "usuario")
     private Direccion direccion;
     

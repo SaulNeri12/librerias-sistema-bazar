@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import objetosNegocio.DetalleVenta;
-import objetosNegocio.Venta;
+import objetosNegocio.DetalleVentaDTO;
+import objetosNegocio.VentaDTO;
 import ventas.IGestorVentas;
 
 /**
@@ -18,19 +18,19 @@ import ventas.IGestorVentas;
  * @author saul
  */
 public class GestorVentas implements IGestorVentas {
-    private final List<Venta> ventas;
+    private final List<VentaDTO> ventas;
     
     public GestorVentas() {
         this.ventas = new ArrayList<>();
     }
     
     @Override
-    public Venta consultarVenta(Long idVenta) throws DAOException {
+    public VentaDTO consultarVenta(Long idVenta) throws DAOException {
         if (idVenta == null) {
             throw new DAOException("El ID de la venta dado es null");
         }
         
-         Optional<Venta> venta = this.ventas.stream()
+         Optional<VentaDTO> venta = this.ventas.stream()
                 .filter(v -> v.getId().equals(idVenta))
                 .findFirst();
         
@@ -42,12 +42,12 @@ public class GestorVentas implements IGestorVentas {
     }
 
     @Override
-    public List<Venta> consultarVentasDeUsuario(Long idUsuario) throws DAOException {
+    public List<VentaDTO> consultarVentasDeUsuario(Long idUsuario) throws DAOException {
         if (idUsuario == null) {
             throw new DAOException("El ID del usuario dado es null");
         }
         
-         List<Venta> ventas = this.ventas.stream()
+         List<VentaDTO> ventas = this.ventas.stream()
                 .filter(v -> v.getUsuario().getId().equals(idUsuario))
                  .collect(Collectors.toList());
         
@@ -59,7 +59,7 @@ public class GestorVentas implements IGestorVentas {
     }
 
     @Override
-    public List<Venta> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws DAOException {
+    public List<VentaDTO> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws DAOException {
         if (fechaInicio == null) {
             throw new DAOException("La fecha de inicio dada es null");
         }
@@ -70,9 +70,9 @@ public class GestorVentas implements IGestorVentas {
         
         // NOTE: Solo funciona para fechas de un dia a otro, no para horas...
         // TODO: Se tendra que corregir despues...
-        Predicate<Venta> ventaEntrePeriodo = v ->  v.getFechaVenta().toLocalDate().isAfter(fechaInicio) && v.getFechaVenta().toLocalDate().isBefore(fechaFin);
+        Predicate<VentaDTO> ventaEntrePeriodo = v ->  v.getFechaVenta().toLocalDate().isAfter(fechaInicio) && v.getFechaVenta().toLocalDate().isBefore(fechaFin);
         
-         List<Venta> ventas = this.ventas.stream()
+         List<VentaDTO> ventas = this.ventas.stream()
                 .filter(ventaEntrePeriodo)
                  .collect(Collectors.toList());
         
@@ -84,26 +84,26 @@ public class GestorVentas implements IGestorVentas {
     }
 
     @Override
-    public List<Venta> consultarTodos() throws DAOException {
+    public List<VentaDTO> consultarTodos() throws DAOException {
         
-        List<Venta> ventas = this.ventas.stream().collect(Collectors.toList());
+        List<VentaDTO> ventas = this.ventas.stream().collect(Collectors.toList());
 
         return ventas;
     }
 
     @Override
-    public void registrarVenta(Venta venta) throws DAOException {
+    public void registrarVenta(VentaDTO venta) throws DAOException {
         if (venta == null) {
             throw new DAOException("La venta dada es null");
         }
         
-        Optional<Venta> ventaEnSistema = this.ventas.stream().filter(v -> v.getId().equals(venta.getId())).findFirst();
+        Optional<VentaDTO> ventaEnSistema = this.ventas.stream().filter(v -> v.getId().equals(venta.getId())).findFirst();
         
         if (!ventaEnSistema.isPresent()) {
             
             Float totalVenta = 0.0f;
             
-            for (DetalleVenta productoVendido: venta.getProductosVendidos()) {
+            for (DetalleVentaDTO productoVendido: venta.getProductosVendidos()) {
                 totalVenta += productoVendido.getPrecioProducto() * productoVendido.getCantidad();
             }
             
@@ -124,12 +124,12 @@ public class GestorVentas implements IGestorVentas {
     }
 
     @Override
-    public void actualizarVenta(Venta venta) throws DAOException {
+    public void actualizarVenta(VentaDTO venta) throws DAOException {
         if (venta == null) {
             throw new DAOException("La venta dada es null");
         }
         
-        Optional<Venta> ventaEnSistema = this.ventas.stream().filter(v -> v.equals(venta)).findFirst();
+        Optional<VentaDTO> ventaEnSistema = this.ventas.stream().filter(v -> v.equals(venta)).findFirst();
         
         if (!ventaEnSistema.isPresent()) {
             throw new DAOException("No se encontro la venta especificada");
@@ -141,7 +141,7 @@ public class GestorVentas implements IGestorVentas {
             throw new DAOException("Ningun producto presente en la venta");
         }
         
-        for (DetalleVenta productoVendido: venta.getProductosVendidos()) {
+        for (DetalleVentaDTO productoVendido: venta.getProductosVendidos()) {
             totalVenta += productoVendido.getPrecioProducto() * productoVendido.getCantidad();
         }
 
@@ -165,7 +165,7 @@ public class GestorVentas implements IGestorVentas {
             throw new DAOException("El ID de la venta dado es null");
         }
         
-        Optional<Venta> ventaEnSistema = this.ventas.stream().filter(v -> v.getId().equals(idVenta)).findFirst();
+        Optional<VentaDTO> ventaEnSistema = this.ventas.stream().filter(v -> v.getId().equals(idVenta)).findFirst();
         
         if (!ventaEnSistema.isPresent()) {
             throw new DAOException("No se encontro la venta especificada");

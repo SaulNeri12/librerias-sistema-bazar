@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import objetosNegocio.ProductoDTO;
+import objetosNegocio.ProveedorDTO;
 import productos.IGestorProductos;
 
 /**
@@ -26,14 +27,14 @@ public class GestorProductos implements IGestorProductos {
         // NOTE: DATOS DE PRUEBA
         Random random = new Random();
         
-        Proveedor proveedorGamesa = new Proveedor();
+        ProveedorDTO proveedorGamesa = new ProveedorDTO();
         proveedorGamesa.setId(random.nextLong() & Long.MAX_VALUE);
         proveedorGamesa.setNombre("GAMESA");
         proveedorGamesa.setDescripcion("Venta amplia variedad de galletas y productos de panadería");
         proveedorGamesa.setEmail("grupogamesa1921@gamesa.co.mx");
         proveedorGamesa.setTelefono("6441292556");
         
-        Proveedor proveedorRopa = new Proveedor();
+        ProveedorDTO proveedorRopa = new ProveedorDTO();
         proveedorRopa.setId(random.nextLong() & Long.MAX_VALUE);
         proveedorRopa.setNombre("CottonRey Textiles S.A. de C.V");
         proveedorRopa.setDescripcion("Vende una amplia gama de productos textiles, incluyendo ropa casual, ropa interior, ropa de cama, y accesorios de moda.");
@@ -124,20 +125,20 @@ public class GestorProductos implements IGestorProductos {
     }
     
     @Override
-    public List<Producto> consultarTodos() throws DAOException {
-        List<Producto> productosTodos = this.productos.stream().collect(Collectors.toList());
+    public List<ProductoDTO> consultarTodos() throws DAOException {
+        List<ProductoDTO> productosTodos = this.productos.stream().collect(Collectors.toList());
         
         return productosTodos;
     }
 
     @Override
-    public List<Producto> consultarProductosPorNombre(String nombreProducto) throws DAOException {
+    public List<ProductoDTO> consultarProductosPorNombre(String nombreProducto) throws DAOException {
         
         if (nombreProducto == null) {
             throw new DAOException("El nombre del producto a buscar dado es null");
         }
         
-        List<Producto> productosTodos = this.productos.stream()
+        List<ProductoDTO> productosTodos = this.productos.stream()
                 .filter(producto -> producto.getNombre().toLowerCase().contains(nombreProducto.toLowerCase()))
                 .collect(Collectors.toList());
         
@@ -145,15 +146,15 @@ public class GestorProductos implements IGestorProductos {
     }
 
     @Override
-    public List<Producto> consultarProductosPorProveedor(Proveedor proveedor) throws DAOException {
+    public List<ProductoDTO> consultarProductosPorProveedor(ProveedorDTO proveedor) throws DAOException {
         
         if (proveedor == null) {
             throw new DAOException("El proveedor dado es null");
         }
         
-        Predicate<Producto> contieneAlProveedor = prdct -> prdct.obtenerProveedores().stream().anyMatch(prov -> prov.getId().equals(prov.getId()));
+        Predicate<ProductoDTO> contieneAlProveedor = prdct -> prdct.obtenerProveedores().stream().anyMatch(prov -> prov.getId().equals(prov.getId()));
         
-        List<Producto> productosTodos = this.productos.stream()
+        List<ProductoDTO> productosTodos = this.productos.stream()
                 .filter(contieneAlProveedor)
                 .collect(Collectors.toList());
         
@@ -161,12 +162,12 @@ public class GestorProductos implements IGestorProductos {
     }
 
     @Override
-    public void registrarProducto(Producto producto) throws DAOException {
+    public void registrarProducto(ProductoDTO producto) throws DAOException {
         if (producto == null) {
             throw new DAOException("El producto dado es null");
         }
         
-        Optional<Producto> productoEnCatalogo = this.productos.stream()
+        Optional<ProductoDTO> productoEnCatalogo = this.productos.stream()
                 .filter(prdct -> prdct.getId().equals(producto.getId()) || prdct.getCodigo().equals(producto.getCodigo()))
                 .findFirst();
         
@@ -186,12 +187,12 @@ public class GestorProductos implements IGestorProductos {
     }
 
     @Override
-    public Producto consultarProducto(String codigoInterno) throws DAOException {
+    public ProductoDTO consultarProducto(String codigoInterno) throws DAOException {
         if (codigoInterno == null) {
             throw new DAOException("El codigo interno dado es null");
         }
         
-        Optional<Producto> productoEnCatalogo = this.productos.stream()
+        Optional<ProductoDTO> productoEnCatalogo = this.productos.stream()
                 .filter(prdct -> prdct.getCodigo().equals(codigoInterno))
                 .findFirst();
         
@@ -203,12 +204,12 @@ public class GestorProductos implements IGestorProductos {
     }
 
     @Override
-    public Producto consultarProducto(Long codigoBarras) throws DAOException {
+    public ProductoDTO consultarProducto(Long codigoBarras) throws DAOException {
         if (codigoBarras == null) {
             throw new DAOException("El codigo de barras dado es null");
         }
         
-        Optional<Producto> productoEnCatalogo = this.productos.stream()
+        Optional<ProductoDTO> productoEnCatalogo = this.productos.stream()
                 .filter(p -> p.getId().equals(codigoBarras))
                 .findFirst();
         
@@ -220,12 +221,12 @@ public class GestorProductos implements IGestorProductos {
     }
 
     @Override
-    public void actualizarProducto(Producto producto) throws DAOException {
+    public void actualizarProducto(ProductoDTO producto) throws DAOException {
         if (producto == null) {
             throw new DAOException("El producto dado es null");
         }
         
-        Optional<Producto> productoEnCatalogo = this.productos.stream()
+        Optional<ProductoDTO> productoEnCatalogo = this.productos.stream()
                 .filter(p -> p.getId().equals(producto.getId()) || p.getCodigo().equals(producto.getCodigo()))
                 .findFirst();
         
@@ -250,7 +251,7 @@ public class GestorProductos implements IGestorProductos {
             throw new DAOException("El codigo interno dado es null");
         }
         
-        Optional<Producto> productoEnCatalogo = this.productos.stream()
+        Optional<ProductoDTO> productoEnCatalogo = this.productos.stream()
                 .filter(p -> p.getCodigo().equals(codigoInterno))
                 .findFirst();
         
