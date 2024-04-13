@@ -3,7 +3,7 @@ package proveedores;
 
 import excepciones.DAOException;
 import java.util.List;
-import objetosNegocio.Proveedor;
+import objetosNegocio.ProveedorDTO;
 
 /**
  * Define las operaciones basicas para el subsistema de gestion de proveedores
@@ -16,7 +16,7 @@ public interface IGestorProveedores {
      * @return 
      * @throws excepciones.DAOException En caso de error
      */
-    public List<Proveedor> consultarTodos() throws DAOException;
+    public List<ProveedorDTO> consultarTodos() throws DAOException;
     
     /**
      * Regresa todos los proveedores que coincidan con el nombre especificado.
@@ -24,7 +24,7 @@ public interface IGestorProveedores {
      * @return 
      * @throws excepciones.DAOException En caso de error
      */
-    public List<Proveedor> consultarProveedoresPorNombre(String nombre) throws DAOException;
+    public List<ProveedorDTO> consultarProveedoresPorNombre(String nombre) throws DAOException;
     
     /**
      * Busca y regresa un proveedor a partir de su ID en el sistema.
@@ -32,7 +32,7 @@ public interface IGestorProveedores {
      * @return 
      * @throws excepciones.DAOException En caso de error.
      */
-    public Proveedor consultarProveedor(Long id) throws DAOException;
+    public ProveedorDTO consultarProveedor(Long id) throws DAOException;
     
     /**
      * Busca y regresa un proveedor a partir de su numero telefonico.
@@ -40,21 +40,21 @@ public interface IGestorProveedores {
      * @return 
      * @throws excepciones.DAOException En caso de error.
      */
-    public Proveedor consultarProveedorPorNumeroTelefono(String telefono) throws DAOException;
+    public ProveedorDTO consultarProveedorPorNumeroTelefono(String telefono) throws DAOException;
     
     /**
      * Registra un proveedor en el sistema.
      * @param proveedor Informacion del proveedor a guardar.
      * @throws excepciones.DAOException En caso de que no se pueda registrar el proveedor.
      */
-    public void registrarProveedor(Proveedor proveedor) throws DAOException;
+    public void registrarProveedor(ProveedorDTO proveedor) throws DAOException;
     
     /**
      * Modifica la informacion de un proveedor en el sistema.
      * @param proveedor Proveedor a modificar.
      * @throws excepciones.DAOException En caso de que no se pueda actualizar el proveedor
      */
-    public void actualizarProveedor(Proveedor proveedor) throws DAOException;
+    public void actualizarProveedor(ProveedorDTO proveedor) throws DAOException;
     
     /**
      * Elimina a un proveedor a partir de su ID.

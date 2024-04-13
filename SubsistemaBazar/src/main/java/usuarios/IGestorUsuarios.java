@@ -2,7 +2,7 @@
 package usuarios;
 
 import excepciones.DAOException;
-import objetosNegocio.Usuario;
+import objetosNegocio.UsuarioDTO;
 
 /**
  * Define las operaciones basicas para el subsistema de Usuarios
@@ -16,7 +16,7 @@ public interface IGestorUsuarios {
      * @return Usuario si se encuentra, null en caso contrario
      * @throws excepciones.DAOException En caso de error
      */
-    public Usuario consultarUsuario(Long id) throws DAOException;
+    public UsuarioDTO consultarUsuario(Long id) throws DAOException;
     
     /**
      * Busca al usuario con el telefono especificado y lo regresa.
@@ -24,21 +24,21 @@ public interface IGestorUsuarios {
      * @return Usuario si se encuentra, null en caso contrario
      * @throws excepciones.DAOException En caso de error.
      */
-    public Usuario consultarUsuarioPorNumeroTelefono(String telefono) throws DAOException;
+    public UsuarioDTO consultarUsuarioPorNumeroTelefono(String telefono) throws DAOException;
     
     /**
      * Registra un usuario en el sistema (base de datos)
      * @param usuario Usuario a registrar
      * @throws excepciones.DAOException En caso de que no se pueda registrar el usuario
      */
-    public void registrarUsuario(Usuario usuario) throws DAOException;
+    public void registrarUsuario(UsuarioDTO usuario) throws DAOException;
     
     /**
      * Modifica la informacion del usuario especificado en el sistema.
      * @param usuario Usuario a modificar
      * @throws excepciones.DAOException En caso de que no se pueda actualizar los datos del usuario
      */
-    public void actualizarUsuario(Usuario usuario) throws DAOException;
+    public void actualizarUsuario(UsuarioDTO usuario) throws DAOException;
     
     /**
      * Elimina al usuario con el ID especificado en el sistema.
@@ -57,6 +57,6 @@ public interface IGestorUsuarios {
      * en el incio de sesion del usuaro, telefono o contrasena incorrectos, 
      * errores internos, etc.
      */
-    public Usuario iniciarSesion(String telefono, String contrasena) throws DAOException;
+    public UsuarioDTO iniciarSesion(String telefono, String contrasena) throws DAOException;
 }
 

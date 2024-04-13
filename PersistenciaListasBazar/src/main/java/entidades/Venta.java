@@ -31,11 +31,8 @@ public class Venta implements Serializable {
     @Column(name = "nombre_cliente")
     private String nombreCliente;
 
-    @Column(name = "apellido_paterno_cliente")
-    private String apellidoPaternoCliente;
-    
-    @Column(name = "apellido_materno_cliente")
-    private String apellidoMaternoCliente;
+    @Column(name = "apellido_cliente")
+    private String apellidoCliente;
     
     @Column(name = "monto_total")
     private Float montoToal;
@@ -75,20 +72,12 @@ public class Venta implements Serializable {
         this.nombreCliente = nombreCliente;
     }
 
-    public String getApellidoPaternoCliente() {
-        return apellidoPaternoCliente;
+    public String getApellidoCliente() {
+        return apellidoCliente;
     }
 
-    public void setApellidoPaternoCliente(String apellidoPaternoCliente) {
-        this.apellidoPaternoCliente = apellidoPaternoCliente;
-    }
-
-    public String getApellidoMaternoCliente() {
-        return apellidoMaternoCliente;
-    }
-
-    public void setApellidoMaternoCliente(String apellidoMaternoCliente) {
-        this.apellidoMaternoCliente = apellidoMaternoCliente;
+    public void setApellidoCliente(String apellidoCliente) {
+        this.apellidoCliente = apellidoCliente;
     }
 
     public Float getMontoToal() {

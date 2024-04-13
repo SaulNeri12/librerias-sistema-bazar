@@ -4,7 +4,7 @@ package ventas;
 import excepciones.DAOException;
 import java.time.LocalDate;
 import java.util.List;
-import objetosNegocio.Venta;
+import objetosNegocio.VentaDTO;
 
 /**
  * Define las operaciones basicas para gestionar ventas en el sistema.
@@ -18,7 +18,7 @@ public interface IGestorVentas {
      * @return Venta si se encuentra, null en caso contrario.
      * @throws excepciones.DAOException En caso de error
      */
-    public Venta consultarVenta(Long id) throws DAOException;
+    public VentaDTO consultarVenta(Long id) throws DAOException;
     
     /**
      * Regresa una lista de las ventas hechas por el usuario con el ID especificado.
@@ -26,7 +26,7 @@ public interface IGestorVentas {
      * @return 
      * @throws excepciones.DAOException En caso de error.
      */
-    public List<Venta> consultarVentasDeUsuario(Long usuarioId) throws DAOException;
+    public List<VentaDTO> consultarVentasDeUsuario(Long usuarioId) throws DAOException;
     
     /**
      * Regresa una lista de ventas en el periodo especificado.
@@ -35,14 +35,14 @@ public interface IGestorVentas {
      * @return 
      * @throws excepciones.DAOException En caso de error.
      */
-    public List<Venta> consultarVentasPorPeriodo(LocalDate inicio, LocalDate fin) throws DAOException;
+    public List<VentaDTO> consultarVentasPorPeriodo(LocalDate inicio, LocalDate fin) throws DAOException;
     
     /**
      * Regresa una lista con todas las ventas existentes.
      * @return 
      * @throws excepciones.DAOException En caso de error.
      */
-    public List<Venta> consultarTodos() throws DAOException;
+    public List<VentaDTO> consultarTodos() throws DAOException;
     
     /**
      * Registra una nueva venta.
@@ -50,7 +50,7 @@ public interface IGestorVentas {
      * @throws excepciones.DAOException En caso de que no se pueda registrar 
      * la venta.
      */
-    public void registrarVenta(Venta venta) throws DAOException;
+    public void registrarVenta(VentaDTO venta) throws DAOException;
     
     /**
      * Modifica la informacion de la venta en cuestion.
@@ -58,7 +58,7 @@ public interface IGestorVentas {
      * @throws excepciones.DAOException En caso de que no se pueda actualizar
      * la venta.
      */
-    public void actualizarVenta(Venta venta) throws DAOException;
+    public void actualizarVenta(VentaDTO venta) throws DAOException;
     
     /**
      * Elimina una venta con el ID de la venta especificado.
