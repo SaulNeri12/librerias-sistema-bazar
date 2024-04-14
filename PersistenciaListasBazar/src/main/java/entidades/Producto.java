@@ -31,6 +31,9 @@ public class Producto implements Serializable {
     @Column(name = "codigo_interno", unique = true, nullable = false)
     private String codigoInterno;
     
+    @Column(name = "codigo_barras", unique = true, nullable = false)
+    private Long codigoBarras;
+
     @Column(name = "nombre")
     private String nombre;
     
@@ -87,5 +90,13 @@ public class Producto implements Serializable {
 
     public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public Long getCodigoBarras() {
+        return codigoBarras;
+    }
+
+    public void setCodigoBarras(Long codigoBarras) {
+        this.codigoBarras = codigoBarras;
     }
 }
