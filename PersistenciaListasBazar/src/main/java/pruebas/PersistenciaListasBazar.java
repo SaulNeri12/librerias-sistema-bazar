@@ -12,6 +12,8 @@ import entidades.Producto;
 import entidades.Proveedor;
 import entidades.Usuario;
 import excepciones.DAOException;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -61,11 +63,13 @@ public class PersistenciaListasBazar {
 
         em.persist(user1);
 
+        // Inicializar un objeto LocalDateTime
+        LocalDateTime fecha = LocalDateTime.now();
         Producto product1 = new Producto();
         product1.setCodigoInterno("PROD123");
         product1.setNombre("Product 1");
         product1.setPrecio(19.99f);
-        product1.setFechaRegistro(new Date());
+        product1.setFechaRegistro(fecha);
 
         em.persist(product1);
 

@@ -4,6 +4,7 @@
 package entidades;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +39,7 @@ public class Producto implements Serializable {
     
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.DATE)
-    private Date fechaRegistro;
+    private LocalDateTime fechaRegistro;
     
     public Producto() {
     }
@@ -80,11 +81,11 @@ public class Producto implements Serializable {
         this.precio = precio;
     }
 
-    public Date getFechaRegistro() {
+    public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 }
