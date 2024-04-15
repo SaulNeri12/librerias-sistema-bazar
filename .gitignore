@@ -1,5 +1,11 @@
+<<<<<<< Updated upstream
 /PersistenciaListasBazar/nbproject/private/
 /PersistenciaListasBazar/target/
 /ObjetosNegocioBazar/target/
 /SubsistemaBazar/target/
 /ObjetosNegocioDTOBazar/target/
+=======
+/ObjetosNegocioBazar/nbproject/
+/SubsistemaBazar/nbproject/
+/PersistenciaListasBazar/nbproject/
+>>>>>>> Stashed changes
