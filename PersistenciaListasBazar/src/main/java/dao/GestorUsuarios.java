@@ -229,6 +229,15 @@ public class GestorUsuarios implements IGestorUsuarios {
 
             Usuario usuarioEntity = query.getSingleResult();
 
+            // NOTE: Estos if's dan detalles sobre que pasa en el inicio de sesion, ruben.
+            if (usuarioEntity == null) {
+                throw new DAOException("No se encontro al usuario con el telefono especificado");
+            }
+
+            if (usuarioEntity.getContrasenha().equals(contrasena)) {
+                throw new DAOException("La contrasena es incorrecta");
+            }
+            
             // Convertir el Usuario a UsuarioDTO si la autenticación es exitosa
             UsuarioDTO usuarioDTO = new UsuarioDTO();
             usuarioDTO.setId(usuarioEntity.getId());
