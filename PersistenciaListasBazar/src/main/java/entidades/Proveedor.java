@@ -4,6 +4,7 @@
 package entidades;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -45,7 +46,7 @@ public class Proveedor implements Serializable {
     
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.DATE)
-    private Date fechaRegistro;
+    private LocalDateTime fechaRegistro;
     
     @OneToMany(mappedBy = "proveedor")
     private List<Compra> compras;
@@ -97,11 +98,11 @@ public class Proveedor implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getFechaRegistro() {
+    public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
