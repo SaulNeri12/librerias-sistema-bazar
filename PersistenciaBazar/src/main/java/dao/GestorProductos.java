@@ -1,16 +1,15 @@
 
 package dao;
 
+import conexion.EntityManagerSingleton;
+import entidades.Producto;
 import excepciones.DAOException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.ProveedorDTO;
 import productos.IGestorProductos;
-import conexion.EntityManagerSingleton;
-import entidades.Producto;
 
 /**
  * Implementacion del subsistema de Productos con listas.
@@ -47,7 +46,7 @@ public class GestorProductos implements IGestorProductos {
     @Override
     public List<ProductoDTO> consultarTodos() throws DAOException {
         try {
-            TypedQuery<ProductoDTO> consulta = em.createQuery("SELECT p FROM productos p", ProductoDTO.class);
+            TypedQuery<ProductoDTO> consulta = em.createQuery("SELECT p FROM Producto p", ProductoDTO.class);
             return consulta.getResultList();
         } catch (Exception ex) {
             throw new DAOException("Error al consultar todos los productos");
@@ -67,7 +66,7 @@ public class GestorProductos implements IGestorProductos {
     @Override
     public List<ProductoDTO> consultarProductosPorNombre(String nombreProducto) throws DAOException {
         try {
-            TypedQuery<ProductoDTO> consulta = em.createQuery("SELECT p FROM productos p WHERE p.nombre LIKE :nombre",
+            TypedQuery<ProductoDTO> consulta = em.createQuery("SELECT p FROM Producto p WHERE p.nombre LIKE :nombre",
                     ProductoDTO.class);
             consulta.setParameter("nombre", "%" + nombreProducto + "%");
             return consulta.getResultList();
@@ -89,7 +88,7 @@ public class GestorProductos implements IGestorProductos {
     public List<ProductoDTO> consultarProductosPorProveedor(ProveedorDTO proveedor) throws DAOException {
         try {
             TypedQuery<ProductoDTO> consulta = em.createQuery(
-                    "SELECT p FROM productos p WHERE :proveedor MEMBER OF p.proveedores",
+                    "SELECT p FROM Producto p WHERE :proveedor MEMBER OF p.proveedores",
                     ProductoDTO.class);
             consulta.setParameter("proveedor", proveedor);
             return consulta.getResultList();
@@ -134,7 +133,7 @@ public class GestorProductos implements IGestorProductos {
 
         try {
             TypedQuery<ProductoDTO> consulta = em.createQuery(
-                    "SELECT p FROM productos p WHERE p.codigo = :codigo_interno",
+                    "SELECT p FROM Producto p WHERE p.codigo = :codigo_interno",
                     ProductoDTO.class);
             consulta.setParameter("codigo", codigoInterno);
             return consulta.getSingleResult();
@@ -160,7 +159,7 @@ public class GestorProductos implements IGestorProductos {
 
         try {
             TypedQuery<ProductoDTO> consulta = em.createQuery(
-                    "SELECT p FROM productos p WHERE p.codigoBarras = :codigo_barras",
+                    "SELECT p FROM Producto p WHERE p.codigoBarras = :codigo_barras",
                     ProductoDTO.class);
             consulta.setParameter("codigo_barras", codigoBarras);
             return consulta.getSingleResult();

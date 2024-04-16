@@ -5,7 +5,6 @@ package entidades;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -16,8 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * 
@@ -44,8 +41,7 @@ public class Proveedor implements Serializable {
     @Column(name = "descripcion")
     private String descripcion;
     
-    @Column(name = "fecha_registro")
-    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_registro", columnDefinition = "DATE")
     private LocalDateTime fechaRegistro;
     
     @OneToMany(mappedBy = "proveedor")

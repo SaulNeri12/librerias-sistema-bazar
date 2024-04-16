@@ -12,10 +12,8 @@ import entidades.Producto;
 import entidades.Proveedor;
 import entidades.Usuario;
 import excepciones.DAOException;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -53,13 +51,13 @@ public class PersistenciaListasBazar {
         user1.setContrasenha("password123");
         user1.setPuesto(Usuario.Puesto.CAJERO);
         user1.setTelefono("555-555-5555");
-        user1.setFechaContratacion(new Date());
 
         Direccion direccion1 = new Direccion();
         direccion1.setCalle("123 Main St");
         direccion1.setCiudad("Anytown");
         direccion1.setCodigoPostal("12345");
         user1.setDireccion(direccion1);
+        user1.setFechaContratacion(LocalDateTime.now());
 
         em.persist(user1);
 
@@ -67,6 +65,7 @@ public class PersistenciaListasBazar {
         LocalDateTime fecha = LocalDateTime.now();
         Producto product1 = new Producto();
         product1.setCodigoInterno("PROD123");
+        product1.setCodigoBarras(Long.MIN_VALUE);
         product1.setNombre("Product 1");
         product1.setPrecio(19.99f);
         product1.setFechaRegistro(fecha);
@@ -101,7 +100,6 @@ public class PersistenciaListasBazar {
         Random random = new Random();
 
         ProveedorDTO primerProveedor = new ProveedorDTO();
-        primerProveedor.setId(random.nextLong() & Long.MAX_VALUE);
         primerProveedor.setNombre("Fruteria 'El Guero'");
         primerProveedor.setEmail("fruteriaelguero@gmail.com");
         primerProveedor.setTelefono("6655235123");

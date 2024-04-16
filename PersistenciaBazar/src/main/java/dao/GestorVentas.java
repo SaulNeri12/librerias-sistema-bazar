@@ -116,7 +116,7 @@ public class GestorVentas implements IGestorVentas {
         try
         {
 
-            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT new objetosNegocio.VentaDTO(v.id, v.fecha, v.total) FROM Venta v WHERE v.fecha BETWEEN :fechaInicio AND :fechaFin", VentaDTO.class);
+            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT new objetosNegocio.VentaDTO(V.id, V.fechaVenta, v.montoToal) FROM Venta v WHERE v.fechaVenta BETWEEN :fechaInicio AND :fechaFin", VentaDTO.class);
             consulta.setParameter("fechaInicio", fechaInicio);
             consulta.setParameter("fechaFin", fechaFin);
             return consulta.getResultList();

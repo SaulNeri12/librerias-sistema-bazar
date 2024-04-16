@@ -4,7 +4,6 @@
 package entidades;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
@@ -42,7 +41,7 @@ public class Venta implements Serializable {
     @Column(name = "monto_total")
     private Float montoToal;
 
-    @Column(name = "fecha_venta")
+    @Column(name = "fecha_venta", columnDefinition = "DATE")
     private LocalDateTime fechaVenta;
     
     @Column(name = "metodo_pago")
