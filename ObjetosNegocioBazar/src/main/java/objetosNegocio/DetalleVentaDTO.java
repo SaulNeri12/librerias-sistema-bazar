@@ -15,6 +15,8 @@ public class DetalleVentaDTO {
     private ProductoDTO producto;
 
     private float precioProducto;
+    
+    private VentaDTO venta;
 
     public DetalleVentaDTO() {
 
@@ -55,6 +57,14 @@ public class DetalleVentaDTO {
 
     public float getPrecioProducto() {
         return this.precioProducto;
+    }
+    
+    public VentaDTO getVenta() {
+        return this.venta;
+    }
+    
+    public void setVenta(VentaDTO venta) {
+        this.venta = venta;
     }
 
     @Override

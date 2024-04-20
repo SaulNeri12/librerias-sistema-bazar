@@ -2,7 +2,6 @@ package dao;
 
 import conexion.EntityManagerSingleton;
 import entidades.Usuario;
-import excepciones.DAOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,10 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import objetosNegocio.UsuarioDTO;
-import usuarios.IGestorUsuarios;
+
+
+import subsistemas.interfaces.IGestorUsuarios;
+import subsistemas.excepciones.DAOException;
 
 /**
  * Implementacion del subsistema de usuarios con listas.
@@ -28,18 +30,6 @@ public class GestorUsuarios implements IGestorUsuarios {
 
     public GestorUsuarios(EntityManager em) {
         this.em = EntityManagerSingleton.getInstance().getEntityManager();
-        
-        UsuarioDTO admin = new UsuarioDTO();
-        admin.setNombre("ADMINISTRADOR");
-        admin.setPuesto(UsuarioDTO.Puesto.ADMIN);
-        admin.setTelefono("1000000000");
-        admin.setContrasena("admin");
-        
-        try {
-            this.registrarUsuario(admin);
-        } catch (DAOException ex) {
-            System.out.println("...");
-        }
     }
 
     /**
@@ -48,8 +38,6 @@ public class GestorUsuarios implements IGestorUsuarios {
     public GestorUsuarios() {
         this.em = EntityManagerSingleton.getInstance().getEntityManager();
 
-        
-        
         /*
         this.usuarios = new ArrayList<>();
 
@@ -174,7 +162,7 @@ public class GestorUsuarios implements IGestorUsuarios {
                 throw new DAOException("El usuario no existe en la base de datos");
             }
 
-            usuarioEntity.setNombres(usuario.getNombre());
+            usuarioEntity.setNombre(usuario.getNombre());
             usuarioEntity.setFechaContratacion(usuario.getFechaContratacion());
             usuarioEntity.setPuesto(Usuario.Puesto.valueOf(usuario.getPuesto().name()));
             usuarioEntity.setTelefono(usuario.getTelefono());
@@ -251,18 +239,18 @@ public class GestorUsuarios implements IGestorUsuarios {
                 throw new DAOException("No se encontro al usuario con el telefono especificado");
             }
 
-            if (usuarioEntity.getContrasenha().equals(contrasena)) {
+            if (usuarioEntity.getContrasena().equals(contrasena)) {
                 throw new DAOException("La contrasena es incorrecta");
             }
             
             // Convertir el Usuario a UsuarioDTO si la autenticación es exitosa
             UsuarioDTO usuarioDTO = new UsuarioDTO();
             usuarioDTO.setId(usuarioEntity.getId());
-            usuarioDTO.setNombre(usuarioEntity.getNombres());
+            usuarioDTO.setNombre(usuarioEntity.getNombre());
             usuarioDTO.setFechaContratacion(usuarioEntity.getFechaContratacion());
             usuarioDTO.setPuesto(UsuarioDTO.Puesto.valueOf(usuarioEntity.getPuesto().name()));
             usuarioDTO.setTelefono(usuarioEntity.getTelefono());
-            usuarioDTO.setContrasena(usuarioEntity.getContrasenha());
+            usuarioDTO.setContrasena(usuarioEntity.getContrasena());
 
             return usuarioDTO;
         } catch (Exception ex)

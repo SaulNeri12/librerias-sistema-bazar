@@ -6,6 +6,7 @@ package entidades;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,13 +18,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import objetosNegocio.DetalleVentaDTO;
+import objetosNegocio.VentaDTO;
 
 /**
  *
  * @author Juventino López García
  */
 @Entity
-@Table(name = "Venta")
+@Table(name = "venta")
 public class Venta implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,7 +42,7 @@ public class Venta implements Serializable {
     private String apellidoCliente;
     
     @Column(name = "monto_total")
-    private Float montoToal;
+    private Float montoTotal;
 
     @Column(name = "fecha_venta", columnDefinition = "DATE")
     private LocalDateTime fechaVenta;
@@ -88,11 +91,11 @@ public class Venta implements Serializable {
     }
 
     public Float getMontoToal() {
-        return montoToal;
+        return montoTotal;
     }
 
     public void setMontoToal(Float montoToal) {
-        this.montoToal = montoToal;
+        this.montoTotal = montoToal;
     }
 
     public MetodoPago getMetodoPago() {
@@ -125,6 +128,27 @@ public class Venta implements Serializable {
 
     public void setDetalleVentas(List<DetalleVenta> detalleVentas) {
         this.detalleVentas = detalleVentas;
+    }
+    
+    public VentaDTO toDTO() {
+        VentaDTO v = new VentaDTO();
+        
+        v.setId(id);
+        v.setFechaVenta(fechaVenta);
+        v.setMontoTotal(montoTotal);
+        v.setUsuario(usuario.toDTO());
+        v.setNombreCliente(nombreCliente);
+        v.setApellidoCliente(apellidoCliente);
+        v.setMetodoPago(VentaDTO.MetodoPago.valueOf(this.metodoPago.name()));
+        
+        List<DetalleVentaDTO> productosVendidos = this.detalleVentas
+                .stream()
+                .map(detalle -> detalle.toDTO())
+                .collect(Collectors.toList());
+        
+        v.setProductosVendidos(productosVendidos);
+        
+        return v;
     }
 
 }

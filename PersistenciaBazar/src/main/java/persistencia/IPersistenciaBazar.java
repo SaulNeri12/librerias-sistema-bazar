@@ -23,5 +23,5 @@ public interface IPersistenciaBazar {
     
     public void registrarVenta(VentaDTO venta) throws PersistenciaBazarException;
     
-    public UsuarioDTO iniciarSesionUsuario(UsuarioDTO usuario) throws PersistenciaBazarException;
+    public UsuarioDTO iniciarSesionUsuario(String telefono, String contrasena) throws PersistenciaBazarException;
 }

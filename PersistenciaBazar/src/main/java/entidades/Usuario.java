@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import objetosNegocio.UsuarioDTO;
 
 /**
  * 
@@ -32,23 +33,20 @@ public class Usuario implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombres")
-    private String nombres;
+    @Column(name = "nombre", nullable=false)
+    private String nombre;
     
-    @Column(name = "apellido_paterno")
-    private String apellidoPaterno;
+    @Column(name = "apellido", nullable=false)
+    private String apellido;
     
-    @Column(name = "apellido_materno")
-    private String apellidoMaterno;
-    
-    @Column(name = "contrasenha")
+    @Column(name = "contrasenha", nullable=false)
     private String contrasenha;
     
-    @Column(name = "puesto")
+    @Column(name = "puesto", nullable=false)
     @Enumerated(EnumType.STRING)
     private Puesto puesto;
     
-    @Column(name = "telefono")
+    @Column(name = "telefono", unique = true, nullable=false)
     private String telefono;
     
     @Column(name = "fecha_contratacion", columnDefinition = "DATE")
@@ -78,31 +76,24 @@ public class Usuario implements Serializable {
         this.id = id;
     }
 
-    public String getNombres() {
-        return nombres;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
+    public void setNombre(String nombres) {
+        this.nombre = nombres;
     }
 
-    public String getApellidoPaterno() {
-        return apellidoPaterno;
+    public String getApellido() {
+        return apellido;
     }
 
-    public void setApellidoPaterno(String apellidoPaterno) {
-        this.apellidoPaterno = apellidoPaterno;
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
-    public String getApellidoMaterno() {
-        return apellidoMaterno;
-    }
 
-    public void setApellidoMaterno(String apellidoMaterno) {
-        this.apellidoMaterno = apellidoMaterno;
-    }
-
-    public String getContrasenha() {
+    public String getContrasena() {
         return contrasenha;
     }
 
@@ -148,6 +139,20 @@ public class Usuario implements Serializable {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
+    }
+    
+    public UsuarioDTO toDTO() {
+        UsuarioDTO u = new UsuarioDTO();
+        
+        u.setId(id);
+        u.setNombre(nombre);
+        u.setApellido(apellido);
+        u.setTelefono(telefono);
+        u.setContrasena(contrasenha);
+        u.setFechaContratacion(fechaContratacion);
+        u.setPuesto(UsuarioDTO.Puesto.valueOf(this.puesto.name()));
+        
+        return u;
     }
 
 }

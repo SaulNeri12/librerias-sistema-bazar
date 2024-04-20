@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import objetosNegocio.DetalleVentaDTO;
 
 /**
  * 
@@ -36,8 +37,12 @@ public class DetalleVenta implements Serializable {
     @ManyToOne
     @JoinColumn(name = "producto")
     private Producto producto;
+    
+    @Column(name = "precio_producto")
+    private Float precioProducto;
 
     public DetalleVenta() {
+        
     }
     
     public Long getId() {
@@ -70,6 +75,23 @@ public class DetalleVenta implements Serializable {
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+    
+    public Float getPrecioProducto() {
+        return this.precioProducto;
+    }
+    
+    public void setPrecioProducto(Float precio) {
+        this.precioProducto = precio;
+    }
+    
+    public DetalleVentaDTO toDTO() {
+        DetalleVentaDTO d = new DetalleVentaDTO();
+        d.setCantidad(cantidad);
+        d.setProducto(producto.toDTO());
+        d.setPrecioProducto(this.precioProducto);
+        
+        return d;
     }
 
 }

@@ -7,10 +7,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import objetosNegocio.ProductoDTO;
 
 /**
  * 
@@ -21,15 +20,13 @@ import javax.persistence.Table;
 public class Producto implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "codigo_barras", unique = true, nullable = false)
+    private Long codigoBarras;
     
     @Column(name = "codigo_interno", unique = true, nullable = false)
     private String codigoInterno;
-    
-    @Column(name = "codigo_barras", unique = true, nullable = false)
-    private Long codigoBarras;
 
     @Column(name = "nombre")
     private String nombre;
@@ -41,16 +38,9 @@ public class Producto implements Serializable {
     private LocalDateTime fechaRegistro;
     
     public Producto() {
+        
     }
     
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setCodigoInterno(String codigo) {
         this.codigoInterno = codigo;
     }
@@ -61,7 +51,7 @@ public class Producto implements Serializable {
     
     @Override
     public String toString() {
-        return "entidades.Producto[ id=" + id + ", codigo=" + codigoInterno + " ]";
+        return "entidades.Producto[ codigoBarras=" + codigoBarras + ", codigoInterno=" + codigoInterno + " ]";
     }
 
     public String getNombre() {
@@ -94,5 +84,18 @@ public class Producto implements Serializable {
 
     public void setCodigoBarras(Long codigoBarras) {
         this.codigoBarras = codigoBarras;
+    }
+    
+    public ProductoDTO toDTO() {
+        ProductoDTO p = new ProductoDTO();
+        
+        p.setCodigoBarras(this.codigoBarras);
+        p.setCodigoInterno(this.codigoInterno);
+        p.setFechaRegistro(this.fechaRegistro);
+        p.setPrecio(this.precio);
+        p.setNombre(this.nombre);
+        // TODO: Agregar la lista de proveedores si es necesario...
+        
+        return p;
     }
 }

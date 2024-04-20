@@ -70,5 +70,4 @@ public class DireccionDTO {
     public String toString() {
         return "Direccion{" + "ciudad=" + ciudad + ", numero_edificio=" + numeroEdificio + ", calle=" + calle + ", colonia=" + colonia + ", codigo_postal=" + codigoPostal + '}';
     }
-
 }
