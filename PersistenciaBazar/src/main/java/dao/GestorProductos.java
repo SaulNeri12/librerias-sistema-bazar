@@ -2,7 +2,6 @@
 package dao;
 
 import conexion.EntityManagerSingleton;
-import conversion.Conversion;
 import entidades.Producto;
 import java.util.List;
 import java.util.stream.Collectors;
