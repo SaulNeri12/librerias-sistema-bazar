@@ -1,4 +1,4 @@
-package main.java.conversion;
+package conversion;
 
 /**
  * Clase que permite convertir una entidad a un objetoDAO y viceversa.
