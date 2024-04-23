@@ -55,6 +55,7 @@ public class ConvertidorBazarDTO {
         p.setCodigoInterno(productoDTO.getCodigoInterno());
         p.setNombre(productoDTO.getNombre());
         p.setPrecio(productoDTO.getPrecio());
+        p.setFechaRegistro(productoDTO.getFechaRegistro());
         
         return p;
     }
@@ -110,5 +111,15 @@ public class ConvertidorBazarDTO {
         v.setDetalleVentas(productosVendidos);
         
         return v;
+    }
+    
+    public ProductoDTO convertirProductoAProductoDTO(Producto producto) {
+        ProductoDTO productoDTO = new ProductoDTO();
+        productoDTO.setCodigoBarras(producto.getCodigoBarras());
+        productoDTO.setCodigoInterno(producto.getCodigoInterno());
+        productoDTO.setNombre(producto.getNombre());
+        productoDTO.setPrecio(producto.getPrecio());
+        productoDTO.setFechaRegistro(producto.getFechaRegistro());
+        return productoDTO;
     }
 }

@@ -3,6 +3,7 @@ package dao;
 import conexion.EntityManagerSingleton;
 import entidades.Producto;
 import entidades.convertidor.ConvertidorBazarDTO;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -50,16 +51,17 @@ public class GestorProductos implements IGestorProductos {
     @Override
     public List<ProductoDTO> consultarTodos() throws DAOException {
         try {
-            TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Productos p", Producto.class);
+            TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Producto p", Producto.class);
+            List<Producto> productos = consulta.getResultList();
 
-            List<ProductoDTO> listaProductos = consulta.getResultList()
-                    .stream()
-                    .map(producto -> producto.toDTO())
-                    .collect(Collectors.toList());
+            // Convertir las entidades Producto a DTOs
+            List<ProductoDTO> productosDTO = new ArrayList<>();
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            for (Producto producto : productos) {
+                productosDTO.add(convertidor.convertirProductoAProductoDTO(producto));
+            }
 
-            return listaProductos;
-        } catch (NoResultException ex) {
-            return null;
+            return productosDTO;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar todos los productos");
         }
@@ -78,10 +80,18 @@ public class GestorProductos implements IGestorProductos {
     @Override
     public List<ProductoDTO> consultarProductosPorNombre(String nombreProducto) throws DAOException {
         try {
-            TypedQuery<ProductoDTO> consulta = em.createQuery("SELECT p FROM Producto p WHERE p.nombre LIKE :nombre",
-                    ProductoDTO.class);
+            TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Producto p WHERE p.nombre LIKE :nombre", Producto.class);
             consulta.setParameter("nombre", "%" + nombreProducto + "%");
-            return consulta.getResultList();
+            List<Producto> productos = consulta.getResultList();
+
+            // Convertir las entidades Producto a DTOs
+            List<ProductoDTO> productosDTO = new ArrayList<>();
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            for (Producto producto : productos) {
+                productosDTO.add(convertidor.convertirProductoAProductoDTO(producto));
+            }
+
+            return productosDTO;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar productos por nombre");
         }
@@ -144,19 +154,23 @@ public class GestorProductos implements IGestorProductos {
      */
     @Override
     public ProductoDTO consultarProducto(String codigoInterno) throws DAOException {
-
         if (codigoInterno == null) {
-            throw new DAOException("El codigo interno dado es null");
+            throw new DAOException("El código interno dado es null");
         }
 
         try {
-            TypedQuery<ProductoDTO> consulta = em.createQuery(
-                    "SELECT p FROM Producto p WHERE p.codigo = :codigo_interno",
-                    ProductoDTO.class);
-            consulta.setParameter("codigo", codigoInterno);
-            return consulta.getSingleResult();
+            TypedQuery<Producto> consulta = em.createQuery(
+                    "SELECT p FROM Producto p WHERE p.codigoInterno = :codigoInterno", Producto.class);
+            consulta.setParameter("codigoInterno", codigoInterno);
+            Producto producto = consulta.getSingleResult();
+
+            // Convertir la entidad Producto a un DTO
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            return convertidor.convertirProductoAProductoDTO(producto);
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
-            throw new DAOException("Error al consultar el producto por codigo interno");
+            throw new DAOException("Error al consultar el producto por código interno");
         }
     }
 
@@ -172,19 +186,23 @@ public class GestorProductos implements IGestorProductos {
      */
     @Override
     public ProductoDTO consultarProducto(Long codigoBarras) throws DAOException {
-
         if (codigoBarras == null) {
-            throw new DAOException("El codigo de barras dado es null");
+            throw new DAOException("El código de barras dado es null");
         }
 
         try {
-            TypedQuery<ProductoDTO> consulta = em.createQuery(
-                    "SELECT p FROM Producto p WHERE p.codigoBarras = :codigo_barras",
-                    ProductoDTO.class);
-            consulta.setParameter("codigo_barras", codigoBarras);
-            return consulta.getSingleResult();
+            TypedQuery<Producto> consulta = em.createQuery(
+                    "SELECT p FROM Producto p WHERE p.codigoBarras = :codigoBarras", Producto.class);
+            consulta.setParameter("codigoBarras", codigoBarras);
+            Producto producto = consulta.getSingleResult();
+
+            // Convertir la entidad Producto a un DTO
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            return convertidor.convertirProductoAProductoDTO(producto);
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
-            throw new DAOException("Error al consultar el producto por codigo de barras");
+            throw new DAOException("Error al consultar el producto por código de barras");
         }
     }
 
@@ -222,24 +240,29 @@ public class GestorProductos implements IGestorProductos {
      */
     @Override
     public void eliminarProducto(String codigoInterno) throws DAOException {
-
         if (codigoInterno == null) {
-            throw new DAOException("El codigo interno del producto dado es null");
+            throw new DAOException("El código interno del producto dado es null");
         }
 
         try {
-            Producto producto = em.find(Producto.class, codigoInterno);
-            if (producto != null) {
+            // Consultar el producto por su código interno
+            ProductoDTO productoDTO = consultarProducto(codigoInterno);
+
+            if (productoDTO != null) {
+                // Convertir ProductoDTO a Producto utilizando el convertidor
+                ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+                Producto entidadProducto = convertidor.convertirProductoDTO(productoDTO);
+
+                // Iniciar la transacción y eliminar el producto
                 em.getTransaction().begin();
-                em.remove(producto);
+                em.remove(em.merge(entidadProducto)); // Merge y remove en una línea
                 em.getTransaction().commit();
             } else {
                 throw new DAOException("El producto no se encuentra en la base de datos");
-
             }
-
         } catch (Exception ex) {
-            throw new DAOException("Error al eliminar el producto");
+            throw new DAOException("Error al eliminar el producto: " + ex.getMessage());
         }
     }
+
 }
