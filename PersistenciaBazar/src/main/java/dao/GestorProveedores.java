@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 
 import conexion.EntityManagerSingleton;
 import entidades.Proveedor;
+import main.java.conversion.Conversion;
 import objetosNegocio.ProveedorDTO;
 import subsistemas.excepciones.DAOException;
 
@@ -38,6 +39,7 @@ public class GestorProveedores implements IGestorProveedores {
 
     /**
      * Consulta todos los proveedores registrados en la base de datos.
+     * Debido a que es una consulta, se devuelven DTOs en lugar de entidades.
      * 
      * @return Lista de proveedores registrados en la base de datos.
      * @throws DAOException Si ocurre un error al consultar los proveedores.
@@ -111,6 +113,12 @@ public class GestorProveedores implements IGestorProveedores {
 
     }
 
+    /**
+     * Método para registrar un proveedor en la base de datos.
+     * Recibe un objeto de tipo ProveedorDTO, lo convierte a Entidad utilizando una clase de utilidad y lo registra en la base de datos.
+     * @param proveedor
+     * @throws DAOException
+     */
     @Override
     public void registrarProveedor(ProveedorDTO proveedor) throws DAOException {
 
@@ -118,12 +126,14 @@ public class GestorProveedores implements IGestorProveedores {
             throw new DAOException("El proveedor dado es null");
         }
 
+        Conversion conversion = new Conversion();
+        Proveedor entidadProveedor = conversion.convertirProveedorDTOAEntidad(proveedor);
+
         try {
             em.getTransaction().begin();
-            em.persist(proveedor);
+            em.persist(entidadProveedor);
             em.getTransaction().commit();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new DAOException("Error al registrar el proveedor");
         }
     }
@@ -137,20 +147,15 @@ public class GestorProveedores implements IGestorProveedores {
     @Override
     public void actualizarProveedor(ProveedorDTO proveedor) throws DAOException {
             
+            if (proveedor == null) {
+                throw new DAOException("El proveedor dado es null");
+            }
+            Conversion conversion = new Conversion();
+            Proveedor entidadProveedor = Conversion.convertirProveedorDTOAEntidad(proveedor);
             try {
-                Proveedor proveedorEntity = em.find(Proveedor.class , proveedor.getId());
-                if (proveedorEntity==null) {
-                    throw new DAOException("El proveedor no se encuentra registrado");
-                }
-                proveedorEntity.setNombre(proveedor.getNombre());
-                proveedorEntity.setTelefono(proveedor.getTelefono());
-                proveedorEntity.setEmail(proveedor.getEmail());
-                proveedorEntity.setDescripcion(proveedor.getDescripcion());
-                proveedorEntity.setFechaRegistro(proveedor.getFechaRegistro());
                 em.getTransaction().begin();
-                em.merge(proveedorEntity);
+                em.merge(entidadProveedor);
                 em.getTransaction().commit();
-
             } catch (Exception e) {
                 throw new DAOException("Error al actualizar el proveedor");
             }
@@ -165,10 +170,14 @@ public class GestorProveedores implements IGestorProveedores {
     @Override
     public void eliminarProveedor(Long idProveedor) throws DAOException {
 
+        if (idProveedor == null) {
+            throw new DAOException("El ID del proveedor dado es null");
+        }
+
         try {
             Proveedor proveedor = em.find(Proveedor.class, idProveedor);
             if (proveedor == null) {
-                throw new DAOException("El proveedor no se encuentra registrado");
+                System.out.println("El proveedor no existe en la base de datos");
             }
             em.getTransaction().begin();
             em.remove(proveedor);
