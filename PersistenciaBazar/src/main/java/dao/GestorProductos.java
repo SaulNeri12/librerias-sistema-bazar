@@ -2,6 +2,7 @@
 package dao;
 
 import conexion.EntityManagerSingleton;
+import conversion.Conversion;
 import entidades.Producto;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -120,10 +121,12 @@ public class GestorProductos implements IGestorProductos {
         if (producto == null) {
             throw new DAOException("El producto dado es null");
         }
+        Conversion conversion = new Conversion();
+        Producto entidadProducto = conversion.convertirProductoDTOAEntidad(producto);
 
         try {
             em.getTransaction().begin();
-            em.persist(producto);
+            em.persist(entidadProducto);
             em.getTransaction().commit();
         } catch (Exception ex) {
             throw new DAOException("Error al registrar el producto");
@@ -193,25 +196,20 @@ public class GestorProductos implements IGestorProductos {
 
     @Override
     public void actualizarProducto(ProductoDTO producto) throws DAOException {
+        if (producto == null) {
+            throw new DAOException("El producto dado es null");
+        }
         try {
 
-            Producto productoEntity = em.find(Producto.class, producto.getCodigoBarras());
-
-            if (productoEntity == null) {
-                throw new DAOException("El producto no existe en la base de datos");
-            }
-
-            productoEntity.setCodigoInterno(producto.getCodigoInterno());
-            productoEntity.setNombre(producto.getNombre());
-            productoEntity.setPrecio(producto.getPrecio());
-            productoEntity.setFechaRegistro(producto.getFechaRegistro());
-
+            Conversion conversion = new Conversion();
+            Producto productoEntity = conversion.convertirProductoDTOAEntidad(producto);
             em.getTransaction().begin();
             em.merge(productoEntity);
             em.getTransaction().commit();
         } catch (Exception ex) {
             throw new DAOException("Error al actualizar el producto");
         }
+            
     }
 
     /**
@@ -226,12 +224,19 @@ public class GestorProductos implements IGestorProductos {
             throw new DAOException("El codigo interno del producto dado es null");
         }
 
-        try {
-            ProductoDTO producto = consultarProducto(codigoInterno);
-            em.getTransaction().begin();
-            em.remove(producto);
-            em.getTransaction().commit();
-        } catch (Exception ex) {
+        try{
+            Producto producto = em.find(Producto.class, codigoInterno);
+            if (producto != null) {
+                em.getTransaction().begin();
+                em.remove(producto);
+                em.getTransaction().commit();
+            } else {
+                throw new DAOException("El producto no se encuentra en la base de datos");
+                
+            }
+
+        }
+        catch (Exception ex) {
             throw new DAOException("Error al eliminar el producto");
         }
     }
