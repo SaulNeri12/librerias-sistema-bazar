@@ -1,20 +1,16 @@
 
 package dao;
 
-import excepciones.DAOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import conexion.EntityManagerSingleton;
 import entidades.Proveedor;
 import objetosNegocio.ProveedorDTO;
-import proveedores.IGestorProveedores;
+import subsistemas.excepciones.DAOException;
+
+import subsistemas.interfaces.IGestorProveedores;
 
 /**
  * Implementacion del subsistema de Proveedores con listas.
@@ -23,7 +19,6 @@ import proveedores.IGestorProveedores;
  */
 public class GestorProveedores implements IGestorProveedores {
 
-    
     private static GestorProveedores instancia;
     private final EntityManager em;
 
@@ -34,7 +29,7 @@ public class GestorProveedores implements IGestorProveedores {
         this.em = entityManager;
     }
 
-    public static GestorProveedores getInstancie() {
+    public static GestorProveedores getInstance() {
         if (instancia == null) {
             instancia = new GestorProveedores(EntityManagerSingleton.getInstance().getEntityManager());
         }
@@ -128,6 +123,7 @@ public class GestorProveedores implements IGestorProveedores {
             em.persist(proveedor);
             em.getTransaction().commit();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new DAOException("Error al registrar el proveedor");
         }
     }

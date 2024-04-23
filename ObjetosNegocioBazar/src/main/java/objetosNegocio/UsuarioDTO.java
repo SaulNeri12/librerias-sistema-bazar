@@ -14,10 +14,12 @@ public class UsuarioDTO {
     private Long id;
 
     private String nombre;
+    private String apellido;
     private LocalDateTime fechaContratacion;
     private Puesto puesto;
     private String telefono;
     private String contrasena;
+    private DireccionDTO direccion;
 
     public static enum Puesto {
         CAJERO,
@@ -61,6 +63,22 @@ public class UsuarioDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+    
+    public DireccionDTO getDireccion() {
+        return this.direccion;
+    }
+    
+    public void setDireccion(DireccionDTO direccion) {
+        this.direccion = direccion;
+    }
+    
+    public String getApellido() {
+        return this.apellido;
+    }
+    
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
     public void setFechaContratacion(LocalDateTime fechaContratacion) {

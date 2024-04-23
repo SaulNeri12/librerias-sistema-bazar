@@ -3,13 +3,15 @@ package dao;
 import conexion.EntityManagerSingleton;
 import entidades.Usuario;
 import entidades.Venta;
-import excepciones.DAOException;
+
 import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import objetosNegocio.VentaDTO;
-import ventas.IGestorVentas;
+
+import subsistemas.excepciones.DAOException;
+import subsistemas.interfaces.IGestorVentas;
 
 /**
  * Implementacion del subsistema de ventas con listas.
@@ -55,7 +57,7 @@ public class GestorVentas implements IGestorVentas {
 
         try
         {
-            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT v FROM Venta v WHERE v.id = :id", VentaDTO.class);
+            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT v FROM venta v WHERE v.id = :id", VentaDTO.class);
             consulta.setParameter("id", id);
             return consulta.getSingleResult();
         } catch (Exception ex)
@@ -82,7 +84,7 @@ public class GestorVentas implements IGestorVentas {
 
         try
         {
-            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT v FROM Venta v WHERE v.usuario.id = :id", VentaDTO.class);
+            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT v FROM venta v WHERE v.usuario.id = :id", VentaDTO.class);
             consulta.setParameter("id", id);
             return consulta.getResultList();
         } catch (Exception ex)
@@ -116,7 +118,7 @@ public class GestorVentas implements IGestorVentas {
         try
         {
 
-            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT new objetosNegocio.VentaDTO(V.id, V.fechaVenta, v.montoToal) FROM Venta v WHERE v.fechaVenta BETWEEN :fechaInicio AND :fechaFin", VentaDTO.class);
+            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT new objetosNegocio.VentaDTO(V.id, V.fechaVenta, v.montoToal) FROM venta v WHERE v.fechaVenta BETWEEN :fechaInicio AND :fechaFin", VentaDTO.class);
             consulta.setParameter("fechaInicio", fechaInicio);
             consulta.setParameter("fechaFin", fechaFin);
             return consulta.getResultList();
@@ -232,6 +234,13 @@ public class GestorVentas implements IGestorVentas {
         try
         {
             VentaDTO venta = consultarVenta(idVenta);
+         
+            if (venta == null) {
+                throw new DAOException("No se encontro la venta a eliminar");
+            }
+            
+            // TODO: Convertir...
+            
             em.getTransaction().begin();
             em.remove(venta);
             em.getTransaction().commit();

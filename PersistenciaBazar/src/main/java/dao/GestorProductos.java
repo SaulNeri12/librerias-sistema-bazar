@@ -3,13 +3,17 @@ package dao;
 
 import conexion.EntityManagerSingleton;
 import entidades.Producto;
-import excepciones.DAOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.ProveedorDTO;
-import productos.IGestorProductos;
+
+
+import subsistemas.excepciones.DAOException;
+import subsistemas.interfaces.IGestorProductos;
 
 /**
  * Implementacion del subsistema de Productos con listas.
@@ -42,12 +46,21 @@ public class GestorProductos implements IGestorProductos {
      * Consulta todos los productos registrados en el sistema.
      * 
      * @return Una lista con todos los productos registrados en el sistema.
+     * @throws subsistemas.excepciones.DAOException
      */
     @Override
     public List<ProductoDTO> consultarTodos() throws DAOException {
         try {
-            TypedQuery<ProductoDTO> consulta = em.createQuery("SELECT p FROM Producto p", ProductoDTO.class);
-            return consulta.getResultList();
+            TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Productos p", Producto.class);
+            
+            List<ProductoDTO> listaProductos = consulta.getResultList()
+                    .stream()
+                    .map(producto -> producto.toDTO())
+                    .collect(Collectors.toList());
+            
+            return listaProductos;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar todos los productos");
         }
@@ -99,7 +112,8 @@ public class GestorProductos implements IGestorProductos {
 
     /**
      * Registra un nuevo producto en la base de datos.
-     * 
+     * @param producto
+     * @throws excepciones.DAOException
      */
     @Override
     public void registrarProducto(ProductoDTO producto) throws DAOException {
@@ -181,13 +195,13 @@ public class GestorProductos implements IGestorProductos {
     public void actualizarProducto(ProductoDTO producto) throws DAOException {
         try {
 
-            Producto productoEntity = em.find(Producto.class, producto.getId());
+            Producto productoEntity = em.find(Producto.class, producto.getCodigoBarras());
 
             if (productoEntity == null) {
                 throw new DAOException("El producto no existe en la base de datos");
             }
 
-            productoEntity.setCodigoInterno(producto.getCodigo());
+            productoEntity.setCodigoInterno(producto.getCodigoInterno());
             productoEntity.setNombre(producto.getNombre());
             productoEntity.setPrecio(producto.getPrecio());
             productoEntity.setFechaRegistro(producto.getFechaRegistro());

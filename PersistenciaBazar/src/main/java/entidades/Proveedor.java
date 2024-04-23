@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import objetosNegocio.ProveedorDTO;
 
 /**
  * 
@@ -44,8 +45,10 @@ public class Proveedor implements Serializable {
     @Column(name = "fecha_registro", columnDefinition = "DATE")
     private LocalDateTime fechaRegistro;
     
+    /*
     @OneToMany(mappedBy = "proveedor")
     private List<Compra> compras;
+*/
     
     @Embedded
     @OneToOne(mappedBy = "proveedor")
@@ -102,13 +105,14 @@ public class Proveedor implements Serializable {
         this.fechaRegistro = fechaRegistro;
     }
 
+    /*
     public List<Compra> getCompras() {
         return compras;
     }
 
     public void setCompras(List<Compra> compras) {
         this.compras = compras;
-    }
+    }*/
 
     public Direccion getDireccion() {
         return direccion;
@@ -116,6 +120,19 @@ public class Proveedor implements Serializable {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
+    }
+    
+    public ProveedorDTO toDTO() {
+        ProveedorDTO p = new ProveedorDTO();
+        
+        p.setId(id);
+        p.setDescripcion(descripcion);
+        p.setEmail(email);
+        p.setNombre(nombre);
+        p.setTelefono(telefono);
+        p.setDireccion(direccion.toDTO());
+        
+        return p;
     }
 
 }

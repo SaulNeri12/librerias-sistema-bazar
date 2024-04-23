@@ -6,6 +6,7 @@ package entidades;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import objetosNegocio.DireccionDTO;
 
 /**
  *
@@ -24,7 +25,7 @@ public class Direccion implements Serializable {
     private String ciudad;
 
     @Column(name = "numero_edificio")
-    private Integer numeroEdificio;
+    private String numeroEdificio;
 
     @Column(name = "codigo_postal")
     private String codigoPostal;
@@ -56,11 +57,11 @@ public class Direccion implements Serializable {
         this.ciudad = ciudad;
     }
 
-    public Integer getNumeroEdificio() {
+    public String getNumeroEdificio() {
         return numeroEdificio;
     }
 
-    public void setNumeroEdificio(Integer numeroEdificio) {
+    public void setNumeroEdificio(String numeroEdificio) {
         this.numeroEdificio = numeroEdificio;
     }
 
@@ -70,5 +71,15 @@ public class Direccion implements Serializable {
 
     public void setCodigoPostal(String codigoPostal) {
         this.codigoPostal = codigoPostal;
+    }
+    
+    public DireccionDTO toDTO() {
+        DireccionDTO d = new DireccionDTO();
+        d.setCalle(calle);
+        d.setCiudad(ciudad);
+        d.setCodigoPostal(codigoPostal);
+        d.setColonia(colonia);
+        d.setNumeroEdificio(calle);
+        return d;
     }
 }

@@ -18,26 +18,19 @@ public class ProveedorDTO {
     private String email;
     private String descripcion;
     private LocalDateTime fechaRegistro;
+    private DireccionDTO direccion;
 
     public ProveedorDTO() {
     }
 
-    /**
-     * Crea una instancia con la informacion de un proveedor especificada.
-     * @param nombre Nombre del proveedor o negocio.
-     * @param telefono Numero telefonico del proveedor o negocio.
-     * @param email Correo electronico del proveedor o negocio.
-     * @param descripcion Descripcion del proveedor o negocio.
-     * @param fechaRegistro Fecha de registro del proveedor en el sistema.
-     */
-    public ProveedorDTO(String nombre, String telefono, String email, String descripcion, LocalDateTime fechaRegistro) {
-        this.nombre = nombre;
-        this.telefono = telefono;
-        this.email = email;
-        this.descripcion = descripcion;
-        this.fechaRegistro = fechaRegistro;
+    public void setDireccion(DireccionDTO direccion) {
+        this.direccion = direccion;
     }
-
+            
+    public DireccionDTO getDireccion() {
+        return this.direccion;
+    }
+    
     public String getNombre() {
         return nombre;
     }

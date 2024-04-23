@@ -14,48 +14,46 @@ import java.util.Objects;
 */
 public class ProductoDTO {
 
-    private Long id;
-    private String codigo;
+    private Long codigoBarras;
+    private String codigoInterno;
     private String nombre;
     private float precio;
     private LocalDateTime fechaRegistro;
-    private List<ProveedorDTO> proveedores;
 
     public ProductoDTO() {
-        proveedores = new ArrayList<>();
     }
 
     /**
      * Crea una instancia con la informacion de un producto en el catalogo de
      * productos.
-     * @param codigo Codigo interno del producto (no codigo de barras o ID)
+     * @param codigoBarras
+     * @param codigoInterno
      * @param nombre Nombre del producto.
      * @param precio Precio del producto.
      * @param fechaRegistro Fecha de registro del producto en el sistema.
-     * @param proveedores Proveedores que venden dicho producto.
      */
-    public ProductoDTO(String codigo, String nombre, float precio, LocalDateTime fechaRegistro, List<ProveedorDTO> proveedores) {
-        this.codigo = codigo;
+    public ProductoDTO(Long codigoBarras, String codigoInterno, String nombre, float precio, LocalDateTime fechaRegistro) {
+        this.codigoBarras = codigoBarras;
+        this.codigoInterno = codigoInterno;
         this.nombre = nombre;
         this.precio = precio;
         this.fechaRegistro = fechaRegistro;
-        this.proveedores = proveedores;
     }
 
-    public Long getId() {
-        return id;
+    public Long getCodigoBarras() {
+        return codigoBarras;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCodigoBarras(Long id) {
+        this.codigoBarras = id;
     }
     
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setCodigoInterno(String codigo) {
+        this.codigoInterno = codigo;
     }
     
-    public String getCodigo() {
-        return this.codigo;
+    public String getCodigoInterno() {
+        return this.codigoInterno;
     }
 
     public String getNombre() {
@@ -81,25 +79,10 @@ public class ProductoDTO {
     public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-    
-    public void agregarProveedor(ProveedorDTO proveedor) {
-        this.proveedores.add(proveedor);
-    }
-    
-    public void quitarProveedor(ProveedorDTO proveedor) {
-        this.proveedores.removeIf(p -> Objects.equals(p.getId(), proveedor.getId()) 
-                || p.getNombre().toLowerCase().equals(proveedor.getNombre().toLowerCase())
-                || p.getEmail().equals(proveedor.getEmail())
-        );
-    }
-    
-    public List<ProveedorDTO> obtenerProveedores() {
-        return this.proveedores;
-    }
 
     @Override
     public String toString() {
-        return "Producto{" + "id=" + id + ", codigo=" + codigo + ", nombre=" + nombre + ", precio=" + precio + ", fecha_registro=" + fechaRegistro + '}';
+        return "Producto{" + "codigoBarras=" + codigoBarras+ ", codigo=" + codigoInterno + ", nombre=" + nombre + ", precio=" + precio + ", fecha_registro=" + fechaRegistro + '}';
     }
 
 }

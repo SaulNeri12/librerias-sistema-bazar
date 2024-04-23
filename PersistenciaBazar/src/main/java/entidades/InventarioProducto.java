@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import objetosNegocio.InventarioProductoDTO;
 
 /**
  * 
@@ -58,6 +59,14 @@ public class InventarioProducto implements Serializable {
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+    
+    public InventarioProductoDTO toDTO() {
+        InventarioProductoDTO i = new InventarioProductoDTO();
+        i.setCantidad(cantidad);
+        i.setProducto(producto.toDTO());
+        
+        return i;
     }
 
 }
