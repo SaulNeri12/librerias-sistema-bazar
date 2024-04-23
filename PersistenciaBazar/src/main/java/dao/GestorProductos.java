@@ -1,8 +1,8 @@
-
 package dao;
 
 import conexion.EntityManagerSingleton;
 import entidades.Producto;
+import entidades.convertidor.ConvertidorBazarDTO;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
@@ -11,13 +11,12 @@ import javax.persistence.TypedQuery;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.ProveedorDTO;
 
-
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorProductos;
 
 /**
  * Implementacion del subsistema de Productos con listas.
- * 
+ *
  * @author saul
  */
 public class GestorProductos implements IGestorProductos {
@@ -44,7 +43,7 @@ public class GestorProductos implements IGestorProductos {
 
     /**
      * Consulta todos los productos registrados en el sistema.
-     * 
+     *
      * @return Una lista con todos los productos registrados en el sistema.
      * @throws subsistemas.excepciones.DAOException
      */
@@ -52,12 +51,12 @@ public class GestorProductos implements IGestorProductos {
     public List<ProductoDTO> consultarTodos() throws DAOException {
         try {
             TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Productos p", Producto.class);
-            
+
             List<ProductoDTO> listaProductos = consulta.getResultList()
                     .stream()
                     .map(producto -> producto.toDTO())
                     .collect(Collectors.toList());
-            
+
             return listaProductos;
         } catch (NoResultException ex) {
             return null;
@@ -69,12 +68,12 @@ public class GestorProductos implements IGestorProductos {
     /**
      * Consulta los productos cuyo nombre contenga una cadena dada en la base de
      * datos.
-     * 
+     *
      * @param nombreProducto La cadena que se desea buscar en el nombre de los
-     *                       productos.
+     * productos.
      * @return Una lista con los productos cuyo nombre contiene la cadena dada.
      * @throws DAOException Si ocurre un error al consultar los productos por
-     *                      nombre.
+     * nombre.
      */
     @Override
     public List<ProductoDTO> consultarProductosPorNombre(String nombreProducto) throws DAOException {
@@ -89,13 +88,14 @@ public class GestorProductos implements IGestorProductos {
     }
 
     /**
-     * Consulta los productos que son proveidos por un proveedor dado en la base de
-     * datos
-     * 
+     * Consulta los productos que son proveidos por un proveedor dado en la base
+     * de datos
+     *
      * @param proveedor El proveedor del cual se desean consultar los productos.
-     * @return Una lista con los productos que son proveidos por el proveedor dado.
+     * @return Una lista con los productos que son proveidos por el proveedor
+     * dado.
      * @throws DAOException Si ocurre un error al consultar los productos por
-     *                      proveedor.
+     * proveedor.
      */
     @Override
     public List<ProductoDTO> consultarProductosPorProveedor(ProveedorDTO proveedor) throws DAOException {
@@ -112,6 +112,7 @@ public class GestorProductos implements IGestorProductos {
 
     /**
      * Registra un nuevo producto en la base de datos.
+     *
      * @param producto
      * @throws excepciones.DAOException
      */
@@ -120,8 +121,8 @@ public class GestorProductos implements IGestorProductos {
         if (producto == null) {
             throw new DAOException("El producto dado es null");
         }
-        Conversion conversion = new Conversion();
-        Producto entidadProducto = conversion.convertirProductoDTOAEntidad(producto);
+        ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+        Producto entidadProducto = convertidor.convertirProductoDTO(producto);
 
         try {
             em.getTransaction().begin();
@@ -134,11 +135,12 @@ public class GestorProductos implements IGestorProductos {
 
     /**
      * Consulta un producto por su codigo interno en la base de datos.
-     * 
-     * @param codigoInterno El codigo interno del producto que se desea consultar.
+     *
+     * @param codigoInterno El codigo interno del producto que se desea
+     * consultar.
      * @return El producto con el codigo interno dado, o null si no se encontro.
      * @throws DAOException Si ocurre un error al consultar el producto por su
-     *                      codigo interno.
+     * codigo interno.
      */
     @Override
     public ProductoDTO consultarProducto(String codigoInterno) throws DAOException {
@@ -160,11 +162,13 @@ public class GestorProductos implements IGestorProductos {
 
     /**
      * Consulta un producto por su codigo de barras en la base de datos.
-     * 
-     * @param codigoBarras El codigo de barras del producto que se desea consultar.
-     * @return El producto con el codigo de barras dado, o null si no se encontro.
+     *
+     * @param codigoBarras El codigo de barras del producto que se desea
+     * consultar.
+     * @return El producto con el codigo de barras dado, o null si no se
+     * encontro.
      * @throws DAOException Si ocurre un error al consultar el producto por su
-     *                      codigo de barras.
+     * codigo de barras.
      */
     @Override
     public ProductoDTO consultarProducto(Long codigoBarras) throws DAOException {
@@ -186,13 +190,11 @@ public class GestorProductos implements IGestorProductos {
 
     /**
      * Actualiza un producto en la base de datos.
-     * 
+     *
      * @param producto El producto con los datos actualizados.
      * @throws DAOException Si el producto dado es null, si no se encontro el
-     *                      producto en el sistema o si no se pudo modificar los
-     *                      datos del producto.
+     * producto en el sistema o si no se pudo modificar los datos del producto.
      */
-
     @Override
     public void actualizarProducto(ProductoDTO producto) throws DAOException {
         if (producto == null) {
@@ -200,30 +202,32 @@ public class GestorProductos implements IGestorProductos {
         }
         try {
 
-            Conversion conversion = new Conversion();
-            Producto productoEntity = conversion.convertirProductoDTOAEntidad(producto);
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            Producto entidadProducto = convertidor.convertirProductoDTO(producto);
             em.getTransaction().begin();
-            em.merge(productoEntity);
+            em.merge(entidadProducto);
             em.getTransaction().commit();
         } catch (Exception ex) {
             throw new DAOException("Error al actualizar el producto");
         }
-            
+
     }
 
     /**
      * Elimina un producto de la base de datos.
-     * @param codigoInterno El codigo interno del producto que se desea eliminar.
+     *
+     * @param codigoInterno El codigo interno del producto que se desea
+     * eliminar.
      * @throws DAOException Si ocurre un error al eliminar el producto.
      */
     @Override
     public void eliminarProducto(String codigoInterno) throws DAOException {
-        
+
         if (codigoInterno == null) {
             throw new DAOException("El codigo interno del producto dado es null");
         }
 
-        try{
+        try {
             Producto producto = em.find(Producto.class, codigoInterno);
             if (producto != null) {
                 em.getTransaction().begin();
@@ -231,11 +235,10 @@ public class GestorProductos implements IGestorProductos {
                 em.getTransaction().commit();
             } else {
                 throw new DAOException("El producto no se encuentra en la base de datos");
-                
+
             }
 
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new DAOException("Error al eliminar el producto");
         }
     }
