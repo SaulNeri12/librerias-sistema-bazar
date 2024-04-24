@@ -24,165 +24,144 @@ public class PersistenciaListasBazar {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
         GestorProveedores gestorProveedores = GestorProveedores.getInstance();
-        GestorProductos gestorProductos = GestorProductos.getInstance();
-        /*
-        pruebaConsultarTodos(gestorProductos);
-        pruebaConsultarProductosPorNombre(gestorProductos);
-        pruebaConsultarProductoPorCodigoInterno(gestorProductos);
-        pruebaConsultarProductoPorCodigoBarras(gestorProductos);
-         */
-        
-        // pruebaActualizarProducto(gestorProductos); 
-        pruebaEliminarProducto(gestorProductos);
-        
-        // insertarProveedores(gestorProveedores);
-        // TODO: CUANDO SE HAGAN LAS CONVERSIONES EN LOS DAO, EMPIEZEN POR HACER
-        //       BUSQUEDA, INSERCION, ACTUALIZACION Y ELMININACION CON LOS SUBSISTEMAS
-        //       NECESARIOS, NO HABRAN UNA NUEVA CONEXION. PARA ESO SON LOS 
-        //       DAO...
+
+        // Prueba insertarProveedor
+        //pruebaInsertarProveedor(gestorProveedores);
+        // Prueba consultar
+        pruebaConsultarTodos(gestorProveedores);
+        pruebaConsultarProveedorPorId(gestorProveedores);
+        pruebaConsultarProveedorPorTelefono(gestorProveedores);
+        pruebaConsultarProveedoresPorNombre(gestorProveedores);
+        // Pruebas para actualizarProveedor
+        pruebaActualizarProveedor(gestorProveedores);
+
+        // Pruebas para eliminarProveedor
+        pruebaEliminarProveedor(gestorProveedores);
+
     }
 
-    public static void insertarProveedores(GestorProveedores gestorProveedores) {
+    public static void pruebaInsertarProveedor(GestorProveedores gestorProveedores) {
         try {
-            // Obtener la fecha y hora actual
-            LocalDateTime fechaActual = LocalDateTime.now();
+            // Crear un nuevo proveedor
+            ProveedorDTO proveedor = new ProveedorDTO();
+            proveedor.setNombre("Proveedor de prueba");
+            proveedor.setTelefono("1234567890");
+            proveedor.setEmail("proveedor@ejemplo.com");
+            proveedor.setDescripcion("Proveedor de prueba para pruebas unitarias");
+            proveedor.setFechaRegistro(LocalDateTime.now());
 
-            // Crear direcciones
-            DireccionDTO direccionProveedor1 = new DireccionDTO();
-            direccionProveedor1.setCiudad("Ciudad 1");
-            direccionProveedor1.setNumeroEdificio("123");
-            direccionProveedor1.setCalle("Calle 1");
-            direccionProveedor1.setColonia("Colonia 1");
-            direccionProveedor1.setCodigoPostal("12345");
+            // Crear una nueva dirección
+            DireccionDTO direccion = new DireccionDTO();
+            direccion.setCiudad("Ciudad de prueba");
+            direccion.setNumeroEdificio("123");
+            direccion.setCalle("Calle de prueba");
+            direccion.setColonia("Colonia de prueba");
+            direccion.setCodigoPostal("12345");
 
-            DireccionDTO direccionProveedor2 = new DireccionDTO();
-            direccionProveedor2.setCiudad("Ciudad 2");
-            direccionProveedor2.setNumeroEdificio("456");
-            direccionProveedor2.setCalle("Calle 2");
-            direccionProveedor2.setColonia("Colonia 2");
-            direccionProveedor2.setCodigoPostal("54321");
+            // Asignar la dirección al proveedor
+            proveedor.setDireccion(direccion);
 
-            // Crear proveedores
-            ProveedorDTO proveedor1 = new ProveedorDTO();
-            proveedor1.setNombre("Proveedor 1");
-            proveedor1.setTelefono("123456789");
-            proveedor1.setEmail("proveedor1@example.com");
-            proveedor1.setDescripcion("Proveedor número 1");
-            proveedor1.setDireccion(direccionProveedor1);
-            proveedor1.setFechaRegistro(fechaActual);
-
-            ProveedorDTO proveedor2 = new ProveedorDTO();
-            proveedor2.setNombre("Proveedor 2");
-            proveedor2.setTelefono("987654321");
-            proveedor2.setEmail("proveedor2@example.com");
-            proveedor2.setDescripcion("Proveedor número 2");
-            proveedor2.setDireccion(direccionProveedor2);
-            proveedor2.setFechaRegistro(fechaActual);
-
-            // Registrar proveedores
-            gestorProveedores.registrarProveedor(proveedor1);
-            gestorProveedores.registrarProveedor(proveedor2);
-
-            System.out.println("Proveedores registrados correctamente.");
+            // Insertar el proveedor
+            gestorProveedores.registrarProveedor(proveedor);
+            System.out.println("Proveedor insertado correctamente.");
         } catch (DAOException e) {
-            System.err.println("Error al registrar proveedores: " + e.getMessage());
+            System.out.println("Error al insertar el proveedor: " + e.getMessage());
         }
     }
 
-    public static void pruebaConsultarTodos(GestorProductos gestorProductos) {
+    public static void pruebaConsultarTodos(GestorProveedores gestorProveedores) {
         try {
-            // Consultar todos los productos
-            List<ProductoDTO> productos = gestorProductos.consultarTodos();
+            // Consultar todos los proveedores
+            List<ProveedorDTO> proveedores = gestorProveedores.consultarTodos();
 
-            // Mostrar los productos consultados
-            System.out.println("Productos registrados en el sistema:");
-            for (ProductoDTO producto : productos) {
-                System.out.println("Nombre: " + producto.getNombre() + ", Código Interno: " + producto.getCodigoInterno());
+            // Mostrar los proveedores consultados
+            System.out.println("Proveedores registrados en el sistema:");
+            for (ProveedorDTO proveedor : proveedores) {
+                System.out.println("ID: " + proveedor.getId() + ", Nombre: " + proveedor.getNombre());
             }
         } catch (DAOException e) {
-            System.out.println("Error al consultar todos los productos: " + e.getMessage());
+            System.out.println("Error al consultar todos los proveedores: " + e.getMessage());
         }
     }
 
-    public static void pruebaConsultarProductosPorNombre(GestorProductos gestorProductos) {
+    public static void pruebaConsultarProveedorPorId(GestorProveedores gestorProveedores) {
         try {
-            // Consultar productos cuyo nombre contiene la cadena "prueba"
-            String nombreABuscar = "prueba";
-            List<ProductoDTO> productos = gestorProductos.consultarProductosPorNombre(nombreABuscar);
+            Long idProveedor = 3L;
+            ProveedorDTO proveedor = gestorProveedores.consultarProveedor(idProveedor);
 
-            // Mostrar los productos consultados
-            System.out.println("Productos cuyo nombre contiene '" + nombreABuscar + "':");
-            for (ProductoDTO producto : productos) {
-                System.out.println("Nombre: " + producto.getNombre() + ", Código Interno: " + producto.getCodigoInterno());
-            }
-        } catch (DAOException e) {
-            System.out.println("Error al consultar productos por nombre: " + e.getMessage());
-        }
-    }
-
-    public static void pruebaConsultarProductoPorCodigoInterno(GestorProductos gestorProductos) {
-        String codigoInterno = "ABC123"; // Supongamos que este es el código interno que queremos buscar
-        try {
-            ProductoDTO producto = gestorProductos.consultarProducto(codigoInterno);
-            if (producto != null) {
-                System.out.println("Producto encontrado por código interno:");
-                System.out.println("Nombre: " + producto.getNombre() + ", Código Interno: " + producto.getCodigoInterno());
+            if (proveedor != null) {
+                System.out.println("Proveedor encontrado con ID '" + idProveedor + "':");
+                System.out.println("ID: " + proveedor.getId() + ", Nombre: " + proveedor.getNombre());
             } else {
-                System.out.println("No se encontró ningún producto con el código interno: " + codigoInterno);
+                System.out.println("No se encontró ningún proveedor con el ID '" + idProveedor + "'");
             }
         } catch (DAOException e) {
-            System.err.println("Error al consultar el producto por código interno: " + e.getMessage());
+            System.out.println("Error al consultar proveedor por ID: " + e.getMessage());
         }
     }
 
-    public static void pruebaConsultarProductoPorCodigoBarras(GestorProductos gestorProductos) {
-        Long codigoBarras = 123456789L; // Supongamos que este es el código de barras que queremos buscar
+    public static void pruebaConsultarProveedorPorTelefono(GestorProveedores gestorProveedores) {
         try {
-            ProductoDTO producto = gestorProductos.consultarProducto(codigoBarras);
-            if (producto != null) {
-                System.out.println("Producto encontrado por código de barras:");
-                System.out.println("Nombre: " + producto.getNombre() + ", Código Interno: " + producto.getCodigoInterno());
+            String telefonoProveedor = "987654321";
+            ProveedorDTO proveedor = gestorProveedores.consultarProveedorPorNumeroTelefono(telefonoProveedor);
+
+            if (proveedor != null) {
+                System.out.println("Proveedor encontrado con teléfono '" + telefonoProveedor + "':");
+                System.out.println("ID: " + proveedor.getId() + ", Nombre: " + proveedor.getNombre() + ", Teléfono: " + proveedor.getTelefono());
             } else {
-                System.out.println("No se encontró ningún producto con el código de barras: " + codigoBarras);
+                System.out.println("No se encontró ningún proveedor con el teléfono '" + telefonoProveedor + "'");
             }
         } catch (DAOException e) {
-            System.err.println("Error al consultar el producto por código de barras: " + e.getMessage());
+            System.out.println("Error al consultar proveedor por teléfono: " + e.getMessage());
         }
     }
 
-    public static void pruebaActualizarProducto(GestorProductos gestorProductos) {
+    public static void pruebaConsultarProveedoresPorNombre(GestorProveedores gestorProveedores) {
         try {
-            // Crear un nuevo producto para insertarlo
-            ProductoDTO nuevoProducto = new ProductoDTO();
-            nuevoProducto.setCodigoBarras(2222111166L);
-            nuevoProducto.setCodigoInterno("BQZ123");
-            nuevoProducto.setNombre("Producto de Prueba");
-            nuevoProducto.setPrecio(50.0f);
-            nuevoProducto.setFechaRegistro(LocalDateTime.now());
+            String nombreProveedor = "Proveedor de prueba";
+            List<ProveedorDTO> proveedores = gestorProveedores.consultarProveedoresPorNombre(nombreProveedor);
 
-            gestorProductos.registrarProducto(nuevoProducto);
-
-            nuevoProducto.setNombre("Nuevo Nombre");
-            nuevoProducto.setPrecio(99.99f);
-            gestorProductos.actualizarProducto(nuevoProducto);
-
-            System.out.println("Producto actualizado correctamente.");
+            System.out.println("Proveedores cuyo nombre contiene '" + nombreProveedor + "':");
+            for (ProveedorDTO proveedor : proveedores) {
+                System.out.println("ID: " + proveedor.getId() + ", Nombre: " + proveedor.getNombre());
+            }
         } catch (DAOException e) {
-            System.err.println("Error al actualizar el producto: " + e.getMessage());
+            System.out.println("Error al consultar proveedores por nombre: " + e.getMessage());
         }
     }
 
-    public static void pruebaEliminarProducto(GestorProductos gestorProductos) {
+    public static void pruebaActualizarProveedor(GestorProveedores gestorProveedores) {
         try {
-            String codigoInterno = "ABC123";
+            ProveedorDTO proveedorDTO = gestorProveedores.consultarProveedorPorNumeroTelefono("123456789");
+            if (proveedorDTO != null) {
+                // Modificamos algunos datos del proveedor
+                proveedorDTO.setNombre("Nuevo Nombre");
+                proveedorDTO.setEmail("nuevo_email@example.com");
 
-            gestorProductos.eliminarProducto(codigoInterno);
+                // Actualizamos el proveedor en la base de datos
+                gestorProveedores.actualizarProveedor(proveedorDTO);
 
-            System.out.println("Producto eliminado correctamente.");
+                System.out.println("Proveedor actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró ningún proveedor para actualizar.");
+            }
         } catch (DAOException e) {
-            System.err.println("Error al eliminar el producto: " + e.getMessage());
+            System.out.println("Error al actualizar el proveedor: " + e.getMessage());
+        }
+    }
+
+    public static void pruebaEliminarProveedor(GestorProveedores gestorProveedores) {
+        try {
+            // Supongamos que queremos eliminar un proveedor con ID 1
+            Long idProveedor = 7L;
+
+            // Intentamos eliminar el proveedor
+            gestorProveedores.eliminarProveedor(idProveedor);
+
+            System.out.println("Proveedor eliminado correctamente.");
+        } catch (DAOException e) {
+            System.out.println("Error al eliminar el proveedor: " + e.getMessage());
         }
     }
 }
