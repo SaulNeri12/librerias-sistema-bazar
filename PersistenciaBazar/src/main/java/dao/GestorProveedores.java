@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 import conexion.EntityManagerSingleton;
 import entidades.Proveedor;
 import entidades.convertidor.ConvertidorBazarDTO;
+import java.util.ArrayList;
 import objetosNegocio.ProveedorDTO;
 import subsistemas.excepciones.DAOException;
 
@@ -47,10 +48,21 @@ public class GestorProveedores implements IGestorProveedores {
     @Override
     public List<ProveedorDTO> consultarTodos() throws DAOException {
         try {
-            TypedQuery<ProveedorDTO> query = em.createNamedQuery("ProveedorDTO.findAll", ProveedorDTO.class);
-            return query.getResultList();
-        } catch (Exception e) {
-            throw new DAOException("Error al consultar los proveedores");
+            TypedQuery<Proveedor> consulta = em.createQuery("SELECT p FROM Proveedor p", Proveedor.class);
+            List<Proveedor> proveedores = consulta.getResultList();
+            if (proveedores.isEmpty()) {
+                throw new DAOException("No se encontraron proveedores en la base de datos");
+            }
+            // Convertir las entidades Proveedor a DTOs
+            List<ProveedorDTO> proveedoresDTO = new ArrayList<>();
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            for (Proveedor proveedor : proveedores) {
+                proveedoresDTO.add(convertidor.convertirProveedorAProveedorDTO(proveedor));
+            }
+
+            return proveedoresDTO;
+        } catch (Exception ex) {
+            throw new DAOException("Error al consultar todos los proveedores");
         }
     }
 
@@ -66,12 +78,23 @@ public class GestorProveedores implements IGestorProveedores {
     @Override
     public List<ProveedorDTO> consultarProveedoresPorNombre(String nombreProveedor) throws DAOException {
         try {
-            TypedQuery<ProveedorDTO> query = em.createNamedQuery("SELECT p FROM proveedores p WHERE p.nombre = :nombre",
-                    ProveedorDTO.class);
-            query.setParameter("nombre", nombreProveedor);
-            return query.getResultList();
+            TypedQuery<Proveedor> query = em.createQuery("SELECT p FROM Proveedor p WHERE p.nombre LIKE :nombre",
+                    Proveedor.class);
+            query.setParameter("nombre", "%" + nombreProveedor + "%");
+            List<Proveedor> proveedores = query.getResultList();
+            if (proveedores.isEmpty()) {
+                throw new DAOException("No se encontraron proveedores con el nombre proporcionado");
+            }
+            // Convertir las entidades Proveedor a DTOs
+            List<ProveedorDTO> proveedoresDTO = new ArrayList<>();
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            for (Proveedor proveedor : proveedores) {
+                proveedoresDTO.add(convertidor.convertirProveedorAProveedorDTO(proveedor));
+            }
+
+            return proveedoresDTO;
         } catch (Exception e) {
-            throw new DAOException("Error al consultar los proveedores");
+            throw new DAOException("Error al consultar los proveedores por nombre");
         }
     }
 
@@ -87,11 +110,15 @@ public class GestorProveedores implements IGestorProveedores {
     @Override
     public ProveedorDTO consultarProveedor(Long idProveedor) throws DAOException {
         try {
-            TypedQuery<ProveedorDTO> query = em.createNamedQuery("SELECT p FROM proveedores p WHERE p.id = :id", ProveedorDTO.class);
-            query.setParameter("id", idProveedor);
-            return query.getSingleResult();
+            Proveedor proveedor = em.find(Proveedor.class, idProveedor);
+            if (proveedor != null) {
+                ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+                return convertidor.convertirProveedorAProveedorDTO(proveedor);
+            } else {
+                throw new DAOException("No se encontró ningún proveedor con el ID proporcionado");
+            }
         } catch (Exception e) {
-            throw new DAOException("Error al consultar los proveedores");
+            throw new DAOException("Error al consultar el proveedor por ID");
         }
     }
 
@@ -107,13 +134,19 @@ public class GestorProveedores implements IGestorProveedores {
     @Override
     public ProveedorDTO consultarProveedorPorNumeroTelefono(String telefono) throws DAOException {
         try {
-            TypedQuery<ProveedorDTO> query = em.createNamedQuery("SELECT p FROM proveedores p WHERE p.telefono = :telefono", ProveedorDTO.class);
+            TypedQuery<Proveedor> query = em.createQuery("SELECT p FROM Proveedor p WHERE p.telefono = :telefono", Proveedor.class);
             query.setParameter("telefono", telefono);
-            return query.getSingleResult();
-        } catch (Exception e) {
-            throw new DAOException("Error al consultar los proveedores");
-        }
+            List<Proveedor> proveedores = query.getResultList();
 
+            if (proveedores.isEmpty()) {
+                throw new DAOException("No se encontró ningún proveedor con el número de teléfono proporcionado");
+            }
+
+            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            return convertidor.convertirProveedorAProveedorDTO(proveedores.get(0));
+        } catch (Exception e) {
+            throw new DAOException("Error al consultar el proveedor por número de teléfono");
+        }
     }
 
     /**
@@ -150,20 +183,20 @@ public class GestorProveedores implements IGestorProveedores {
      */
     @Override
     public void actualizarProveedor(ProveedorDTO proveedor) throws DAOException {
-
         if (proveedor == null) {
             throw new DAOException("El proveedor dado es null");
         }
+
         ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
         Proveedor entidadProveedor = convertidor.convertirProveedorDTO(proveedor);
+
         try {
             em.getTransaction().begin();
-            em.merge(entidadProveedor);
+            entidadProveedor = em.merge(entidadProveedor);
             em.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOException("Error al actualizar el proveedor");
         }
-
     }
 
     /**
@@ -174,23 +207,22 @@ public class GestorProveedores implements IGestorProveedores {
      */
     @Override
     public void eliminarProveedor(Long idProveedor) throws DAOException {
-
         if (idProveedor == null) {
             throw new DAOException("El ID del proveedor dado es null");
         }
 
+        Proveedor proveedor = em.find(Proveedor.class, idProveedor);
+        if (proveedor == null) {
+            throw new DAOException("El proveedor con ID " + idProveedor + " no existe en la base de datos");
+        }
+
         try {
-            Proveedor proveedor = em.find(Proveedor.class, idProveedor);
-            if (proveedor == null) {
-                System.out.println("El proveedor no existe en la base de datos");
-            }
             em.getTransaction().begin();
             em.remove(proveedor);
             em.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOException("Error al eliminar el proveedor");
         }
-
     }
 
 }
