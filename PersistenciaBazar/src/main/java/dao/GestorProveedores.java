@@ -51,7 +51,7 @@ public class GestorProveedores implements IGestorProveedores {
             TypedQuery<Proveedor> consulta = em.createQuery("SELECT p FROM Proveedor p", Proveedor.class);
             List<Proveedor> proveedores = consulta.getResultList();
             if (proveedores.isEmpty()) {
-                throw new DAOException("No se encontraron proveedores en la base de datos");
+                return null;
             }
             // Convertir las entidades Proveedor a DTOs
             List<ProveedorDTO> proveedoresDTO = new ArrayList<>();
@@ -83,7 +83,7 @@ public class GestorProveedores implements IGestorProveedores {
             query.setParameter("nombre", "%" + nombreProveedor + "%");
             List<Proveedor> proveedores = query.getResultList();
             if (proveedores.isEmpty()) {
-                throw new DAOException("No se encontraron proveedores con el nombre proporcionado");
+                return null;
             }
             // Convertir las entidades Proveedor a DTOs
             List<ProveedorDTO> proveedoresDTO = new ArrayList<>();
@@ -111,12 +111,14 @@ public class GestorProveedores implements IGestorProveedores {
     public ProveedorDTO consultarProveedor(Long idProveedor) throws DAOException {
         try {
             Proveedor proveedor = em.find(Proveedor.class, idProveedor);
+            
             if (proveedor != null) {
                 ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
                 return convertidor.convertirProveedorAProveedorDTO(proveedor);
-            } else {
-                throw new DAOException("No se encontró ningún proveedor con el ID proporcionado");
-            }
+            } 
+            
+            return null;
+            
         } catch (Exception e) {
             throw new DAOException("Error al consultar el proveedor por ID");
         }
@@ -139,8 +141,10 @@ public class GestorProveedores implements IGestorProveedores {
             List<Proveedor> proveedores = query.getResultList();
 
             if (proveedores.isEmpty()) {
-                throw new DAOException("No se encontró ningún proveedor con el número de teléfono proporcionado");
+                return null;
             }
+            
+                        
 
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
             return convertidor.convertirProveedorAProveedorDTO(proveedores.get(0));
@@ -163,9 +167,16 @@ public class GestorProveedores implements IGestorProveedores {
         if (proveedor == null) {
             throw new DAOException("El proveedor dado es null");
         }
+        
+        // TODO: Verificar si existe el proveedor antes de realizar conversiones
+        // por que puede causar un error de NullPointerException cuando se 
+        // quiere sacar atributos o metodos de un objeto que es NULL...
+        
         ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
         Proveedor entidadProveedor = convertidor.convertirProveedorDTO(proveedor);
 
+        
+        
         try {
             em.getTransaction().begin();
             em.persist(entidadProveedor);
@@ -186,6 +197,10 @@ public class GestorProveedores implements IGestorProveedores {
         if (proveedor == null) {
             throw new DAOException("El proveedor dado es null");
         }
+        
+        // TODO: Verificar si existe el proveedor antes de realizar conversiones
+        // por que puede causar un error de NullPointerException cuando se 
+        // quiere sacar atributos o metodos de un objeto que es NULL...
 
         ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
         Proveedor entidadProveedor = convertidor.convertirProveedorDTO(proveedor);
@@ -213,7 +228,7 @@ public class GestorProveedores implements IGestorProveedores {
 
         Proveedor proveedor = em.find(Proveedor.class, idProveedor);
         if (proveedor == null) {
-            throw new DAOException("El proveedor con ID " + idProveedor + " no existe en la base de datos");
+            throw new DAOException("El proveedor con el ID especificado no existe");
         }
 
         try {
