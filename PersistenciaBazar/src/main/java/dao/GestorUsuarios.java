@@ -2,67 +2,43 @@ package dao;
 
 import conexion.EntityManagerSingleton;
 import entidades.Usuario;
+import static entidades.convertidor.ConvertidorBazarDTO.convertirUsuarioDTO;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.UsuarioDTO;
-
-
-import subsistemas.interfaces.IGestorUsuarios;
 import subsistemas.excepciones.DAOException;
+import subsistemas.interfaces.IGestorUsuarios;
 
 /**
- * Implementacion del subsistema de usuarios con listas.
+ * Implementacion del subsistema de usuarios
  *
  * @author saul
  */
 public class GestorUsuarios implements IGestorUsuarios {
 
-    private List<UsuarioDTO> usuarios;
-
     private static GestorUsuarios instance;
     private final EntityManager em;
-
-    public GestorUsuarios(EntityManager em) {
-        this.em = EntityManagerSingleton.getInstance().getEntityManager();
-    }
 
     /**
      * Crea una instancia del subsistema Usuarios
      */
-    public GestorUsuarios() {
+    private GestorUsuarios() {
         this.em = EntityManagerSingleton.getInstance().getEntityManager();
-
-        /*
-        this.usuarios = new ArrayList<>();
-
-        UsuarioDTO admin = new UsuarioDTO();
-
-        admin.setId(1l);
-        
-
-        this.usuarios.add(admin);
-
-        UsuarioDTO nuevoUsuario = new UsuarioDTO();
-        nuevoUsuario.setId(1l);
-        nuevoUsuario.setNombre("Saul Armando Neri Escarcega");
-        nuevoUsuario.setPuesto(UsuarioDTO.Puesto.CAJERO);
-        nuevoUsuario.setTelefono("6442269619");
-        nuevoUsuario.setContrasena("saulneri12");
-
-        this.usuarios.add(nuevoUsuario);
-        */
     }
 
+    /**
+     * Regresa la instancia del gestor de usuarios
+     *
+     * @return La unica instancia del gestor de usuarios de la aplicacion
+     */
     public static GestorUsuarios getInstance() {
-        if (instance == null)
-        {
-            instance = new GestorUsuarios(EntityManagerSingleton.getInstance().getEntityManager());
+        if (instance == null) {
+            instance = new GestorUsuarios();
         }
 
         return instance;
@@ -73,23 +49,29 @@ public class GestorUsuarios implements IGestorUsuarios {
      *
      * @param id El id del usuario que se desea consultar.
      * @return El usuario con el id dado, o null si no se encontro.
-     * @throws DAOException Si ocurre un error al consultar el usuario por su
-     * id.
+     * @throws DAOException Si el id es null, menor a 1, o ocurre un error al
+     * ejecutar la consulta en la base de datos
      */
     @Override
     public UsuarioDTO consultarUsuario(Long id) throws DAOException {
-        if (id == null)
-        {
+        if (id == null) {
             throw new DAOException("El id del usuario dado es null");
         }
 
-        try
-        {
-            TypedQuery<UsuarioDTO> consulta = em.createQuery("SELECT u FROM Usuario u WHERE u.id = :id", UsuarioDTO.class);
-            consulta.setParameter("id", id);
-            return consulta.getSingleResult();
-        } catch (Exception ex)
-        {
+        if (id < 1) {
+            throw new DAOException("El id del usuario dado debe ser un numero"
+                    + " positivo mayor a 0");
+        }
+
+        try {
+            Usuario usuario = em.find(Usuario.class, id);
+            if (usuario != null) {
+                return usuario.toDTO();
+            }
+            return null;
+        } catch (Exception ex) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
             throw new DAOException("Error al consultar el usuario por id");
         }
     }
@@ -104,18 +86,28 @@ public class GestorUsuarios implements IGestorUsuarios {
      */
     @Override
     public UsuarioDTO consultarUsuarioPorNumeroTelefono(String telefono) throws DAOException {
-        if (telefono == null)
-        {
+        if (telefono == null) {
             throw new DAOException("El telefono del usuario dado es null");
         }
 
-        try
-        {
-            TypedQuery<UsuarioDTO> consulta = em.createQuery("SELECT u FROM Usuario u WHERE u.telefono = :telefono", UsuarioDTO.class);
+        Pattern validaNumero = Pattern.compile("\\d{10}");
+        if (!validaNumero.matcher(telefono).matches()) {
+            throw new DAOException("El telefono ingresado no es de un "
+                    + "formato valido");
+        }
+
+        try {
+            TypedQuery<Usuario> consulta = em.createNamedQuery(
+                    "consultaUsuarioNumTelefono", Usuario.class);
             consulta.setParameter("telefono", telefono);
-            return consulta.getSingleResult();
-        } catch (Exception ex)
-        {
+            return consulta.getSingleResult().toDTO();
+        } catch (NoResultException nre) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, nre.getMessage());
+            return null;
+        }catch (Exception ex) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
             throw new DAOException("Error al consultar el usuario por telefono");
         }
     }
@@ -123,23 +115,38 @@ public class GestorUsuarios implements IGestorUsuarios {
     /**
      * Registra un nuevo usuario en la base de datos.
      *
+     * @throws DAOException si ocurre un error al registrar el usuario
      */
     @Override
     public void registrarUsuario(UsuarioDTO usuario) throws DAOException {
-        if (usuario == null)
-        {
+        if (usuario == null) {
             throw new DAOException("El usuario especificado es null");
         }
 
-        try
-        {
+        if (usuario.getNombre() == null || usuario.getNombre().isBlank()
+                || usuario.getApellido() == null || usuario.getApellido().isBlank()) {
+            throw new DAOException("El usuario debe tener un nombre valido");
+        }
+        if (usuario.getContrasena() == null || usuario.getContrasena().equals("")) {
+            throw new DAOException("Introduzca una contraseña valida");
+        }
+
+        if (usuario.getDireccion() == null) {
+            throw new DAOException("El usuario debe tener una direccion");
+        }
+
+        try {
             em.getTransaction().begin();
+
             LocalDateTime fechaHoraActual = LocalDateTime.now();
             usuario.setFechaContratacion(fechaHoraActual);
-            em.persist(usuario);
+
+            Usuario usuarioEntity = convertirUsuarioDTO(usuario);
+            em.persist(usuarioEntity);
             em.getTransaction().commit();
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
             throw new DAOException("Error al registrar el usuario");
         }
     }
@@ -153,54 +160,58 @@ public class GestorUsuarios implements IGestorUsuarios {
      */
     @Override
     public void actualizarUsuario(UsuarioDTO usuario) throws DAOException {
-        try
-        {
-            Usuario usuarioEntity = em.find(Usuario.class, usuario.getId());
+        if (usuario == null) {
+            throw new DAOException("El usuario no existe en la base de datos");
+        }
 
-            if (usuario == null)
-            {
-                throw new DAOException("El usuario no existe en la base de datos");
-            }
+        Usuario entity = em.find(Usuario.class, usuario.getId());
+        if (entity == null) {
+            throw new DAOException("No se encontro el usuario a actualizar");
+        }
 
-            usuarioEntity.setNombre(usuario.getNombre());
-            usuarioEntity.setFechaContratacion(usuario.getFechaContratacion());
-            usuarioEntity.setPuesto(Usuario.Puesto.valueOf(usuario.getPuesto().name()));
-            usuarioEntity.setTelefono(usuario.getTelefono());
-            usuarioEntity.setContrasenha(usuario.getContrasena());
+        try {
+            Usuario usuarioEntity = convertirUsuarioDTO(usuario);
 
             em.getTransaction().begin();
             em.merge(usuarioEntity);
             em.getTransaction().commit();
 
-        } catch (Exception ex)
-        {
-            throw new DAOException("Error al actualizar el producto");
+        } catch (Exception ex) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            throw new DAOException("Error al actualizar el usuario");
         }
     }
 
     /**
      * Elimina un usuario en la base de datos.
      *
-     * @param idUsuario El id del usuario que se desea eliminar.
+     * @param id El id del usuario que se desea eliminar.
      * @throws DAOException Si el usuario dado es null, si no se pudo eliminar
      * el usuario.
      */
     @Override
-    public void eliminarUsuario(Long idUsuario) throws DAOException {
-        if (idUsuario == null)
-        {
+    public void eliminarUsuario(Long id) throws DAOException {
+        if (id == null) {
             throw new DAOException("El ID de usuario dado es null");
         }
 
-        try
-        {
-            UsuarioDTO usuario = consultarUsuario(idUsuario);
+        try {
+            TypedQuery<Usuario> consulta = em.createNamedQuery(
+                    "consultaUsuarioID", Usuario.class);
+            consulta.setParameter("id", id);
+
             em.getTransaction().begin();
-            em.remove(usuario);
+            em.remove(consulta.getSingleResult());
             em.getTransaction().commit();
-        } catch (Exception ex)
-        {
-            throw new DAOException("Error al eliminar el usuario");
+        } catch (NoResultException nre) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, nre.getMessage());
+            throw new DAOException("No se encontro al usuario en la base de datos");
+        } catch (Exception ex) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            throw new DAOException("Ocurrio un error al eliminar al usuario");
         }
     }
 
@@ -216,45 +227,36 @@ public class GestorUsuarios implements IGestorUsuarios {
      */
     @Override
     public UsuarioDTO iniciarSesion(String telefono, String contrasena) throws DAOException {
-        if (telefono == null)
-        {
+        if (telefono == null) {
             throw new DAOException("El telefono dado es null");
         }
 
-        if (contrasena == null)
-        {
-            throw new DAOException("La contrasena dada es null");
+        Pattern validaNumero = Pattern.compile("\\d{10}");
+        if (!validaNumero.matcher(telefono).matches()) {
+            throw new DAOException("El telefono ingresado no es de un "
+                    + "formato valido");
         }
 
-        try
-        {
-            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.telefono = :telefono AND u.contrasenha = :contrasena", Usuario.class);
+        if (contrasena == null || contrasena.isBlank()) {
+            throw new DAOException("Ingrese una contraseña");
+        }
+
+        try {
+            TypedQuery<Usuario> query = em.createNamedQuery(
+                    "inicioSesion", Usuario.class);
             query.setParameter("telefono", telefono);
             query.setParameter("contrasena", contrasena);
 
             Usuario usuarioEntity = query.getSingleResult();
 
-            // NOTE: Estos if's dan detalles sobre lo que pasa durante el inicio de sesion.
-            if (usuarioEntity == null) {
-                throw new DAOException("No se encontro al usuario con el telefono especificado");
-            }
-
-            if (usuarioEntity.getContrasena().equals(contrasena)) {
-                throw new DAOException("La contrasena es incorrecta");
-            }
-            
-            // Convertir el Usuario a UsuarioDTO si la autenticación es exitosa
-            UsuarioDTO usuarioDTO = new UsuarioDTO();
-            usuarioDTO.setId(usuarioEntity.getId());
-            usuarioDTO.setNombre(usuarioEntity.getNombre());
-            usuarioDTO.setFechaContratacion(usuarioEntity.getFechaContratacion());
-            usuarioDTO.setPuesto(UsuarioDTO.Puesto.valueOf(usuarioEntity.getPuesto().name()));
-            usuarioDTO.setTelefono(usuarioEntity.getTelefono());
-            usuarioDTO.setContrasena(usuarioEntity.getContrasena());
-
-            return usuarioDTO;
-        } catch (Exception ex)
-        {
+            return usuarioEntity.toDTO();
+        } catch (NoResultException nre) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, nre.getMessage());
+            throw new DAOException("El telefono o la contraseña son erroneos, intente de nuevo");
+        } catch (Exception ex) {
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
             throw new DAOException("Error al intentar iniciar sesion");
         }
     }

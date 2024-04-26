@@ -44,8 +44,9 @@ public class ConvertidorBazarDTO {
         usuario.setTelefono(usuarioDTO.getTelefono());
         usuario.setPuesto(Usuario.Puesto.valueOf(usuarioDTO.getPuesto().name()));
         usuario.setDireccion(ConvertidorBazarDTO.convertirDireccionDTO(usuarioDTO.getDireccion()));
+        usuario.setFechaContratacion(usuarioDTO.getFechaContratacion());
 
-        return null;
+        return usuario;
     }
 
     public static Producto convertirProductoDTO(ProductoDTO productoDTO) {
