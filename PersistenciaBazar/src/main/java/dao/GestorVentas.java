@@ -46,6 +46,7 @@ public class GestorVentas implements IGestorVentas {
      */
     @Override
     public VentaDTO consultarVenta(Long id) throws DAOException {
+        
         if (id == null) {
             throw new DAOException("El ID de la venta dado es null");
         }
@@ -56,8 +57,10 @@ public class GestorVentas implements IGestorVentas {
             consulta.setParameter("id", id);
             return consulta.getSingleResult().toDTO();
         } catch (Exception ex) {
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al consultar la venta por id");
         }
     }
@@ -89,8 +92,10 @@ public class GestorVentas implements IGestorVentas {
             }
             return ventaDTOs;
         } catch (Exception ex) {
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al consultar las ventas");
         }
     }
@@ -154,8 +159,10 @@ public class GestorVentas implements IGestorVentas {
             }
             return ventaDTOs;
         } catch (Exception ex) {
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al consultar las ventas");
         }
     }
@@ -180,8 +187,10 @@ public class GestorVentas implements IGestorVentas {
             em.persist(ventaEntity);
             em.getTransaction().commit();
         } catch (Exception ex) {
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al registrar la venta");
         }
     }
@@ -197,9 +206,11 @@ public class GestorVentas implements IGestorVentas {
     public void actualizarVenta(VentaDTO venta) throws DAOException {
         try {
             Venta ventaEntity = em.find(Venta.class, venta.getId());
+            
             if (ventaEntity == null) {
                 throw new DAOException("La venta no se encuentra registrada");
             }
+            
             ventaEntity.setNombreCliente(venta.getNombreCliente());
             ventaEntity.setApellidoCliente(venta.getApellidoCliente());
             ventaEntity.setMontoToal(venta.getMontoTotal());
@@ -220,15 +231,19 @@ public class GestorVentas implements IGestorVentas {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, de.getMessage());
+            */
             throw new DAOException("Error al actualizar la venta");
         } catch (Exception ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al actualizar la venta");
         }
     }
@@ -242,6 +257,7 @@ public class GestorVentas implements IGestorVentas {
      */
     @Override
     public void eliminarVenta(Long id) throws DAOException {
+        
         if (id == null) {
             throw new DAOException("El ID de la venta dado es null");
         }
@@ -260,16 +276,20 @@ public class GestorVentas implements IGestorVentas {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, de.getMessage());
+            */
             throw new DAOException(de.getMessage());
         } catch (Exception ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
-            throw new DAOException("Error al actualizar la venta");
+            */
+            throw new DAOException("Error al eliminar la venta");
         }
     }
 
