@@ -1,5 +1,5 @@
 
-package persistencia;
+package persistenciaBazar;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +14,7 @@ import persistencia.excepciones.PersistenciaBazarException;
  */
 public interface IPersistenciaBazar {
     
-    public ProductoDTO consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException;;
+    public ProductoDTO consultarProductoPorCodigoInterno(String codigoInterno) throws PersistenciaBazarException;;
     
     public ProductoDTO consultarProductoPorCodigoBarras(Long codigoBarras) throws PersistenciaBazarException;;
     

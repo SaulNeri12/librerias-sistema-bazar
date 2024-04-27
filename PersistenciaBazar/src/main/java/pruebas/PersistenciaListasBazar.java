@@ -288,7 +288,7 @@ public class PersistenciaListasBazar {
         System.out.println("--------[ iniciar sesion usuario ]-----------");
         
         try {
-            System.out.println(gestorUsuarios.iniciarSesion("1244567890", "x"));
+            System.out.println(gestorUsuarios.iniciarSesion("1244567890", "123"));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -323,7 +323,8 @@ public class PersistenciaListasBazar {
         System.out.println("--------[ eliminar usuario ]-----------");
         
         try {
-            gestorUsuarios.eliminarUsuario(8l);
+            gestorUsuarios.eliminarUsuario(28l);
+            System.out.println("Se elimino al usuario...");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

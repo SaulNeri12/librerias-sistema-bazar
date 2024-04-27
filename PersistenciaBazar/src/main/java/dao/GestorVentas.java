@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.VentaDTO;
 import subsistemas.excepciones.DAOException;
@@ -56,6 +57,8 @@ public class GestorVentas implements IGestorVentas {
                     "consultaVentaID", Venta.class);
             consulta.setParameter("id", id);
             return consulta.getSingleResult().toDTO();
+        } catch (NoResultException ex) {   
+            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -91,6 +94,8 @@ public class GestorVentas implements IGestorVentas {
                 ventaDTOs.add(venta.toDTO());
             }
             return ventaDTOs;
+        } catch (NoResultException ex) {   
+            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -132,7 +137,10 @@ public class GestorVentas implements IGestorVentas {
                 ventaDTOs.add(venta.toDTO());
             }
             return ventaDTOs;
+        } catch (NoResultException ex) {   
+            return null;
         } catch (Exception ex) {
+            
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             throw new DAOException("Error al consultar las ventas por periodo");
@@ -158,6 +166,8 @@ public class GestorVentas implements IGestorVentas {
                 ventaDTOs.add(venta.toDTO());
             }
             return ventaDTOs;
+        } catch (NoResultException ex) {   
+            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -180,6 +190,27 @@ public class GestorVentas implements IGestorVentas {
             throw new DAOException("La venta dada es null");
         }
 
+        /*
+        TODO: CUANDO SE REALIZA UNA VENTA, SE DEBE VERIFICAR SI EL OBJETO VENTA
+        DTO TIENE DATOS ESENCIALES EN NULO (USUARIO, LISTA DE DETALLE DE VENTAS).
+        
+        ADEMAS SE DEBE DE CALCULAR EL MONTO TOTAL DE LA VENTA EN ESTE MISMO METODO,
+        NO TE PUEDES FIAR DE ASIGNARLE EL MONTO TOTAL CON EL METODO .setMontoTotal(), 
+        SE DEBE ITERAR SOBRE CADA UNO DE LOS DETALLES DE VENTA PARA QUE SE SUME
+        LA OPERACION DE (DETALLE_PRODUCTO.PRECIO * DETALLE_PRODUCTO.CANTIDAD), POR 
+        CADA UNO DE LOS DETALLES DE PRODUCTO, Y DE AHI SACAR EL TOTAL.
+        
+            En caso de que detalles_venta fuera NULL, arrojar un DAOException con:
+                "Esta venta no contiene detalles de venta" o algo parecido que describa el error...
+        
+        ADEMAS, SE DEBE VERIFICAR SI EL USUARIO NO ES NULO, SI EL USUARIO ES NULO
+        DEBE DEVOLVER UNA EXCEPCION DAOEXCEPTION QUE INDIQUE EL ERROR.
+                "Esta venta no tiene usuario a cargo" o algo que describa mejor el error...
+        
+        DEBES ESTAR SEGURO DE QUE CADA UNO DE LOS VALORES NO SEAN NULL YA QUE SIN 
+        DATOS CORRECTOS, NO FUNCIONA CORRECTAMENTE EL PROGRAMA EN LA INTERFAZ...
+        */
+        
         try {
             Venta ventaEntity = convertirVentaDTO(venta);
 
@@ -191,6 +222,11 @@ public class GestorVentas implements IGestorVentas {
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al registrar la venta");
         }
     }
@@ -211,6 +247,31 @@ public class GestorVentas implements IGestorVentas {
                 throw new DAOException("La venta no se encuentra registrada");
             }
             
+            /*
+        TODO: CUANDO SE REALIZA UNA VENTA, SE DEBE VERIFICAR SI EL OBJETO VENTA
+        DTO TIENE DATOS ESENCIALES EN NULO (USUARIO, LISTA DE DETALLE DE VENTAS).
+        
+        ADEMAS SE DEBE DE CALCULAR EL MONTO TOTAL DE LA VENTA EN ESTE MISMO METODO,
+        NO TE PUEDES FIAR DE ASIGNARLE EL MONTO TOTAL CON EL METODO .setMontoTotal(), 
+        SE DEBE ITERAR SOBRE CADA UNO DE LOS DETALLES DE VENTA PARA QUE SE SUME
+        LA OPERACION DE (DETALLE_PRODUCTO.PRECIO * DETALLE_PRODUCTO.CANTIDAD), POR 
+        CADA UNO DE LOS DETALLES DE PRODUCTO, Y DE AHI SACAR EL TOTAL.
+        
+            En caso de que detalles_venta fuera NULL, arrojar un DAOException con:
+                "Esta venta no contiene detalles de venta" o algo parecido que describa el error...
+        
+        ADEMAS, SE DEBE VERIFICAR SI EL USUARIO NO ES NULO, SI EL USUARIO ES NULO
+        DEBE DEVOLVER UNA EXCEPCION DAOEXCEPTION QUE INDIQUE EL ERROR.
+                "Esta venta no tiene usuario a cargo" o algo que describa mejor el error...
+        
+        DEBES ESTAR SEGURO DE QUE CADA UNO DE LOS VALORES NO SEAN NULL YA QUE SIN 
+        DATOS CORRECTOS, NO FUNCIONA CORRECTAMENTE EL PROGRAMA EN LA INTERFAZ...
+            
+  
+            (CHECAR QUE SE GUARDE LA MISMA FECHA CON LA QUE SE REGISTRO LA VENTA, NO ACTUALIZARLA
+            AL MOMENTO DE LA MODIFICACION NI DEJARLA EN NULL)
+        */
+            
             ventaEntity.setNombreCliente(venta.getNombreCliente());
             ventaEntity.setApellidoCliente(venta.getApellidoCliente());
             ventaEntity.setMontoToal(venta.getMontoTotal());
@@ -227,15 +288,6 @@ public class GestorVentas implements IGestorVentas {
             em.merge(ventaEntity);
             em.getTransaction().commit();
 
-        } catch (DAOException de) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            /*
-            Logger.getLogger(GestorUsuarios.class.getName()).log(
-                    Level.SEVERE, de.getMessage());
-            */
-            throw new DAOException("Error al actualizar la venta");
         } catch (Exception ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -244,6 +296,11 @@ public class GestorVentas implements IGestorVentas {
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al actualizar la venta");
         }
     }
@@ -272,15 +329,6 @@ public class GestorVentas implements IGestorVentas {
             em.getTransaction().begin();
             em.remove(venta);
             em.getTransaction().commit();
-        } catch (DAOException de) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            /*
-            Logger.getLogger(GestorUsuarios.class.getName()).log(
-                    Level.SEVERE, de.getMessage());
-            */
-            throw new DAOException(de.getMessage());
         } catch (Exception ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -289,7 +337,12 @@ public class GestorVentas implements IGestorVentas {
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
-            throw new DAOException("Error al eliminar la venta");
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
+            throw new DAOException("Error al actualizar la venta");
         }
     }
 

@@ -28,7 +28,7 @@ import objetosNegocio.UsuarioDTO;
 @Table(name = "usuarios")
 @NamedQuery(name = "consultaUsuarioID", query = "SELECT u FROM Usuario u WHERE u.id = :id")
 @NamedQuery(name = "consultaUsuarioNumTelefono", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono")
-@NamedQuery(name = "inicioSesion", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono AND u.contrasenha = :contrasena")
+@NamedQuery(name = "inicioSesion", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono")
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;

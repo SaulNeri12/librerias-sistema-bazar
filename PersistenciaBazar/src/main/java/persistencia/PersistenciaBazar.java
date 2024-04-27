@@ -1,11 +1,14 @@
 
-package persistencia;
+package persistenciaBazar;
 
+import conexion.EntityManagerSingleton;
 import dao.GestorProductos;
 import dao.GestorUsuarios;
 import dao.GestorVentas;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.UsuarioDTO;
 import objetosNegocio.VentaDTO;
@@ -14,48 +17,6 @@ import persistencia.excepciones.PersistenciaBazarException;
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.*;
 
-/*
-    NOTE: Hacer las conversiones necesarias para hacer funcionar los metodos de esta
-    clase, se marca error en muchas partes del codigo porque ocurre un error en los
-    gestores DAO, el problema es el que no se convierten las clases adecuadamente,
-    se quiere sacar objetos entidad en las consultas pero se les pone como DTO y 
-    las entidades no tienen compatibilidad con los DTO.
-
-    TODO: Adecua las conversiones entre objetos Entidad y DTO
-        
-        1.  [X] Anade un metodo """toDTO()""" en las clases entidad para convertirlas 
-            a DTO sin tener que recurrir a crear una clase especificamente para eso.
-            NOTE: LISTO (en todos menos CompraDTO y DetalleCompraDTO)
-
-        2.  [ ] Se puede tener una clase que haga el proceso a la inversa (de DTO a Entidad)
-            Esto sera asi porque el proyecto o libreria de los DTO y las Entidades 
-            deben estar separados (por como lo menciono el profe), asi que no tendrian 
-            por que estar relacionadas. Entonces, tendriamos que crear una clase 'ConvertidorDTO' 
-            con sus metodos como 'obtenerEntidadProducto', 'obtenerEntidadProveedor', etc.
-
-                ((( NOTE: POR PRUEBAS, VAMOS PONERLO EN ESTE PROYECTO EN UN PAQUETE DENTRO 
-                    EL PAQUETE ENTIDADES LLAMADO 'convertidor' EN DONDE ESTA LA CLASE
-                    QUE CONVIERTE DE 'DTO' A 'ENTIDAD'
-                )))
-            
-            (Esta clase debe de ir en este mismo proyecto, en un paquete propio)
-
-    NOTE: Antes de cambiar las clases Entidad a otro proyecto, primero debemos definir
-          bien los campos que vamos a necesitar en cada entidad y DTO. Asi que NO HAY
-          NECESIDAD DE PONER ENTIDADES EN SU PROPIO PROYECTO POR AHORA (Los DTOs si 
-          podemos organizarlos en su propio proyecto desde ahora).
-
-    [SUBSISTEMAS FUNCIONANDO] - despues de hacer las conversiones...
-
-    Rellena con 'x' los corchetes cuando esten funcionando correctamente...
-
-        1. [ ] GestorProductos
-        2. [ ] GestorProveedores
-        3. [ ] GestorInventario
-        4. [ ] GestorUsuarios
-        5. [ ] GestorVentas
-
-*/
 
 /**
  *
@@ -63,6 +24,8 @@ import subsistemas.interfaces.*;
  */
 public class PersistenciaBazar implements IPersistenciaBazar {
 
+    private static PersistenciaBazar instancia;
+    
     private final IGestorProductos  productos;
     private final IGestorUsuarios   usuarios;
     private final IGestorVentas     ventas;
@@ -71,6 +34,14 @@ public class PersistenciaBazar implements IPersistenciaBazar {
         this.productos = GestorProductos.getInstance();
         this.usuarios = GestorUsuarios.getInstance();
         this.ventas = GestorVentas.getInstance();
+    }
+
+    public static PersistenciaBazar getInstance() {
+        if (instancia == null) {
+            instancia = new PersistenciaBazar();
+        }
+
+        return instancia;
     }
     
     @Override
@@ -136,13 +107,17 @@ public class PersistenciaBazar implements IPersistenciaBazar {
     }
 
     @Override
-    public ProductoDTO consultarProductoPorCodigo(String codigoInterno) throws PersistenciaBazarException {
+    public ProductoDTO consultarProductoPorCodigoInterno(String codigoInterno) throws PersistenciaBazarException {
         try {
             ProductoDTO producto = this.productos.consultarProducto(codigoInterno);
             
+            if (producto == null) {
+                throw new DAOException("No se encontro el producto con el codigo especificado");
+            }
+            
             return producto;
         } catch (DAOException ex) {
-            throw new PersistenciaBazarException("Ha ocurrido un error al buscar el producto, intente de nuevo mas tarde");
+            throw new PersistenciaBazarException(ex.getMessage());
         }
     }
 
@@ -151,55 +126,125 @@ public class PersistenciaBazar implements IPersistenciaBazar {
         try {
             ProductoDTO producto = this.productos.consultarProducto(codigoBarras);
             
+            if (producto == null) {
+                throw new DAOException("No se encontro el producto con el codigo de barras especificado");
+            }
+            
             return producto;
         } catch (DAOException ex) {
-            throw new PersistenciaBazarException("Ha ocurrido un error al buscar el producto, intente de nuevo mas tarde");
+            throw new PersistenciaBazarException(ex.getMessage());
         }
     }
 
     @Override
     public void registrarProducto(ProductoDTO producto) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            this.productos.registrarProducto(producto);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public void actualizarProducto(ProductoDTO producto) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            this.productos.actualizarProducto(producto);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public void eliminarProducto(String codigoInterno) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            this.productos.eliminarProducto(codigoInterno);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public VentaDTO consultarVenta(Long idVenta) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            VentaDTO venta = this.ventas.consultarVenta(idVenta);
+            
+            if (venta == null) {
+                throw new DAOException("No se encontro la venta con el ID dado");
+            }
+            
+            return venta;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public List<VentaDTO> consultarVentasTodas() throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            List<VentaDTO> ventas = this.ventas.consultarTodos();
+            
+            if (ventas == null) {
+                throw new DAOException("No se encontraron ventas registradas");
+            }
+            
+            return ventas;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public List<VentaDTO> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            List<VentaDTO> ventas = this.ventas.consultarTodos();
+            
+            if (ventas == null) {
+                throw new DAOException("No se encontraron ventas hechas en ese periodo de tiempo");
+            }
+            
+            return ventas;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public List<VentaDTO> consultarVentasDeUsuario(Long idUsuario) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+         try {
+            UsuarioDTO usuario = this.usuarios.consultarUsuario(idUsuario);
+            
+            if (usuario == null) {
+                throw new DAOException("El usuario no existe");
+            } 
+             
+            List<VentaDTO> ventas = this.ventas.consultarVentasDeUsuario(idUsuario);
+            
+            if (ventas == null) {
+                throw new DAOException("No se encontraron ventas hechas por el usuario especificado");
+            }
+            
+            return ventas;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public void actualizarVenta(VentaDTO venta) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            this.ventas.actualizarVenta(venta);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
 
     @Override
     public void eliminarVenta(Long idVenta) throws PersistenciaBazarException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            this.ventas.eliminarVenta(idVenta);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
     }
     
 }

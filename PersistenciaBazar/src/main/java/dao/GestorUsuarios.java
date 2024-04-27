@@ -267,9 +267,9 @@ public class GestorUsuarios implements IGestorUsuarios {
 
         try {
             
-            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.telefono LIKE :telefono", Usuario.class);
-            query.setParameter("telefono", "%" + telefono + "%");
-                    
+            TypedQuery<Usuario> query = em.createNamedQuery("inicioSesion", Usuario.class);
+            query.setParameter("telefono", telefono);
+            
             Usuario usuarioEntity = query.getSingleResult();
             
             if (!usuarioEntity.getContrasena().equals(contrasena)) {
