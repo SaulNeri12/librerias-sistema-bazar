@@ -254,8 +254,12 @@ public class PersistenciaListasBazar {
     }
 
     public static void pruebaRegistrarUsuario(GestorUsuarios gestorUsuarios) {
+        
+        System.out.println("--------[ registrar usuario ]-----------");
+        
         try {
             UsuarioDTO usuario = new UsuarioDTO("nombre", LocalDateTime.MIN, UsuarioDTO.Puesto.CAJERO, "1244567890", "123");
+            usuario.setApellido("Perez");
             usuario.setDireccion(new DireccionDTO("Ciudad", "123", "cAlle", "colonia", "8500"));
             usuario.setApellido("apellido");
             gestorUsuarios.registrarUsuario(usuario);
@@ -263,40 +267,68 @@ public class PersistenciaListasBazar {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        
+        System.out.println("--------[ fin registrar usuario ]-----------");
     }
 
     public static void pruebaConsultarUsuario(GestorUsuarios gestorUsuarios) {
+        
+        System.out.println("--------[ consultar usuario ]-----------");
+        
         try {
-            System.out.println(gestorUsuarios.consultarUsuario(5l));
+            System.out.println(gestorUsuarios.consultarUsuario(4l));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        System.out.println("--------[ fin consultar usuario ]-----------");
+        
     }
     
     public static void pruebaInicioSesion(GestorUsuarios gestorUsuarios) {
+        System.out.println("--------[ iniciar sesion usuario ]-----------");
+        
         try {
-            System.out.println(gestorUsuarios.iniciarSesion("1234567890", "123"));
+            System.out.println(gestorUsuarios.iniciarSesion("1244567890", "x"));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        
+        System.out.println("--------[ fin iniciar sesion usuario ]-----------");
     }
     
     public static void pruebaActualizacionUsuario(GestorUsuarios gestorUsuarios) {
+        
+        System.out.println("--------[ actualizar usuario ]-----------");
+        
         try {
-            UsuarioDTO usuario = gestorUsuarios.consultarUsuarioPorNumeroTelefono("1234597890");
+            UsuarioDTO usuario = gestorUsuarios.consultarUsuarioPorNumeroTelefono("1244567890");
+            
+            if (usuario == null) {
+                throw new Exception("el usuario no existe....");
+            }
+            
+            System.out.println("AQUI!!!");
             usuario.setApellido("Lopez");
+            
             gestorUsuarios.actualizarUsuario(usuario);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        
+        System.out.println("--------[ fin actualizar usuario ]-----------");
     }
     
     public static void pruebaEliminarUsuario(GestorUsuarios gestorUsuarios) {
+        
+        System.out.println("--------[ eliminar usuario ]-----------");
+        
         try {
-            gestorUsuarios.eliminarUsuario(5l);
+            gestorUsuarios.eliminarUsuario(8l);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        
+        System.out.println("--------[ fin eliminar usuario ]-----------");
     }
     
 }

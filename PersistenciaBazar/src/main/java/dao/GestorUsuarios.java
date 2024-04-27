@@ -58,11 +58,6 @@ public class GestorUsuarios implements IGestorUsuarios {
             throw new DAOException("El id del usuario dado es null");
         }
 
-        if (id < 1) {
-            throw new DAOException("El id del usuario dado debe ser un numero"
-                    + " positivo mayor a 0");
-        }
-
         try {
             Usuario usuario = em.find(Usuario.class, id);
             if (usuario != null) {
@@ -74,6 +69,11 @@ public class GestorUsuarios implements IGestorUsuarios {
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al consultar el usuario por id");
         }
     }
@@ -88,14 +88,9 @@ public class GestorUsuarios implements IGestorUsuarios {
      */
     @Override
     public UsuarioDTO consultarUsuarioPorNumeroTelefono(String telefono) throws DAOException {
+        
         if (telefono == null) {
             throw new DAOException("El telefono del usuario dado es null");
-        }
-
-        Pattern validaNumero = Pattern.compile("\\d{10}");
-        if (!validaNumero.matcher(telefono).matches()) {
-            throw new DAOException("El telefono ingresado no es de un "
-                    + "formato valido");
         }
 
         try {
@@ -104,9 +99,10 @@ public class GestorUsuarios implements IGestorUsuarios {
             consulta.setParameter("telefono", telefono);
             return consulta.getSingleResult().toDTO();
         } catch (NoResultException nre) {
+            
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
-                    Level.SEVERE, nre.getMessage());
+                    Level.SEVERE, nre.getMessage() + "AQUO!!!!");
             */
             return null;
         }catch (Exception ex) {
@@ -114,6 +110,11 @@ public class GestorUsuarios implements IGestorUsuarios {
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al consultar el usuario por telefono");
         }
     }
@@ -155,6 +156,11 @@ public class GestorUsuarios implements IGestorUsuarios {
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al registrar el usuario");
         }
     }
@@ -168,6 +174,7 @@ public class GestorUsuarios implements IGestorUsuarios {
      */
     @Override
     public void actualizarUsuario(UsuarioDTO usuario) throws DAOException {
+        
         if (usuario == null) {
             throw new DAOException("El usuario no existe en la base de datos");
         }
@@ -185,8 +192,14 @@ public class GestorUsuarios implements IGestorUsuarios {
             em.getTransaction().commit();
 
         } catch (Exception ex) {
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
+            */
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al actualizar el usuario");
         }
     }
@@ -222,6 +235,11 @@ public class GestorUsuarios implements IGestorUsuarios {
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Ocurrio un error al eliminar al usuario");
         }
     }
@@ -248,10 +266,10 @@ public class GestorUsuarios implements IGestorUsuarios {
         }
 
         try {
-            TypedQuery<Usuario> query = em.createNamedQuery(
-                    "inicioSesion", Usuario.class);
-            query.setParameter("telefono", telefono);
             
+            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.telefono LIKE :telefono", Usuario.class);
+            query.setParameter("telefono", "%" + telefono + "%");
+                    
             Usuario usuarioEntity = query.getSingleResult();
             
             if (!usuarioEntity.getContrasena().equals(contrasena)) {
@@ -266,10 +284,16 @@ public class GestorUsuarios implements IGestorUsuarios {
             */
             throw new DAOException("No existe un usuario con el telefono proporcionado");
         } catch (Exception ex) {
+            
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
             */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al intentar iniciar sesion");
         }
     }

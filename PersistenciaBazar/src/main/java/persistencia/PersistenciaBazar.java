@@ -4,6 +4,7 @@ package persistencia;
 import dao.GestorProductos;
 import dao.GestorUsuarios;
 import dao.GestorVentas;
+import java.time.LocalDate;
 import java.util.List;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.UsuarioDTO;
@@ -154,6 +155,51 @@ public class PersistenciaBazar implements IPersistenciaBazar {
         } catch (DAOException ex) {
             throw new PersistenciaBazarException("Ha ocurrido un error al buscar el producto, intente de nuevo mas tarde");
         }
+    }
+
+    @Override
+    public void registrarProducto(ProductoDTO producto) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void actualizarProducto(ProductoDTO producto) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void eliminarProducto(String codigoInterno) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public VentaDTO consultarVenta(Long idVenta) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<VentaDTO> consultarVentasTodas() throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<VentaDTO> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public List<VentaDTO> consultarVentasDeUsuario(Long idUsuario) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void actualizarVenta(VentaDTO venta) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void eliminarVenta(Long idVenta) throws PersistenciaBazarException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }
