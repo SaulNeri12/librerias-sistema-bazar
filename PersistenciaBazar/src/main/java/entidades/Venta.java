@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import objetosNegocio.DetalleVentaDTO;
@@ -26,7 +27,11 @@ import objetosNegocio.VentaDTO;
  * @author Juventino López García
  */
 @Entity
-@Table(name = "venta")
+@Table(name = "ventas")
+@NamedQuery(name = "consultaVentaID", query = "SELECT v FROM Venta v WHERE v.id = :id")
+@NamedQuery(name = "consultaVentasUsuario", query = "SELECT v FROM Venta v WHERE v.usuario.id = :id")
+@NamedQuery(name = "consultaVentasPeriodo", query = "SELECT v FROM Venta v WHERE v.fechaVenta BETWEEN :fechaInicio AND :fechaFin")
+@NamedQuery(name = "consultaVentas", query = "SELECT v FROM Venta v")
 public class Venta implements Serializable {
 
     private static final long serialVersionUID = 1L;

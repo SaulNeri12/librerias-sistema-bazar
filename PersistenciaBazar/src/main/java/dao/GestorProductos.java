@@ -3,6 +3,7 @@ package dao;
 import conexion.EntityManagerSingleton;
 import entidades.Producto;
 import entidades.convertidor.ConvertidorBazarDTO;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,13 @@ public class GestorProductos implements IGestorProductos {
 
             return productosDTO;
         } catch (Exception ex) {
+            
+            //System.out.println(ex.getClass());
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al consultar todos los productos");
         }
     }
@@ -156,6 +164,11 @@ public class GestorProductos implements IGestorProductos {
             em.persist(entidadProducto);
             em.getTransaction().commit();
         } catch (Exception ex) {
+            
+            if (ex.getClass() == SQLIntegrityConstraintViolationException.class) {
+                throw new DAOException("El producto que intentas registrar, ya fue registrado anteriormente");
+            }
+            
             throw new DAOException("Error al registrar el producto");
         }
     }
@@ -257,13 +270,24 @@ public class GestorProductos implements IGestorProductos {
             que el producto no existe o no esta registrado
             */
             
+            ProductoDTO productoEncontrado = this.consultarProducto(producto.getCodigoInterno());
+            
+            if (productoEncontrado == null) {
+                throw new DAOException("No se encontro el producto a actualizar");
+            }
             
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-            Producto entidadProducto = convertidor.convertirProductoDTO(producto);
+            Producto entidadProducto = convertidor.convertirProductoDTO(productoEncontrado);
+            entidadProducto.setFechaRegistro(productoEncontrado.getFechaRegistro());
             em.getTransaction().begin();
             em.merge(entidadProducto);
             em.getTransaction().commit();
         } catch (Exception ex) {
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al actualizar el producto");
         }
 
@@ -299,7 +323,12 @@ public class GestorProductos implements IGestorProductos {
                 throw new DAOException("El producto no se encuentra en la base de datos");
             }
         } catch (Exception ex) {
-            throw new DAOException("Error al eliminar el producto: " + ex.getMessage());
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
+            throw new DAOException("Error al eliminar el producto: ");
         }
     }
 

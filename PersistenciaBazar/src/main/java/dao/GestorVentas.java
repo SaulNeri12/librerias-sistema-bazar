@@ -3,13 +3,16 @@ package dao;
 import conexion.EntityManagerSingleton;
 import entidades.Usuario;
 import entidades.Venta;
-
+import static entidades.convertidor.ConvertidorBazarDTO.convertirVentaDTO;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.VentaDTO;
-
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorVentas;
 
@@ -23,19 +26,13 @@ public class GestorVentas implements IGestorVentas {
     private static GestorVentas instance;
     private final EntityManager em;
 
-    public GestorVentas(EntityManager em) {
-        this.em = EntityManagerSingleton.getInstance().getEntityManager();
-
-    }
-
-    public GestorVentas() {
+    private GestorVentas() {
         this.em = EntityManagerSingleton.getInstance().getEntityManager();
     }
 
     public static GestorVentas getInstance() {
-        if (instance == null)
-        {
-            instance = new GestorVentas(EntityManagerSingleton.getInstance().getEntityManager());
+        if (instance == null) {
+            instance = new GestorVentas();
         }
 
         return instance;
@@ -50,18 +47,23 @@ public class GestorVentas implements IGestorVentas {
      */
     @Override
     public VentaDTO consultarVenta(Long id) throws DAOException {
-        if (id == null)
-        {
+        
+        if (id == null) {
             throw new DAOException("El ID de la venta dado es null");
         }
 
-        try
-        {
-            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT v FROM venta v WHERE v.id = :id", VentaDTO.class);
+        try {
+            TypedQuery<Venta> consulta = em.createNamedQuery(
+                    "consultaVentaID", Venta.class);
             consulta.setParameter("id", id);
-            return consulta.getSingleResult();
-        } catch (Exception ex)
-        {
+            return consulta.getSingleResult().toDTO();
+        } catch (NoResultException ex) {   
+            return null;
+        } catch (Exception ex) {
+            /*
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al consultar la venta por id");
         }
     }
@@ -70,25 +72,35 @@ public class GestorVentas implements IGestorVentas {
      * Consulta las ventas registrados en la base de datos que coincidan con el
      * id dado.
      *
-     * @param id Id de la venta a buscar.
+     * @param id Id del usuario a buscar.
      * @return Lista de ventas registrados en la base de datos que coinciden con
      * el nombre dado.
      * @throws DAOException Si ocurre un error al consultar los proveedores.
      */
     @Override
     public List<VentaDTO> consultarVentasDeUsuario(Long id) throws DAOException {
-        if (id == null)
-        {
+        if (id == null) {
             throw new DAOException("El ID del usuario dado es null");
         }
 
-        try
-        {
-            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT v FROM venta v WHERE v.usuario.id = :id", VentaDTO.class);
+        try {
+            TypedQuery<Venta> consulta = em.createNamedQuery(
+                    "consultaVentasUsuario", Venta.class);
             consulta.setParameter("id", id);
-            return consulta.getResultList();
-        } catch (Exception ex)
-        {
+            List<Venta> ventas = consulta.getResultList();
+            
+            List<VentaDTO> ventaDTOs = new ArrayList<>();
+            for (Venta venta : ventas) {
+                ventaDTOs.add(venta.toDTO());
+            }
+            return ventaDTOs;
+        } catch (NoResultException ex) {   
+            return null;
+        } catch (Exception ex) {
+            /*
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al consultar las ventas");
         }
     }
@@ -105,25 +117,32 @@ public class GestorVentas implements IGestorVentas {
      */
     @Override
     public List<VentaDTO> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws DAOException {
-        if (fechaInicio == null)
-        {
+        if (fechaInicio == null) {
             throw new DAOException("La fecha de inicio dada es null");
         }
 
-        if (fechaFin == null)
-        {
-            throw new DAOException("La fecha fin dada es null");
+        if (fechaFin == null) {
+            throw new DAOException("La fecha de fin dada es null");
         }
 
-        try
-        {
-
-            TypedQuery<VentaDTO> consulta = em.createQuery("SELECT new objetosNegocio.VentaDTO(V.id, V.fechaVenta, v.montoToal) FROM venta v WHERE v.fechaVenta BETWEEN :fechaInicio AND :fechaFin", VentaDTO.class);
+        try {
+            TypedQuery<Venta> consulta = em.createNamedQuery(
+                    "consultaVentasPeriodo", Venta.class);
             consulta.setParameter("fechaInicio", fechaInicio);
             consulta.setParameter("fechaFin", fechaFin);
-            return consulta.getResultList();
-        } catch (Exception ex)
-        {
+            List<Venta> ventas = consulta.getResultList();
+            
+            List<VentaDTO> ventaDTOs = new ArrayList<>();
+            for (Venta venta : ventas) {
+                ventaDTOs.add(venta.toDTO());
+            }
+            return ventaDTOs;
+        } catch (NoResultException ex) {   
+            return null;
+        } catch (Exception ex) {
+            
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
             throw new DAOException("Error al consultar las ventas por periodo");
         }
 
@@ -138,12 +157,22 @@ public class GestorVentas implements IGestorVentas {
     @Override
     public List<VentaDTO> consultarTodos() throws DAOException {
 
-        try
-        {
-            TypedQuery<VentaDTO> consulta = em.createNamedQuery("ProveedorDTO.findAll", VentaDTO.class);
-            return consulta.getResultList();
-        } catch (Exception ex)
-        {
+        try {
+            TypedQuery<Venta> consulta = em.createNamedQuery(
+                    "consultaVentas", Venta.class);
+            List<Venta> ventas = consulta.getResultList();
+            List<VentaDTO> ventaDTOs = new ArrayList<>();
+            for (Venta venta : ventas) {
+                ventaDTOs.add(venta.toDTO());
+            }
+            return ventaDTOs;
+        } catch (NoResultException ex) {   
+            return null;
+        } catch (Exception ex) {
+            /*
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al consultar las ventas");
         }
     }
@@ -152,23 +181,52 @@ public class GestorVentas implements IGestorVentas {
      * Registra un nuevo usuario en la base de datos.
      *
      * @param venta La venta a registrar
-     * @throws DAOExeption si la venta dada es null, si no se pudo registrar la
+     * @throws DAOException si la venta dada es null, si no se pudo registrar la
      * venta
      */
     @Override
     public void registrarVenta(VentaDTO venta) throws DAOException {
-        if (venta == null)
-        {
+        if (venta == null) {
             throw new DAOException("La venta dada es null");
         }
 
-        try
-        {
+        /*
+        TODO: CUANDO SE REALIZA UNA VENTA, SE DEBE VERIFICAR SI EL OBJETO VENTA
+        DTO TIENE DATOS ESENCIALES EN NULO (USUARIO, LISTA DE DETALLE DE VENTAS).
+        
+        ADEMAS SE DEBE DE CALCULAR EL MONTO TOTAL DE LA VENTA EN ESTE MISMO METODO,
+        NO TE PUEDES FIAR DE ASIGNARLE EL MONTO TOTAL CON EL METODO .setMontoTotal(), 
+        SE DEBE ITERAR SOBRE CADA UNO DE LOS DETALLES DE VENTA PARA QUE SE SUME
+        LA OPERACION DE (DETALLE_PRODUCTO.PRECIO * DETALLE_PRODUCTO.CANTIDAD), POR 
+        CADA UNO DE LOS DETALLES DE PRODUCTO, Y DE AHI SACAR EL TOTAL.
+        
+            En caso de que detalles_venta fuera NULL, arrojar un DAOException con:
+                "Esta venta no contiene detalles de venta" o algo parecido que describa el error...
+        
+        ADEMAS, SE DEBE VERIFICAR SI EL USUARIO NO ES NULO, SI EL USUARIO ES NULO
+        DEBE DEVOLVER UNA EXCEPCION DAOEXCEPTION QUE INDIQUE EL ERROR.
+                "Esta venta no tiene usuario a cargo" o algo que describa mejor el error...
+        
+        DEBES ESTAR SEGURO DE QUE CADA UNO DE LOS VALORES NO SEAN NULL YA QUE SIN 
+        DATOS CORRECTOS, NO FUNCIONA CORRECTAMENTE EL PROGRAMA EN LA INTERFAZ...
+        */
+        
+        try {
+            Venta ventaEntity = convertirVentaDTO(venta);
+
             em.getTransaction().begin();
-            em.persist(venta);
+            em.persist(ventaEntity);
             em.getTransaction().commit();
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
+            /*
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al registrar la venta");
         }
     }
@@ -182,23 +240,46 @@ public class GestorVentas implements IGestorVentas {
      */
     @Override
     public void actualizarVenta(VentaDTO venta) throws DAOException {
-        try
-        {
+        try {
             Venta ventaEntity = em.find(Venta.class, venta.getId());
-            if (ventaEntity == null)
-            {
+            
+            if (ventaEntity == null) {
                 throw new DAOException("La venta no se encuentra registrada");
             }
+            
+            /*
+        TODO: CUANDO SE REALIZA UNA VENTA, SE DEBE VERIFICAR SI EL OBJETO VENTA
+        DTO TIENE DATOS ESENCIALES EN NULO (USUARIO, LISTA DE DETALLE DE VENTAS).
+        
+        ADEMAS SE DEBE DE CALCULAR EL MONTO TOTAL DE LA VENTA EN ESTE MISMO METODO,
+        NO TE PUEDES FIAR DE ASIGNARLE EL MONTO TOTAL CON EL METODO .setMontoTotal(), 
+        SE DEBE ITERAR SOBRE CADA UNO DE LOS DETALLES DE VENTA PARA QUE SE SUME
+        LA OPERACION DE (DETALLE_PRODUCTO.PRECIO * DETALLE_PRODUCTO.CANTIDAD), POR 
+        CADA UNO DE LOS DETALLES DE PRODUCTO, Y DE AHI SACAR EL TOTAL.
+        
+            En caso de que detalles_venta fuera NULL, arrojar un DAOException con:
+                "Esta venta no contiene detalles de venta" o algo parecido que describa el error...
+        
+        ADEMAS, SE DEBE VERIFICAR SI EL USUARIO NO ES NULO, SI EL USUARIO ES NULO
+        DEBE DEVOLVER UNA EXCEPCION DAOEXCEPTION QUE INDIQUE EL ERROR.
+                "Esta venta no tiene usuario a cargo" o algo que describa mejor el error...
+        
+        DEBES ESTAR SEGURO DE QUE CADA UNO DE LOS VALORES NO SEAN NULL YA QUE SIN 
+        DATOS CORRECTOS, NO FUNCIONA CORRECTAMENTE EL PROGRAMA EN LA INTERFAZ...
+            
+  
+            (CHECAR QUE SE GUARDE LA MISMA FECHA CON LA QUE SE REGISTRO LA VENTA, NO ACTUALIZARLA
+            AL MOMENTO DE LA MODIFICACION NI DEJARLA EN NULL)
+        */
+            
             ventaEntity.setNombreCliente(venta.getNombreCliente());
             ventaEntity.setApellidoCliente(venta.getApellidoCliente());
             ventaEntity.setMontoToal(venta.getMontoTotal());
             ventaEntity.setMetodoPago(Venta.MetodoPago.valueOf(venta.getMetodoPago().name()));
 
-            if (venta.getUsuario().getId() != null)
-            {
+            if (venta.getUsuario().getId() != null) {
                 Usuario usuario = em.find(Usuario.class, venta.getUsuario().getId());
-                if (usuario == null)
-                {
+                if (usuario == null) {
                     throw new DAOException("El usuario con ID " + venta.getUsuario().getId() + " no existe");
                 }
                 ventaEntity.setUsuario(usuario);
@@ -207,12 +288,19 @@ public class GestorVentas implements IGestorVentas {
             em.merge(ventaEntity);
             em.getTransaction().commit();
 
-        } catch (Exception ex)
-        {
-            if (em.getTransaction().isActive())
-            {
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            /*
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
             throw new DAOException("Error al actualizar la venta");
         }
     }
@@ -220,33 +308,41 @@ public class GestorVentas implements IGestorVentas {
     /**
      * Elimina una venta en la base de datos.
      *
-     * @param idVenta El id de la venta que se desea eliminar.
+     * @param id El id de la venta que se desea eliminar.
      * @throws DAOException Si la venta dada es null, si no se pudo eliminar la
      * venta.
      */
     @Override
-    public void eliminarVenta(Long idVenta) throws DAOException {
-        if (idVenta == null)
-        {
+    public void eliminarVenta(Long id) throws DAOException {
+        
+        if (id == null) {
             throw new DAOException("El ID de la venta dado es null");
         }
 
-        try
-        {
-            VentaDTO venta = consultarVenta(idVenta);
-         
+        try {
+            VentaDTO venta = consultarVenta(id);
+
             if (venta == null) {
                 throw new DAOException("No se encontro la venta a eliminar");
             }
-            
-            // TODO: Convertir...
-            
+
             em.getTransaction().begin();
             em.remove(venta);
             em.getTransaction().commit();
-        } catch (Exception ex)
-        {
-            throw new DAOException("Error al eliminar la venta");
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            /*
+            Logger.getLogger(GestorUsuarios.class.getName()).log(
+                    Level.SEVERE, ex.getMessage());
+            */
+            
+            if (ex.getClass() == DAOException.class) {
+                throw new DAOException(ex.getMessage());
+            }
+            
+            throw new DAOException("Error al actualizar la venta");
         }
     }
 
