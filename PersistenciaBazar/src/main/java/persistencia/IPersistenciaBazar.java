@@ -1,7 +1,8 @@
 
-package persistenciaBazar;
+package persistencia;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.UsuarioDTO;
@@ -36,7 +37,7 @@ public interface IPersistenciaBazar {
     
     public List<VentaDTO> consultarVentasTodas() throws PersistenciaBazarException;
     
-    public List<VentaDTO> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaBazarException;
+    public List<VentaDTO> consultarVentasPorPeriodo(LocalDateTime fechaInicio, LocalDateTime fechaFin) throws PersistenciaBazarException;
     
     public List<VentaDTO> consultarVentasDeUsuario(Long idUsuario) throws PersistenciaBazarException;
     
@@ -49,6 +50,15 @@ public interface IPersistenciaBazar {
     
     
     
+    public UsuarioDTO consultarUsuario(Long idUsuario) throws PersistenciaBazarException;
+    
+    public UsuarioDTO consultarUsuarioPorNumeroTelefono(String telefono) throws PersistenciaBazarException;;
+    
+    public void registrarUsuario(UsuarioDTO usuario) throws PersistenciaBazarException;
+    
+    public void actualizarUsuario(UsuarioDTO usuario) throws PersistenciaBazarException;
+    
+    public void eliminarUsuario(Long idUsuario) throws PersistenciaBazarException;
     
     public UsuarioDTO iniciarSesionUsuario(String telefono, String contrasena) throws PersistenciaBazarException;
 }

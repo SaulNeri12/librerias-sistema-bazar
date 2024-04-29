@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -60,7 +61,8 @@ public class Venta implements Serializable {
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
     
-    @OneToMany(mappedBy = "venta")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "venta_id")
     private List<DetalleVenta> detalleVentas;
     
     public static enum MetodoPago {

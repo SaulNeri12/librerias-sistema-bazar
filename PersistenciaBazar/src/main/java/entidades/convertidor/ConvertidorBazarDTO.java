@@ -90,8 +90,7 @@ public class ConvertidorBazarDTO {
         d.setCantidad(detalleDTO.getCantidad());
         d.setPrecioProducto(detalleDTO.getPrecioProducto());
         d.setProducto(ConvertidorBazarDTO.convertirProductoDTO(detalleDTO.getProducto()));
-        d.setVenta(ConvertidorBazarDTO.convertirVentaDTO(detalleDTO.getVenta()));
-
+        
         return d;
     }
 

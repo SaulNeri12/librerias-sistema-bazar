@@ -4,10 +4,12 @@ import conexion.EntityManagerSingleton;
 import entidades.DetalleVenta;
 import entidades.Usuario;
 import entidades.Venta;
+import entidades.convertidor.ConvertidorBazarDTO;
 import static entidades.convertidor.ConvertidorBazarDTO.convertirVentaDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,7 +61,14 @@ public class GestorVentas implements IGestorVentas {
             TypedQuery<Venta> consulta = em.createNamedQuery(
                     "consultaVentaID", Venta.class);
             consulta.setParameter("id", id);
-            return consulta.getSingleResult().toDTO();
+           
+            Venta venta = consulta.getSingleResult();
+            
+            if (venta == null) {
+                return null;
+            }
+            
+            return venta.toDTO();
         } catch (NoResultException ex) {   
             return null;
         } catch (Exception ex) {
@@ -92,6 +101,10 @@ public class GestorVentas implements IGestorVentas {
             consulta.setParameter("id", id);
             List<Venta> ventas = consulta.getResultList();
             
+            if (ventas.isEmpty()) {
+                return null;
+            }
+            
             List<VentaDTO> ventaDTOs = new ArrayList<>();
             for (Venta venta : ventas) {
                 ventaDTOs.add(venta.toDTO());
@@ -119,7 +132,7 @@ public class GestorVentas implements IGestorVentas {
      * @throws DAOException Si ocurre un error al consultar las ventas.
      */
     @Override
-    public List<VentaDTO> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws DAOException {
+    public List<VentaDTO> consultarVentasPorPeriodo(LocalDateTime fechaInicio, LocalDateTime fechaFin) throws DAOException {
         if (fechaInicio == null) {
             throw new DAOException("La fecha de inicio dada es null");
         }
@@ -131,14 +144,21 @@ public class GestorVentas implements IGestorVentas {
         try {
             TypedQuery<Venta> consulta = em.createNamedQuery(
                     "consultaVentasPeriodo", Venta.class);
+            
             consulta.setParameter("fechaInicio", fechaInicio);
-            consulta.setParameter("fechaFin", fechaFin);
+            consulta.setParameter("fechaFin", fechaInicio);
+            
             List<Venta> ventas = consulta.getResultList();
+            
+            if (ventas.isEmpty()) {
+                return null;
+            }
             
             List<VentaDTO> ventaDTOs = new ArrayList<>();
             for (Venta venta : ventas) {
                 ventaDTOs.add(venta.toDTO());
             }
+            
             return ventaDTOs;
         } catch (NoResultException ex) {   
             return null;
@@ -227,6 +247,9 @@ public class GestorVentas implements IGestorVentas {
             em.persist(ventaEntity);
             em.getTransaction().commit();
         } catch (Exception ex) {
+            
+            System.out.println(ex.getMessage());
+            
             if (ex.getClass() == DAOException.class) {
                 throw new DAOException(ex.getMessage());
             }
@@ -245,6 +268,11 @@ public class GestorVentas implements IGestorVentas {
     @Override
     public void actualizarVenta(VentaDTO venta) throws DAOException {
         try {
+            
+            if (venta == null || venta.getId() == null) {
+                throw new DAOException("La venta dada es null");
+            }
+            
             Venta ventaEntity = em.find(Venta.class, venta.getId());
             
             if (ventaEntity == null) {
@@ -272,6 +300,8 @@ public class GestorVentas implements IGestorVentas {
                 montoTotal += producto.getPrecioProducto() * producto.getCantidad();
             }
             
+            Long idVenta = ventaEntity.getId();
+            
             ventaEntity.setNombreCliente(venta.getNombreCliente());
             ventaEntity.setApellidoCliente(venta.getApellidoCliente());
             ventaEntity.setMontoTotal(montoTotal);
@@ -286,7 +316,23 @@ public class GestorVentas implements IGestorVentas {
                 }
                 ventaEntity.setUsuario(usuario);
             }
+            
+            Venta ventaPreparada = ConvertidorBazarDTO.convertirVentaDTO(venta);
+            ventaPreparada.setId(idVenta);
+            ventaPreparada.setMontoTotal(montoTotal);
 
+            /*
+                Cuando se actualiza una venta, no se actualizan los detalles de venta
+                es decir, si una venta1 tiene 5 detalles de venta, y se quiere actualizar
+                la misma, que ahora tiene 2 detalles de venta, los detalles siguen igual.
+                Siguen siendo 5 los registrados para esa venta...
+            
+                TODO: ELIMINAR TODOS LOS DETALLES DE LA VENTA PARA QUE LOS NUEVOS SE PUEDAN
+                INSERTAR Y TOMAR SU LUGAR...
+            */
+            
+            
+            em.getTransaction().begin();
             em.merge(ventaEntity);
             em.getTransaction().commit();
 

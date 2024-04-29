@@ -43,6 +43,7 @@ public class VentaDTO {
      * 
      */
     public VentaDTO(String nombreCliente, String apellidoCliente, float montoTotal, MetodoPago metodoPago, UsuarioDTO usuario, List<DetalleVentaDTO> productosVendidos, LocalDateTime fecha) {
+        super();
         this.nombreCliente = nombreCliente;
         this.apellidoCliente = apellidoCliente;
         this.montoTotal = montoTotal;
