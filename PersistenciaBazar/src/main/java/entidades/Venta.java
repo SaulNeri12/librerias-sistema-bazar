@@ -95,12 +95,12 @@ public class Venta implements Serializable {
         this.apellidoCliente = apellidoCliente;
     }
 
-    public Float getMontoToal() {
+    public Float getMontoTotal() {
         return montoTotal;
     }
 
-    public void setMontoToal(Float montoToal) {
-        this.montoTotal = montoToal;
+    public void setMontoTotal(Float montoTotal) {
+        this.montoTotal = montoTotal;
     }
 
     public MetodoPago getMetodoPago() {

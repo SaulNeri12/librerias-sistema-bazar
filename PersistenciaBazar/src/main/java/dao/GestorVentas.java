@@ -1,10 +1,12 @@
 package dao;
 
 import conexion.EntityManagerSingleton;
+import entidades.DetalleVenta;
 import entidades.Usuario;
 import entidades.Venta;
 import static entidades.convertidor.ConvertidorBazarDTO.convertirVentaDTO;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,6 +14,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import objetosNegocio.DetalleVentaDTO;
 import objetosNegocio.VentaDTO;
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorVentas;
@@ -141,8 +144,10 @@ public class GestorVentas implements IGestorVentas {
             return null;
         } catch (Exception ex) {
             
+            /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
+            */
             throw new DAOException("Error al consultar las ventas por periodo");
         }
 
@@ -186,43 +191,42 @@ public class GestorVentas implements IGestorVentas {
      */
     @Override
     public void registrarVenta(VentaDTO venta) throws DAOException {
+        
         if (venta == null) {
             throw new DAOException("La venta dada es null");
         }
-
-        /*
-        TODO: CUANDO SE REALIZA UNA VENTA, SE DEBE VERIFICAR SI EL OBJETO VENTA
-        DTO TIENE DATOS ESENCIALES EN NULO (USUARIO, LISTA DE DETALLE DE VENTAS).
         
-        ADEMAS SE DEBE DE CALCULAR EL MONTO TOTAL DE LA VENTA EN ESTE MISMO METODO,
-        NO TE PUEDES FIAR DE ASIGNARLE EL MONTO TOTAL CON EL METODO .setMontoTotal(), 
-        SE DEBE ITERAR SOBRE CADA UNO DE LOS DETALLES DE VENTA PARA QUE SE SUME
-        LA OPERACION DE (DETALLE_PRODUCTO.PRECIO * DETALLE_PRODUCTO.CANTIDAD), POR 
-        CADA UNO DE LOS DETALLES DE PRODUCTO, Y DE AHI SACAR EL TOTAL.
+        List<DetalleVentaDTO> productosVendidos = venta.getProductosVendidos();
         
-            En caso de que detalles_venta fuera NULL, arrojar un DAOException con:
-                "Esta venta no contiene detalles de venta" o algo parecido que describa el error...
+        if (productosVendidos == null || productosVendidos.isEmpty()) {
+            throw new DAOException("La venta no cuenta con detalles (productos comprados)");
+        }
         
-        ADEMAS, SE DEBE VERIFICAR SI EL USUARIO NO ES NULO, SI EL USUARIO ES NULO
-        DEBE DEVOLVER UNA EXCEPCION DAOEXCEPTION QUE INDIQUE EL ERROR.
-                "Esta venta no tiene usuario a cargo" o algo que describa mejor el error...
+        if (venta.getUsuario() == null || venta.getUsuario().getId() == null) {
+            throw new DAOException("La venta no cuenta el usuario a cargo de la venta");
+        }
         
-        DEBES ESTAR SEGURO DE QUE CADA UNO DE LOS VALORES NO SEAN NULL YA QUE SIN 
-        DATOS CORRECTOS, NO FUNCIONA CORRECTAMENTE EL PROGRAMA EN LA INTERFAZ...
-        */
+        Float montoTotal = 0.0f;
         
+        // se calcula el monto total de la compra en base a los productos comprados
+        for (DetalleVentaDTO producto: productosVendidos) {
+            if (producto == null) {
+                throw new DAOException("Detalle de venta erroneo");
+            }
+            
+            montoTotal += producto.getPrecioProducto() * producto.getCantidad();
+        }
+             
         try {
             Venta ventaEntity = convertirVentaDTO(venta);
 
+            ventaEntity.setMontoTotal(montoTotal);
+            ventaEntity.setFechaVenta(LocalDateTime.now());
+            
             em.getTransaction().begin();
             em.persist(ventaEntity);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            /*
-            Logger.getLogger(GestorUsuarios.class.getName()).log(
-                    Level.SEVERE, ex.getMessage());
-            */
-            
             if (ex.getClass() == DAOException.class) {
                 throw new DAOException(ex.getMessage());
             }
@@ -247,36 +251,34 @@ public class GestorVentas implements IGestorVentas {
                 throw new DAOException("La venta no se encuentra registrada");
             }
             
-            /*
-        TODO: CUANDO SE REALIZA UNA VENTA, SE DEBE VERIFICAR SI EL OBJETO VENTA
-        DTO TIENE DATOS ESENCIALES EN NULO (USUARIO, LISTA DE DETALLE DE VENTAS).
+            List<DetalleVentaDTO> productosVendidos = venta.getProductosVendidos();
         
-        ADEMAS SE DEBE DE CALCULAR EL MONTO TOTAL DE LA VENTA EN ESTE MISMO METODO,
-        NO TE PUEDES FIAR DE ASIGNARLE EL MONTO TOTAL CON EL METODO .setMontoTotal(), 
-        SE DEBE ITERAR SOBRE CADA UNO DE LOS DETALLES DE VENTA PARA QUE SE SUME
-        LA OPERACION DE (DETALLE_PRODUCTO.PRECIO * DETALLE_PRODUCTO.CANTIDAD), POR 
-        CADA UNO DE LOS DETALLES DE PRODUCTO, Y DE AHI SACAR EL TOTAL.
-        
-            En caso de que detalles_venta fuera NULL, arrojar un DAOException con:
-                "Esta venta no contiene detalles de venta" o algo parecido que describa el error...
-        
-        ADEMAS, SE DEBE VERIFICAR SI EL USUARIO NO ES NULO, SI EL USUARIO ES NULO
-        DEBE DEVOLVER UNA EXCEPCION DAOEXCEPTION QUE INDIQUE EL ERROR.
-                "Esta venta no tiene usuario a cargo" o algo que describa mejor el error...
-        
-        DEBES ESTAR SEGURO DE QUE CADA UNO DE LOS VALORES NO SEAN NULL YA QUE SIN 
-        DATOS CORRECTOS, NO FUNCIONA CORRECTAMENTE EL PROGRAMA EN LA INTERFAZ...
-            
-  
-            (CHECAR QUE SE GUARDE LA MISMA FECHA CON LA QUE SE REGISTRO LA VENTA, NO ACTUALIZARLA
-            AL MOMENTO DE LA MODIFICACION NI DEJARLA EN NULL)
-        */
+            if (productosVendidos == null || productosVendidos.isEmpty()) {
+                throw new DAOException("La venta no cuenta con detalles (productos comprados)");
+            }
+
+            if (venta.getUsuario() == null || venta.getUsuario().getId() == null) {
+                throw new DAOException("La venta no cuenta el usuario a cargo de la venta");
+            }
+
+            Float montoTotal = 0.0f;
+
+            // se calcula el monto total de la compra en base a los productos comprados
+            for (DetalleVentaDTO producto: productosVendidos) {
+                if (producto == null) {
+                    throw new DAOException("Detalle de venta erroneo");
+                }
+
+                montoTotal += producto.getPrecioProducto() * producto.getCantidad();
+            }
             
             ventaEntity.setNombreCliente(venta.getNombreCliente());
             ventaEntity.setApellidoCliente(venta.getApellidoCliente());
-            ventaEntity.setMontoToal(venta.getMontoTotal());
+            ventaEntity.setMontoTotal(montoTotal);
             ventaEntity.setMetodoPago(Venta.MetodoPago.valueOf(venta.getMetodoPago().name()));
-
+            
+            ventaEntity.setFechaVenta(LocalDateTime.now());
+            
             if (venta.getUsuario().getId() != null) {
                 Usuario usuario = em.find(Usuario.class, venta.getUsuario().getId());
                 if (usuario == null) {
