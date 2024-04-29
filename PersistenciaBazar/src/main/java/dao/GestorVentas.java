@@ -368,7 +368,7 @@ public class GestorVentas implements IGestorVentas {
         }
 
         try {
-            VentaDTO venta = consultarVenta(id);
+            Venta venta = em.find(Venta.class, id);
 
             if (venta == null) {
                 throw new DAOException("No se encontro la venta a eliminar");
@@ -378,6 +378,9 @@ public class GestorVentas implements IGestorVentas {
             em.remove(venta);
             em.getTransaction().commit();
         } catch (Exception ex) {
+            
+            //System.out.println("ERROR >>>>>>: " + ex.getMessage());
+            
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
@@ -390,7 +393,7 @@ public class GestorVentas implements IGestorVentas {
                 throw new DAOException(ex.getMessage());
             }
             
-            throw new DAOException("Error al actualizar la venta");
+            throw new DAOException("Error al eliminar la venta");
         }
     }
 

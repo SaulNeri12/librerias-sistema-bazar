@@ -171,6 +171,12 @@ public class PersistenciaBazarPrueba2 {
             Logger.getLogger(PersistenciaBazarPrueba2.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        try {
+            persistencia.eliminarVenta(1l);
+            System.out.println("Venta eliminada!!!");
+        } catch (PersistenciaBazarException ex) {
+            Logger.getLogger(PersistenciaBazarPrueba2.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
     }
