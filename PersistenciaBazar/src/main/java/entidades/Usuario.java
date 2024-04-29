@@ -14,17 +14,21 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import objetosNegocio.UsuarioDTO;
 
 /**
- * 
+ * Clase de entidad con a información de usuarios en la base de datos
  * @author Juventino López García
  */
 @Entity
 @Table(name = "usuarios")
+@NamedQuery(name = "consultaUsuarioID", query = "SELECT u FROM Usuario u WHERE u.id = :id")
+@NamedQuery(name = "consultaUsuarioNumTelefono", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono")
+@NamedQuery(name = "inicioSesion", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono")
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -151,6 +155,7 @@ public class Usuario implements Serializable {
         u.setContrasena(contrasenha);
         u.setFechaContratacion(fechaContratacion);
         u.setPuesto(UsuarioDTO.Puesto.valueOf(this.puesto.name()));
+        u.setDireccion(direccion.toDTO());
         
         return u;
     }
