@@ -55,9 +55,9 @@ public class GestorProveedores implements IGestorProveedores {
             }
             // Convertir las entidades Proveedor a DTOs
             List<ProveedorDTO> proveedoresDTO = new ArrayList<>();
-            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            
             for (Proveedor proveedor : proveedores) {
-                proveedoresDTO.add(convertidor.convertirProveedorAProveedorDTO(proveedor));
+                proveedoresDTO.add(ConvertidorBazarDTO.convertirProveedorAProveedorDTO(proveedor));
             }
 
             return proveedoresDTO;
@@ -87,9 +87,9 @@ public class GestorProveedores implements IGestorProveedores {
             }
             // Convertir las entidades Proveedor a DTOs
             List<ProveedorDTO> proveedoresDTO = new ArrayList<>();
-            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            
             for (Proveedor proveedor : proveedores) {
-                proveedoresDTO.add(convertidor.convertirProveedorAProveedorDTO(proveedor));
+                proveedoresDTO.add(ConvertidorBazarDTO.convertirProveedorAProveedorDTO(proveedor));
             }
 
             return proveedoresDTO;
@@ -113,8 +113,7 @@ public class GestorProveedores implements IGestorProveedores {
             Proveedor proveedor = em.find(Proveedor.class, idProveedor);
             
             if (proveedor != null) {
-                ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-                return convertidor.convertirProveedorAProveedorDTO(proveedor);
+                return ConvertidorBazarDTO.convertirProveedorAProveedorDTO(proveedor);
             } 
             
             return null;
@@ -143,11 +142,8 @@ public class GestorProveedores implements IGestorProveedores {
             if (proveedores.isEmpty()) {
                 return null;
             }
-            
-                        
 
-            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-            return convertidor.convertirProveedorAProveedorDTO(proveedores.get(0));
+            return ConvertidorBazarDTO.convertirProveedorAProveedorDTO(proveedores.get(0));
         } catch (Exception e) {
             throw new DAOException("Error al consultar el proveedor por número de teléfono");
         }
@@ -168,14 +164,11 @@ public class GestorProveedores implements IGestorProveedores {
             throw new DAOException("El proveedor dado es null");
         }
         
-        // TODO: Verificar si existe el proveedor antes de realizar conversiones
-        // por que puede causar un error de NullPointerException cuando se 
-        // quiere sacar atributos o metodos de un objeto que es NULL...
+        if (consultarProveedoresPorNombre(proveedor.getNombre()) != null) {
+            throw new DAOException("Ya existe un proveedor con dicho nombre");
+        }
         
-        ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-        Proveedor entidadProveedor = convertidor.convertirProveedorDTO(proveedor);
-
-        
+        Proveedor entidadProveedor = ConvertidorBazarDTO.convertirProveedorDTO(proveedor);
         
         try {
             em.getTransaction().begin();
@@ -197,17 +190,20 @@ public class GestorProveedores implements IGestorProveedores {
         if (proveedor == null) {
             throw new DAOException("El proveedor dado es null");
         }
+
+        if (proveedor.getId() == null) {
+            throw new DAOException("El proveedor que se intenta actualizar no tiene ID");
+        }
         
-        // TODO: Verificar si existe el proveedor antes de realizar conversiones
-        // por que puede causar un error de NullPointerException cuando se 
-        // quiere sacar atributos o metodos de un objeto que es NULL...
+        if (consultarProveedor(proveedor.getId()) == null) {
+            throw new DAOException("El proveedor que se quiere modificar no esta registrado");
+        }
 
-        ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-        Proveedor entidadProveedor = convertidor.convertirProveedorDTO(proveedor);
-
+        Proveedor entidadProveedor = ConvertidorBazarDTO.convertirProveedorDTO(proveedor);
+        
         try {
             em.getTransaction().begin();
-            entidadProveedor = em.merge(entidadProveedor);
+            em.merge(entidadProveedor);
             em.getTransaction().commit();
         } catch (Exception e) {
             throw new DAOException("Error al actualizar el proveedor");
@@ -226,13 +222,14 @@ public class GestorProveedores implements IGestorProveedores {
             throw new DAOException("El ID del proveedor dado es null");
         }
 
-        Proveedor proveedor = em.find(Proveedor.class, idProveedor);
-        if (proveedor == null) {
+        ProveedorDTO proveedorEncontrado = consultarProveedor(idProveedor);
+        if (proveedorEncontrado == null) {
             throw new DAOException("El proveedor con el ID especificado no existe");
         }
 
         try {
             em.getTransaction().begin();
+            Proveedor proveedor = ConvertidorBazarDTO.convertirProveedorDTO(proveedorEncontrado);
             em.remove(proveedor);
             em.getTransaction().commit();
         } catch (Exception e) {

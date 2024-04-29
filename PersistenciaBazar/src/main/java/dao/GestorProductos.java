@@ -59,6 +59,11 @@ public class GestorProductos implements IGestorProductos {
             // Convertir las entidades Producto a DTOs
             List<ProductoDTO> productosDTO = new ArrayList<>();
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            
+            if (productos.isEmpty()) {
+                return null;
+            }
+            
             for (Producto producto : productos) {
                 productosDTO.add(convertidor.convertirProductoAProductoDTO(producto));
             }
@@ -67,6 +72,8 @@ public class GestorProductos implements IGestorProductos {
             // devolver NULL...
 
             return productosDTO;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             
             //System.out.println(ex.getClass());
@@ -92,23 +99,26 @@ public class GestorProductos implements IGestorProductos {
     @Override
     public List<ProductoDTO> consultarProductosPorNombre(String nombreProducto) throws DAOException {
         try {
-            TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Producto p WHERE p.nombre LIKE :nombre", Producto.class);
-            consulta.setParameter("nombre", "%" + nombreProducto + "%");
+            TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Producto p WHERE p.nombre LIKE LOWER(:nombre)", Producto.class);
+            consulta.setParameter("nombre", "%" + nombreProducto.toLowerCase() + "%");
             List<Producto> productos = consulta.getResultList();
 
             // Convertir las entidades Producto a DTOs
             List<ProductoDTO> productosDTO = new ArrayList<>();
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+            
+            if (productos.isEmpty()) {
+                return null;
+            }
+            
+            
             for (Producto producto : productos) {
                 productosDTO.add(convertidor.convertirProductoAProductoDTO(producto));
             }
-            
-            // TODO: comparar en minusculas....
-            
-            // TODO: Si no hay ningun elemento que se encontro en la consulta
-            // devolver NULL...
 
             return productosDTO;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar productos por nombre");
         }
@@ -123,6 +133,7 @@ public class GestorProductos implements IGestorProductos {
      * dado.
      * @throws DAOException Si ocurre un error al consultar los productos por
      * proveedor.
+     * @deprecated 
      */
     @Override
     public List<ProductoDTO> consultarProductosPorProveedor(ProveedorDTO proveedor) throws DAOException {
@@ -149,24 +160,35 @@ public class GestorProductos implements IGestorProductos {
             throw new DAOException("El producto dado es null");
         }
         
-        ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-        Producto entidadProducto = convertidor.convertirProductoDTO(producto);
+        Producto entidadProducto = ConvertidorBazarDTO.convertirProductoDTO(producto);
 
         entidadProducto.setFechaRegistro(LocalDateTime.now());
         
         try {
             
-            // TODO: Verificar si ya existe el producto
-            //      1. No pueden tener el mismo id
-            //      2. No pueden tener el mismo nombre (comparar en minusculas)
+            if (consultarProducto(entidadProducto.getCodigoInterno()) != null) {
+                throw new DAOException("El producto ya se encuentra registrado");
+            }
+
+            List<ProductoDTO> productosMismoNombre = consultarProductosPorNombre(
+                    entidadProducto
+                    .getNombre()
+                    .toLowerCase()
+            );
+            
+            if (productosMismoNombre != null && !productosMismoNombre.isEmpty()) {
+                throw new DAOException("Ya existe un producto con el mismo nombre");
+            }
             
             em.getTransaction().begin();
             em.persist(entidadProducto);
             em.getTransaction().commit();
+        } catch (NullPointerException ex) {
+            throw new DAOException("El producto no se registro por falta de campos");
         } catch (Exception ex) {
             
             if (ex.getClass() == SQLIntegrityConstraintViolationException.class) {
-                throw new DAOException("El producto que intentas registrar, ya fue registrado anteriormente");
+                throw new DAOException("El producto que se intenta registrar, ya fue registrado anteriormente");
             }
             
             throw new DAOException("Error al registrar el producto");
@@ -194,12 +216,6 @@ public class GestorProductos implements IGestorProductos {
                     "SELECT p FROM Producto p WHERE p.codigoInterno = :codigoInterno", Producto.class);
             consulta.setParameter("codigoInterno", codigoInterno);
             Producto producto = consulta.getSingleResult();
-
-            // TODO: Verificar que el resultado de 'producto' no sea null,
-            // si llegara a ser null puede haber un error cuando se llama al 
-            // metodo de conversion, cuando se intente acceder a un producto
-            // que es null...
-            // Si el producto no se encontro, devolver NULL
             
             // Convertir la entidad Producto a un DTO
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
@@ -263,12 +279,6 @@ public class GestorProductos implements IGestorProductos {
             throw new DAOException("El producto dado es null");
         }
         try {
-
-            /* TODO: Verificar que el producto exista, si ya esta registrado,
-            convertirlo a Entidad y seguir con la actualizacion...
-            Si no esta registrado, debe arrojar un DAOException que indique 
-            que el producto no existe o no esta registrado
-            */
             
             ProductoDTO productoEncontrado = this.consultarProducto(producto.getCodigoInterno());
             
@@ -276,12 +286,13 @@ public class GestorProductos implements IGestorProductos {
                 throw new DAOException("No se encontro el producto a actualizar");
             }
             
-            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-            Producto entidadProducto = convertidor.convertirProductoDTO(productoEncontrado);
+            Producto entidadProducto = ConvertidorBazarDTO.convertirProductoDTO(productoEncontrado);
             entidadProducto.setFechaRegistro(productoEncontrado.getFechaRegistro());
             em.getTransaction().begin();
             em.merge(entidadProducto);
             em.getTransaction().commit();
+        } catch (NullPointerException ex) {
+            throw new DAOException("El producto no se actualizo por falta de IDs");
         } catch (Exception ex) {
             
             if (ex.getClass() == DAOException.class) {
@@ -312,8 +323,7 @@ public class GestorProductos implements IGestorProductos {
 
             if (productoDTO != null) {
                 // Convertir ProductoDTO a Producto utilizando el convertidor
-                ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-                Producto entidadProducto = convertidor.convertirProductoDTO(productoDTO);
+                Producto entidadProducto = ConvertidorBazarDTO.convertirProductoDTO(productoDTO);
 
                 // Iniciar la transacción y eliminar el producto
                 em.getTransaction().begin();
@@ -322,6 +332,8 @@ public class GestorProductos implements IGestorProductos {
             } else {
                 throw new DAOException("El producto no se encuentra en la base de datos");
             }
+        } catch (NullPointerException ex) {
+            throw new DAOException("El producto no se elimino por falta de IDs");
         } catch (Exception ex) {
             
             if (ex.getClass() == DAOException.class) {
