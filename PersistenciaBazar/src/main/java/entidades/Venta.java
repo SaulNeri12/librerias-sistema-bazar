@@ -62,7 +62,7 @@ public class Venta implements Serializable {
     private Usuario usuario;
     
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "venta_id")
+    @JoinColumn(name = "venta")
     private List<DetalleVenta> detalleVentas;
     
     public static enum MetodoPago {

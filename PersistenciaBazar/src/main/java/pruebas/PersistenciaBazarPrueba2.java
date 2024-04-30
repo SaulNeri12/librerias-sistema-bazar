@@ -4,7 +4,6 @@
  */
 package pruebas;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
@@ -16,8 +15,8 @@ import objetosNegocio.DireccionDTO;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.UsuarioDTO;
 import objetosNegocio.VentaDTO;
-import persistencia.excepciones.PersistenciaBazarException;
 import persistencia.PersistenciaBazar;
+import persistencia.excepciones.PersistenciaBazarException;
 
 
 
@@ -82,7 +81,7 @@ public class PersistenciaBazarPrueba2 {
         // NOTE: ESTE USUARIO YA LO TENIA REGISTRADO, USA OTRO EN TU LUGAR
         UsuarioDTO usuario = null;
         try {
-            usuario = persistencia.consultarUsuario(1l);
+            usuario = persistencia.consultarUsuario(9l);
         } catch (PersistenciaBazarException ex) {
             Logger.getLogger(PersistenciaBazarPrueba2.class.getName()).log(Level.SEVERE, null, ex);
             return;
@@ -136,7 +135,7 @@ public class PersistenciaBazarPrueba2 {
         VentaDTO ventaEncontrada;
         
         try {
-            ventaEncontrada = persistencia.consultarVenta(1l);
+            ventaEncontrada = persistencia.consultarVenta(14l);
             
             System.out.println("Venta encontrada: " + ventaEncontrada);
             for (DetalleVentaDTO dt: ventaEncontrada.getProductosVendidos()) {
