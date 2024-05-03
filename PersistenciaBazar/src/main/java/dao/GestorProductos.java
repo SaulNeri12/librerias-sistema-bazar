@@ -7,13 +7,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.ProveedorDTO;
-
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorProductos;
 
@@ -72,8 +69,6 @@ public class GestorProductos implements IGestorProductos {
             // devolver NULL...
 
             return productosDTO;
-        } catch (NoResultException ex) {
-            return null;
         } catch (Exception ex) {
             
             //System.out.println(ex.getClass());
@@ -117,8 +112,6 @@ public class GestorProductos implements IGestorProductos {
             }
 
             return productosDTO;
-        } catch (NoResultException ex) {
-            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar productos por nombre");
         }
@@ -220,8 +213,7 @@ public class GestorProductos implements IGestorProductos {
             // Convertir la entidad Producto a un DTO
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
             return convertidor.convertirProductoAProductoDTO(producto);
-        } catch (NoResultException ex) {
-            return null;
+        
         } catch (Exception ex) {
             throw new DAOException("Error al consultar el producto por código interno");
         }
@@ -259,8 +251,7 @@ public class GestorProductos implements IGestorProductos {
             // Convertir la entidad Producto a un DTO
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
             return convertidor.convertirProductoAProductoDTO(producto);
-        } catch (NoResultException ex) {
-            return null;
+        
         } catch (Exception ex) {
             throw new DAOException("Error al consultar el producto por código de barras");
         }
