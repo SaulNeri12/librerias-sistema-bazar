@@ -4,7 +4,6 @@
  */
 package pruebas;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
@@ -16,9 +15,8 @@ import objetosNegocio.DireccionDTO;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.UsuarioDTO;
 import objetosNegocio.VentaDTO;
-import persistencia.excepciones.PersistenciaBazarException;
 import persistencia.PersistenciaBazar;
-
+import persistencia.excepciones.PersistenciaBazarException;
 
 
 /**
@@ -26,6 +24,7 @@ import persistencia.PersistenciaBazar;
  * @author saul
  */
 public class PersistenciaBazarPrueba2 {
+    
     
     
     public static void main(String[] args) {
@@ -125,18 +124,20 @@ public class PersistenciaBazarPrueba2 {
             System.out.println(e.getClass() + " " + e.getCause() + " " + e.getMessage());
         }
         
+        /*
         try {
             persistencia.registrarVenta(v);
             System.out.println("Venta registrada!!!");
         } catch (PersistenciaBazarException ex) {
             Logger.getLogger(PersistenciaBazarPrueba2.class.getName()).log(Level.SEVERE, null, ex);
             return;
-        }
+        }*/
+        
         
         VentaDTO ventaEncontrada;
         
         try {
-            ventaEncontrada = persistencia.consultarVenta(1l);
+            ventaEncontrada = persistencia.consultarVenta(2l);
             
             System.out.println("Venta encontrada: " + ventaEncontrada);
             for (DetalleVentaDTO dt: ventaEncontrada.getProductosVendidos()) {
@@ -148,8 +149,11 @@ public class PersistenciaBazarPrueba2 {
             return;
         }
         
+        
         ventaEncontrada.getProductosVendidos().remove(0);
         ventaEncontrada.getProductosVendidos().remove(0);
+        ventaEncontrada.getProductosVendidos().remove(0);
+        
         
         try {
             persistencia.actualizarVenta(ventaEncontrada);
@@ -171,12 +175,13 @@ public class PersistenciaBazarPrueba2 {
             Logger.getLogger(PersistenciaBazarPrueba2.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        /*
         try {
             persistencia.eliminarVenta(1l);
             System.out.println("Venta eliminada!!!");
         } catch (PersistenciaBazarException ex) {
             Logger.getLogger(PersistenciaBazarPrueba2.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
         
         
     }

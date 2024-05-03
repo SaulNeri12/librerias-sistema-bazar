@@ -6,15 +6,11 @@ import entidades.Usuario;
 import entidades.Venta;
 import entidades.convertidor.ConvertidorBazarDTO;
 import static entidades.convertidor.ConvertidorBazarDTO.convertirVentaDTO;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.DetalleVentaDTO;
 import objetosNegocio.VentaDTO;
@@ -69,8 +65,6 @@ public class GestorVentas implements IGestorVentas {
             }
             
             return venta.toDTO();
-        } catch (NoResultException ex) {   
-            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -110,8 +104,6 @@ public class GestorVentas implements IGestorVentas {
                 ventaDTOs.add(venta.toDTO());
             }
             return ventaDTOs;
-        } catch (NoResultException ex) {   
-            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -160,8 +152,6 @@ public class GestorVentas implements IGestorVentas {
             }
             
             return ventaDTOs;
-        } catch (NoResultException ex) {   
-            return null;
         } catch (Exception ex) {
             
             /*
@@ -191,8 +181,6 @@ public class GestorVentas implements IGestorVentas {
                 ventaDTOs.add(venta.toDTO());
             }
             return ventaDTOs;
-        } catch (NoResultException ex) {   
-            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -306,8 +294,13 @@ public class GestorVentas implements IGestorVentas {
             ventaEntity.setApellidoCliente(venta.getApellidoCliente());
             ventaEntity.setMontoTotal(montoTotal);
             ventaEntity.setMetodoPago(Venta.MetodoPago.valueOf(venta.getMetodoPago().name()));
-            
             ventaEntity.setFechaVenta(LocalDateTime.now());
+            
+            List<DetalleVenta> productosVendidosEntidad = venta.getProductosVendidos()
+                .stream()
+                .map(p -> ConvertidorBazarDTO.convertirDetalleVentaDTO(p)).collect(Collectors.toList());
+            
+            ventaEntity.setDetalleVentas(productosVendidosEntidad);
             
             if (venta.getUsuario().getId() != null) {
                 Usuario usuario = em.find(Usuario.class, venta.getUsuario().getId());
