@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.DetalleVentaDTO;
 import objetosNegocio.VentaDTO;
@@ -65,6 +66,9 @@ public class GestorVentas implements IGestorVentas {
             }
             
             return venta.toDTO();
+            
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -104,6 +108,8 @@ public class GestorVentas implements IGestorVentas {
                 ventaDTOs.add(venta.toDTO());
             }
             return ventaDTOs;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -152,6 +158,8 @@ public class GestorVentas implements IGestorVentas {
             }
             
             return ventaDTOs;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             
             /*
@@ -181,6 +189,8 @@ public class GestorVentas implements IGestorVentas {
                 ventaDTOs.add(venta.toDTO());
             }
             return ventaDTOs;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(

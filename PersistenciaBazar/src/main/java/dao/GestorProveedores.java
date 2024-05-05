@@ -8,6 +8,7 @@ import conexion.EntityManagerSingleton;
 import entidades.Proveedor;
 import entidades.convertidor.ConvertidorBazarDTO;
 import java.util.ArrayList;
+import javax.persistence.NoResultException;
 import objetosNegocio.ProveedorDTO;
 import subsistemas.excepciones.DAOException;
 
@@ -61,6 +62,8 @@ public class GestorProveedores implements IGestorProveedores {
             }
 
             return proveedoresDTO;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar todos los proveedores");
         }
@@ -93,6 +96,8 @@ public class GestorProveedores implements IGestorProveedores {
             }
 
             return proveedoresDTO;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception e) {
             throw new DAOException("Error al consultar los proveedores por nombre");
         }
@@ -144,6 +149,9 @@ public class GestorProveedores implements IGestorProveedores {
             }
 
             return ConvertidorBazarDTO.convertirProveedorAProveedorDTO(proveedores.get(0));
+            
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception e) {
             throw new DAOException("Error al consultar el proveedor por número de teléfono");
         }

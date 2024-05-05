@@ -51,12 +51,12 @@ public class PersistenciaBazar implements IPersistenciaBazar {
             List<ProductoDTO> productosTodos = productos.consultarTodos();
             
             if (productosTodos == null) {
-                throw new PersistenciaBazarException("Ha ocurrido un error al consultar los productos, intente de nuevo mas tarde");
-            }
-            
-            if (productosTodos.isEmpty()) {
                 throw new PersistenciaBazarException("No se encontraron productos registrados en el catalogo");
             }
+            /*
+            if (productosTodos.isEmpty()) {
+                throw new PersistenciaBazarException("No se encontraron productos registrados en el catalogo");
+            }*/
             
             return productosTodos;
         } catch (DAOException ex) {
@@ -70,7 +70,7 @@ public class PersistenciaBazar implements IPersistenciaBazar {
             List<ProductoDTO> productosTodos = productos.consultarProductosPorNombre(nombreProducto);
             
             if (productosTodos == null) {
-                throw new PersistenciaBazarException("Ha ocurrido un error al consultar los productos, intente de nuevo mas tarde");
+                throw new PersistenciaBazarException("No se encontraron productos registrados con el nombre dado");
             }
             
             if (productosTodos.isEmpty()) {
@@ -98,7 +98,7 @@ public class PersistenciaBazar implements IPersistenciaBazar {
             UsuarioDTO usuarioEnSistema = usuarios.iniciarSesion(telefono, contrasena);
             
             if (usuarioEnSistema == null) {
-                throw new PersistenciaBazarException("Ha ocurrido un problema al intentar iniciar sesion, intente de nuevo mas tarde");
+                throw new PersistenciaBazarException("No se encontro al usuario con el numero de telefono dado");
             }
             
             return usuarioEnSistema;

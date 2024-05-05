@@ -51,7 +51,7 @@ public class Producto implements Serializable {
     
     @Override
     public String toString() {
-        return "entidades.Producto[ codigoBarras=" + codigoBarras + ", codigoInterno=" + codigoInterno + " ]";
+        return "entidades.Producto{" + "codigoBarras=" + codigoBarras+ ", codigo=" + codigoInterno + ", nombre=" + nombre + ", precio=" + precio + ", fecha_registro=" + fechaRegistro + '}';
     }
 
     public String getNombre() {

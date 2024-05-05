@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.ProveedorDTO;
@@ -69,6 +70,8 @@ public class GestorProductos implements IGestorProductos {
             // devolver NULL...
 
             return productosDTO;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             
             //System.out.println(ex.getClass());
@@ -112,6 +115,8 @@ public class GestorProductos implements IGestorProductos {
             }
 
             return productosDTO;
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar productos por nombre");
         }
@@ -136,6 +141,8 @@ public class GestorProductos implements IGestorProductos {
                     ProductoDTO.class);
             consulta.setParameter("proveedor", proveedor);
             return consulta.getResultList();
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar productos por proveedor");
         }
@@ -213,7 +220,8 @@ public class GestorProductos implements IGestorProductos {
             // Convertir la entidad Producto a un DTO
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
             return convertidor.convertirProductoAProductoDTO(producto);
-        
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar el producto por código interno");
         }
@@ -251,7 +259,8 @@ public class GestorProductos implements IGestorProductos {
             // Convertir la entidad Producto a un DTO
             ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
             return convertidor.convertirProductoAProductoDTO(producto);
-        
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             throw new DAOException("Error al consultar el producto por código de barras");
         }
@@ -278,7 +287,18 @@ public class GestorProductos implements IGestorProductos {
             }
             
             Producto entidadProducto = ConvertidorBazarDTO.convertirProductoDTO(productoEncontrado);
+            
+            entidadProducto.setNombre(producto.getNombre());
+            entidadProducto.setPrecio(producto.getPrecio());
             entidadProducto.setFechaRegistro(productoEncontrado.getFechaRegistro());
+            
+            /*
+            System.out.println("------------------------------------------");
+            System.out.println(productoEncontrado);
+            System.out.println(entidadProducto);
+            System.out.println("------------------------------------------");
+            */
+            
             em.getTransaction().begin();
             em.merge(entidadProducto);
             em.getTransaction().commit();
@@ -309,6 +329,9 @@ public class GestorProductos implements IGestorProductos {
         }
 
         try {
+            
+            //Producto producto = em.find(Producto.class, codigoInterno);
+            
             // Consultar el producto por su código interno
             ProductoDTO productoDTO = consultarProducto(codigoInterno);
 
@@ -331,7 +354,7 @@ public class GestorProductos implements IGestorProductos {
                 throw new DAOException(ex.getMessage());
             }
             
-            throw new DAOException("Error al eliminar el producto: ");
+            throw new DAOException("Error al eliminar el producto");
         }
     }
 
