@@ -31,9 +31,9 @@ public class PersistenciaBazarPrueba2 {
         PersistenciaBazar persistencia = PersistenciaBazar.getInstance();
         
         
-        pruebasUsuarios(persistencia);
+        //pruebasUsuarios(persistencia);
         pruebasProductos(persistencia);
-        pruebasVentas(persistencia);
+        //pruebasVentas(persistencia);
         
         
     }
@@ -210,11 +210,24 @@ public class PersistenciaBazarPrueba2 {
             System.out.println(ex.getMessage());
         }
         
+        p.setNombre("Sabritas Original 75gr");
         p.setPrecio(17.f);
         
         try {
             persistencia.actualizarProducto(p);
             System.out.println("Se actualizo el precio de las sabritas");
+        } catch (PersistenciaBazarException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        p.setCodigoBarras(1022212412341l);
+        p.setCodigoInterno("CAJP1000");
+        p.setNombre("Cacahuates Japoneses Chicos");
+        p.setPrecio(11);
+        
+        try {
+            persistencia.actualizarProducto(p);
+            System.out.println("Se actualizo el precio de los cacahuates");
         } catch (PersistenciaBazarException ex) {
             System.out.println(ex.getMessage());
         }

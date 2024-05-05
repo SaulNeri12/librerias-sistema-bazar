@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import objetosNegocio.UsuarioDTO;
 import subsistemas.excepciones.DAOException;
@@ -97,7 +98,8 @@ public class GestorUsuarios implements IGestorUsuarios {
                     "consultaUsuarioNumTelefono", Usuario.class);
             consulta.setParameter("telefono", telefono);
             return consulta.getSingleResult().toDTO();
-        
+        } catch (NoResultException ex) {
+            return null;
         }catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -217,6 +219,8 @@ public class GestorUsuarios implements IGestorUsuarios {
             em.getTransaction().begin();
             em.remove(consulta.getSingleResult());
             em.getTransaction().commit();
+        } catch (NoResultException ex) {
+            throw new DAOException("No se encontro al usuario a eliminar");
         }  catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
@@ -264,6 +268,8 @@ public class GestorUsuarios implements IGestorUsuarios {
             }
             
             return usuarioEntity.toDTO();
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             
             /*
