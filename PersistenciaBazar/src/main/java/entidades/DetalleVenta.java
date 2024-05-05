@@ -31,10 +31,6 @@ public class DetalleVenta implements Serializable {
     private Integer cantidad;
     
     @ManyToOne
-    @JoinColumn(name = "venta")
-    private Venta venta;
-    
-    @ManyToOne
     @JoinColumn(name = "producto")
     private Producto producto;
     
@@ -59,14 +55,6 @@ public class DetalleVenta implements Serializable {
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
-    }
-
-    public Venta getVenta() {
-        return venta;
-    }
-
-    public void setVenta(Venta venta) {
-        this.venta = venta;
     }
 
     public Producto getProducto() {

@@ -3,6 +3,7 @@ package subsistemas.interfaces;
 
 import subsistemas.excepciones.DAOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import objetosNegocio.VentaDTO;
 
@@ -35,7 +36,7 @@ public interface IGestorVentas {
      * @return
      * @throws subsistemas.excepciones.DAOException
      */
-    public List<VentaDTO> consultarVentasPorPeriodo(LocalDate inicio, LocalDate fin) throws DAOException;
+    public List<VentaDTO> consultarVentasPorPeriodo(LocalDateTime inicio, LocalDateTime fin) throws DAOException;
     
     /**
      * Regresa una lista con todas las ventas existentes.

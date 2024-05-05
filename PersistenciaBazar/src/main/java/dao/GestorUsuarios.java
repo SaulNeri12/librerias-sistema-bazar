@@ -98,12 +98,7 @@ public class GestorUsuarios implements IGestorUsuarios {
                     "consultaUsuarioNumTelefono", Usuario.class);
             consulta.setParameter("telefono", telefono);
             return consulta.getSingleResult().toDTO();
-        } catch (NoResultException nre) {
-            
-            /*
-            Logger.getLogger(GestorUsuarios.class.getName()).log(
-                    Level.SEVERE, nre.getMessage() + "AQUO!!!!");
-            */
+        } catch (NoResultException ex) {
             return null;
         }catch (Exception ex) {
             /*
@@ -224,13 +219,9 @@ public class GestorUsuarios implements IGestorUsuarios {
             em.getTransaction().begin();
             em.remove(consulta.getSingleResult());
             em.getTransaction().commit();
-        } catch (NoResultException nre) {
-            /*
-            Logger.getLogger(GestorUsuarios.class.getName()).log(
-                    Level.SEVERE, nre.getMessage());
-            */
-            throw new DAOException("No se encontro al usuario en la base de datos");
-        } catch (Exception ex) {
+        } catch (NoResultException ex) {
+            throw new DAOException("No se encontro al usuario a eliminar");
+        }  catch (Exception ex) {
             /*
             Logger.getLogger(GestorUsuarios.class.getName()).log(
                     Level.SEVERE, ex.getMessage());
@@ -277,12 +268,8 @@ public class GestorUsuarios implements IGestorUsuarios {
             }
             
             return usuarioEntity.toDTO();
-        } catch (NoResultException nre) {
-            /*
-            Logger.getLogger(GestorUsuarios.class.getName()).log(
-                    Level.SEVERE, nre.getMessage());
-            */
-            throw new DAOException("No existe un usuario con el telefono proporcionado");
+        } catch (NoResultException ex) {
+            return null;
         } catch (Exception ex) {
             
             /*

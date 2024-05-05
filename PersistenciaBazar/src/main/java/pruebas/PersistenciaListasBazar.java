@@ -15,10 +15,7 @@ import subsistemas.excepciones.DAOException;
  */
 public class PersistenciaListasBazar {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
+    //public static void main(String[] args) {
         /*
         GestorProveedores gestorProveedores = GestorProveedores.getInstance();
 
@@ -119,13 +116,13 @@ public class PersistenciaListasBazar {
 //        } catch (DAOException ex) {
 //            Logger.getLogger(PersistenciaListasBazar.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        GestorUsuarios gestorUsuarios = GestorUsuarios.getInstance();
-        pruebaRegistrarUsuario(gestorUsuarios);
-        pruebaConsultarUsuario(gestorUsuarios);
-        pruebaInicioSesion(gestorUsuarios);
-        pruebaActualizacionUsuario(gestorUsuarios);
-        pruebaEliminarUsuario(gestorUsuarios);
-    }
+        //GestorUsuarios gestorUsuarios = GestorUsuarios.getInstance();
+        //pruebaRegistrarUsuario(gestorUsuarios);
+        //pruebaConsultarUsuario(gestorUsuarios);
+        //pruebaInicioSesion(gestorUsuarios);
+        //pruebaActualizacionUsuario(gestorUsuarios);
+        //pruebaEliminarUsuario(gestorUsuarios);
+    //}
 
     public static void pruebaInsertarProveedor(GestorProveedores gestorProveedores) {
         try {

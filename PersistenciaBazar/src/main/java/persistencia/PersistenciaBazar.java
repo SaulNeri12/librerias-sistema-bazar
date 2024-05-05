@@ -1,11 +1,12 @@
 
-package persistenciaBazar;
+package persistencia;
 
 import conexion.EntityManagerSingleton;
 import dao.GestorProductos;
 import dao.GestorUsuarios;
 import dao.GestorVentas;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,12 +51,12 @@ public class PersistenciaBazar implements IPersistenciaBazar {
             List<ProductoDTO> productosTodos = productos.consultarTodos();
             
             if (productosTodos == null) {
-                throw new PersistenciaBazarException("Ha ocurrido un error al consultar los productos, intente de nuevo mas tarde");
-            }
-            
-            if (productosTodos.isEmpty()) {
                 throw new PersistenciaBazarException("No se encontraron productos registrados en el catalogo");
             }
+            /*
+            if (productosTodos.isEmpty()) {
+                throw new PersistenciaBazarException("No se encontraron productos registrados en el catalogo");
+            }*/
             
             return productosTodos;
         } catch (DAOException ex) {
@@ -69,7 +70,7 @@ public class PersistenciaBazar implements IPersistenciaBazar {
             List<ProductoDTO> productosTodos = productos.consultarProductosPorNombre(nombreProducto);
             
             if (productosTodos == null) {
-                throw new PersistenciaBazarException("Ha ocurrido un error al consultar los productos, intente de nuevo mas tarde");
+                throw new PersistenciaBazarException("No se encontraron productos registrados con el nombre dado");
             }
             
             if (productosTodos.isEmpty()) {
@@ -97,7 +98,7 @@ public class PersistenciaBazar implements IPersistenciaBazar {
             UsuarioDTO usuarioEnSistema = usuarios.iniciarSesion(telefono, contrasena);
             
             if (usuarioEnSistema == null) {
-                throw new PersistenciaBazarException("Ha ocurrido un problema al intentar iniciar sesion, intente de nuevo mas tarde");
+                throw new PersistenciaBazarException("No se encontro al usuario con el numero de telefono dado");
             }
             
             return usuarioEnSistema;
@@ -194,9 +195,9 @@ public class PersistenciaBazar implements IPersistenciaBazar {
     }
 
     @Override
-    public List<VentaDTO> consultarVentasPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws PersistenciaBazarException {
+    public List<VentaDTO> consultarVentasPorPeriodo(LocalDateTime fechaInicio, LocalDateTime fechaFin) throws PersistenciaBazarException {
         try {
-            List<VentaDTO> ventas = this.ventas.consultarTodos();
+            List<VentaDTO> ventas = this.ventas.consultarVentasPorPeriodo(fechaInicio, fechaFin);
             
             if (ventas == null) {
                 throw new DAOException("No se encontraron ventas hechas en ese periodo de tiempo");
@@ -242,6 +243,63 @@ public class PersistenciaBazar implements IPersistenciaBazar {
     public void eliminarVenta(Long idVenta) throws PersistenciaBazarException {
         try {
             this.ventas.eliminarVenta(idVenta);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public UsuarioDTO consultarUsuario(Long idUsuario) throws PersistenciaBazarException {
+        try {
+            UsuarioDTO usuario = usuarios.consultarUsuario(idUsuario);
+            
+            if (usuario == null) {
+                throw new DAOException("No se encontro al usuario con dicho ID");
+            }
+            
+            return usuario;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public UsuarioDTO consultarUsuarioPorNumeroTelefono(String telefono) throws PersistenciaBazarException {
+        try {
+            UsuarioDTO usuario = usuarios.consultarUsuarioPorNumeroTelefono(telefono);
+            
+            if (usuario == null) {
+                throw new DAOException("No se encontro al usuario con dicho ID");
+            }
+            
+            return usuario;
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void registrarUsuario(UsuarioDTO usuario) throws PersistenciaBazarException {
+        try {
+            usuarios.registrarUsuario(usuario);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void actualizarUsuario(UsuarioDTO usuario) throws PersistenciaBazarException {
+        try {
+            usuarios.actualizarUsuario(usuario);
+        } catch (DAOException ex) {
+            throw new PersistenciaBazarException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void eliminarUsuario(Long idUsuario) throws PersistenciaBazarException {
+        try {
+            usuarios.eliminarUsuario(idUsuario);
         } catch (DAOException ex) {
             throw new PersistenciaBazarException(ex.getMessage());
         }
