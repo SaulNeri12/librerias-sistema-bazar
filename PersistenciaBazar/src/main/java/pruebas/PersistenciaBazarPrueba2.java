@@ -31,10 +31,9 @@ public class PersistenciaBazarPrueba2 {
         PersistenciaBazar persistencia = PersistenciaBazar.getInstance();
         
         
-        //pruebasUsuarios(persistencia);
+        pruebasUsuarios(persistencia);
         pruebasProductos(persistencia);
-        //pruebasVentas(persistencia);
-        
+        pruebasVentas(persistencia);
         
     }
     
@@ -42,9 +41,9 @@ public class PersistenciaBazarPrueba2 {
         UsuarioDTO usuario = new UsuarioDTO();
         usuario.setNombre("Pedro");
         usuario.setApellido("Lopez");
-        usuario.setTelefono("6442269619");
+        usuario.setTelefono("6444223344");
         usuario.setContrasena("admin12345");
-        usuario.setPuesto(UsuarioDTO.Puesto.CAJERO);
+        usuario.setPuesto(UsuarioDTO.Puesto.ADMIN);
         
         DireccionDTO direccion = new DireccionDTO();
         
