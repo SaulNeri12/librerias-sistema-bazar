@@ -18,7 +18,6 @@ import persistencia.excepciones.PersistenciaBazarException;
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.*;
 
-
 /**
  *
  * @author saul
