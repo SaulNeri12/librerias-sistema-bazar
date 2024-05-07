@@ -10,8 +10,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import objetosNegocio.ProductoDTO;
-import objetosNegocio.ProveedorDTO;
+import objetosDTO.ProductoDTO;
+import objetosDTO.ProveedorDTO;
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorProductos;
 

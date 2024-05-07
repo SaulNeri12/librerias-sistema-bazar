@@ -2,7 +2,7 @@
 package subsistemas.interfaces;
 
 import subsistemas.excepciones.DAOException;
-import objetosNegocio.UsuarioDTO;
+import objetosDTO.UsuarioDTO;
 
 /**
  * Define las operaciones basicas para el subsistema de Usuarios

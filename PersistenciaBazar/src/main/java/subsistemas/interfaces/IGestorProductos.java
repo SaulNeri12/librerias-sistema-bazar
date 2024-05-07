@@ -3,8 +3,8 @@ package subsistemas.interfaces;
 
 import subsistemas.excepciones.DAOException;
 import java.util.List;
-import objetosNegocio.ProductoDTO;
-import objetosNegocio.ProveedorDTO;
+import objetosDTO.ProductoDTO;
+import objetosDTO.ProveedorDTO;
 
 /**
  * Define las operaciones basicas para el registro, modificacion y consulta

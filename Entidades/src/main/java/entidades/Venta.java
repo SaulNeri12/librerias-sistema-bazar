@@ -20,8 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import objetosNegocio.DetalleVentaDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.DetalleVentaDTO;
+import objetosDTO.VentaDTO;
 
 /**
  *

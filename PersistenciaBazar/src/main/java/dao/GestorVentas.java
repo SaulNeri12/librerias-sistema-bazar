@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import objetosNegocio.DetalleVentaDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.DetalleVentaDTO;
+import objetosDTO.VentaDTO;
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorVentas;
 

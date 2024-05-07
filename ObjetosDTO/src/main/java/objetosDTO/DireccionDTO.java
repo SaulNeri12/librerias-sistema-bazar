@@ -1,7 +1,7 @@
 /*
  * DireccionDTO.java
  */
-package objetosNegocio;
+package objetosDTO;
 
 /**
  * Representa la direccion fisica de un proveedor (negocio) o de usuario.

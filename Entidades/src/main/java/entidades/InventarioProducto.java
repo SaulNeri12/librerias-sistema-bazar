@@ -1,5 +1,5 @@
 /*
- * DetalleVenta.java
+ * InventarioProducto.java
  */
 package entidades;
 
@@ -10,17 +10,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import objetosNegocio.DetalleVentaDTO;
+import objetosDTO.InventarioProductoDTO;
 
 /**
  * 
  * @author Juventino López García
  */
 @Entity
-@Table(name = "detalle_ventas")
-public class DetalleVenta implements Serializable {
+@Table(name = "inventario_productos")
+public class InventarioProducto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -30,15 +30,11 @@ public class DetalleVenta implements Serializable {
     @Column(name = "cantidad")
     private Integer cantidad;
     
-    @ManyToOne
-    @JoinColumn(name = "producto")
+    @OneToOne
+    @JoinColumn(name = "id_producto")
     private Producto producto;
-    
-    @Column(name = "precio_producto")
-    private Float precioProducto;
 
-    public DetalleVenta() {
-        
+    public InventarioProducto() {
     }
     
     public Long getId() {
@@ -65,21 +61,12 @@ public class DetalleVenta implements Serializable {
         this.producto = producto;
     }
     
-    public Float getPrecioProducto() {
-        return this.precioProducto;
-    }
-    
-    public void setPrecioProducto(Float precio) {
-        this.precioProducto = precio;
-    }
-    
-    public DetalleVentaDTO toDTO() {
-        DetalleVentaDTO d = new DetalleVentaDTO();
-        d.setCantidad(cantidad);
-        d.setProducto(producto.toDTO());
-        d.setPrecioProducto(this.precioProducto);
+    public InventarioProductoDTO toDTO() {
+        InventarioProductoDTO i = new InventarioProductoDTO();
+        i.setCantidad(cantidad);
+        i.setProducto(producto.toDTO());
         
-        return d;
+        return i;
     }
 
 }

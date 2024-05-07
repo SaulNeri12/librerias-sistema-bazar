@@ -4,9 +4,9 @@ package persistencia;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import objetosNegocio.ProductoDTO;
-import objetosNegocio.UsuarioDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.ProductoDTO;
+import objetosDTO.UsuarioDTO;
+import objetosDTO.VentaDTO;
 import persistencia.excepciones.PersistenciaBazarException;
 
 /**

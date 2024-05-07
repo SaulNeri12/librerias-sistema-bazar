@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import objetosNegocio.DetalleVentaDTO;
-import objetosNegocio.DireccionDTO;
-import objetosNegocio.ProductoDTO;
-import objetosNegocio.UsuarioDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.DetalleVentaDTO;
+import objetosDTO.DireccionDTO;
+import objetosDTO.ProductoDTO;
+import objetosDTO.UsuarioDTO;
+import objetosDTO.VentaDTO;
 import persistencia.PersistenciaBazar;
 import persistencia.excepciones.PersistenciaBazarException;
 

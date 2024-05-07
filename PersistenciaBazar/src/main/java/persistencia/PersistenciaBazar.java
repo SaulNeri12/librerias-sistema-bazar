@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import objetosNegocio.ProductoDTO;
-import objetosNegocio.UsuarioDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.ProductoDTO;
+import objetosDTO.UsuarioDTO;
+import objetosDTO.VentaDTO;
 import persistencia.excepciones.PersistenciaBazarException;
 
 import subsistemas.excepciones.DAOException;
