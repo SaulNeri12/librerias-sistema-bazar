@@ -5,12 +5,15 @@ package objetosNegocio;
 
 import java.time.LocalDateTime;
 
+import org.bson.types.ObjectId;
 
 /**
  * Contiene la informacion de un proveedor.
+ * 
  * @author rramirez
-*/
+ */
 public class ProveedorDTO {
+    private ObjectId _id;
     private Long id;
 
     private String nombre;
@@ -26,11 +29,11 @@ public class ProveedorDTO {
     public void setDireccion(DireccionDTO direccion) {
         this.direccion = direccion;
     }
-            
+
     public DireccionDTO getDireccion() {
         return this.direccion;
     }
-    
+
     public String getNombre() {
         return nombre;
     }
@@ -79,9 +82,18 @@ public class ProveedorDTO {
         this.id = id;
     }
 
+    public ObjectId get_id() {
+        return _id;
+    }
+
+    public void set_id(ObjectId id) {
+        this._id = id;
+    }
+
     @Override
     public String toString() {
-        return "Proveedor{" + "id=" + id + ", nombre=" + nombre + ", telefono=" + telefono + ", email=" + email + ", descripcion=" + descripcion + ", fecha_registro=" + fechaRegistro + '}';
+        return "Proveedor{" + "id=" + id + ", nombre=" + nombre + ", telefono=" + telefono + ", email=" + email
+                + ", descripcion=" + descripcion + ", fecha_registro=" + fechaRegistro + '}';
     }
 
 }

@@ -8,7 +8,7 @@ import com.mongodb.client.MongoDatabase;
 
 public class MongoDBConexion {
 
-    private static final String DATABASE_NAME = "nombre_de_tu_base_de_datos";
+    private static final String DATABASE_NAME = "bazar";
     private static final String CONNECTION_STRING = "mongodb://localhost:27017";
 
     private static MongoClient mongoClient;
