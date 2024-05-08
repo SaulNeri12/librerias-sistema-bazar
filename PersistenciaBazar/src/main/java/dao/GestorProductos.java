@@ -1,6 +1,6 @@
 package dao;
 
-import conexion.EntityManagerSingleton;
+import conexion.MongoDBConexion;
 import entidades.Producto;
 import entidades.convertidor.ConvertidorBazarDTO;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -10,6 +10,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
+import org.bson.Document;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+
 import objetosNegocio.ProductoDTO;
 import objetosNegocio.ProveedorDTO;
 import subsistemas.excepciones.DAOException;
@@ -22,67 +29,38 @@ import subsistemas.interfaces.IGestorProductos;
  */
 public class GestorProductos implements IGestorProductos {
 
-    private static GestorProductos instancia;
-    private final EntityManager em;
+    
 
-    public GestorProductos(EntityManager em) {
-        this.em = EntityManagerSingleton.getInstance().getEntityManager();
-
-    }
-
-    public GestorProductos() {
-        this.em = EntityManagerSingleton.getInstance().getEntityManager();
-    }
-
-    public static GestorProductos getInstance() {
-        if (instancia == null) {
-            instancia = new GestorProductos(EntityManagerSingleton.getInstance().getEntityManager());
-        }
-
-        return instancia;
-    }
-
-    /**
-     * Consulta todos los productos registrados en el sistema.
-     *
-     * @return Una lista con todos los productos registrados en el sistema.
-     * @throws subsistemas.excepciones.DAOException
-     */
     @Override
-    public List<ProductoDTO> consultarTodos() throws DAOException {
-        try {
-            TypedQuery<Producto> consulta = em.createQuery("SELECT p FROM Producto p", Producto.class);
-            List<Producto> productos = consulta.getResultList();
+public List<ProductoDTO> consultarTodos() throws DAOException {
+    try {
+        // Obtener la base de datos MongoDB
+        MongoDatabase database = MongoDBConexion.getDatabase();
 
-            // Convertir las entidades Producto a DTOs
-            List<ProductoDTO> productosDTO = new ArrayList<>();
-            ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
-            
-            if (productos.isEmpty()) {
-                return null;
-            }
-            
-            for (Producto producto : productos) {
-                productosDTO.add(convertidor.convertirProductoAProductoDTO(producto));
-            }
-            
-            // TODO: Si no hay ningun elemento que se encontro en la consulta
-            // devolver NULL...
+        // Obtener la colección de productos
+        MongoCollection<Document> productosCollection = database.getCollection("productos");
 
-            return productosDTO;
-        } catch (NoResultException ex) {
-            return null;
-        } catch (Exception ex) {
-            
-            //System.out.println(ex.getClass());
-            
-            if (ex.getClass() == DAOException.class) {
-                throw new DAOException(ex.getMessage());
-            }
-            
-            throw new DAOException("Error al consultar todos los productos");
+        // Consultar todos los documentos de la colección de productos
+        MongoCursor<Document> cursor = productosCollection.find().iterator();
+
+        // Convertir los documentos de productos a DTOs
+        List<ProductoDTO> productosDTO = new ArrayList<>();
+        ConvertidorBazarDTO convertidor = new ConvertidorBazarDTO();
+
+        while (cursor.hasNext()) {
+            Document productoDoc = cursor.next();
+            ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+            productosDTO.add(productoDTO);
         }
+
+        cursor.close();
+
+        return productosDTO;
+    } catch (Exception ex) {
+        throw new DAOException("Error al consultar todos los productos", ex);
     }
+}
+
 
     /**
      * Consulta los productos cuyo nombre contenga una cadena dada en la base de

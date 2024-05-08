@@ -20,7 +20,7 @@ public class ProductoDTO {
     private Long codigoBarras;
     private String codigoInterno;
     private String nombre;
-    private float precio;
+    private double precio;
     private LocalDateTime fechaRegistro;
 
     public ProductoDTO() {
@@ -36,7 +36,7 @@ public class ProductoDTO {
      * @param precio        Precio del producto.
      * @param fechaRegistro Fecha de registro del producto en el sistema.
      */
-    public ProductoDTO(Long codigoBarras, String codigoInterno, String nombre, float precio,
+    public ProductoDTO(Long codigoBarras, String codigoInterno, String nombre, double precio,
             LocalDateTime fechaRegistro) {
         this.codigoBarras = codigoBarras;
         this.codigoInterno = codigoInterno;
@@ -52,7 +52,7 @@ public class ProductoDTO {
     public void set_id(ObjectId id) {
         this._id = id;
     }
-    
+
     public Long getCodigoBarras() {
         return codigoBarras;
     }
@@ -77,11 +77,11 @@ public class ProductoDTO {
         this.nombre = nombre;
     }
 
-    public float getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(float precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 

@@ -6,6 +6,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
+import subsistemas.excepciones.DAOException;
+
 public class MongoDBConexion {
 
     private static final String DATABASE_NAME = "bazar";
@@ -29,17 +31,17 @@ public class MongoDBConexion {
         return mongoClient;
     }
 
-    // Método para obtener la base de datos MongoDB
-    public static MongoDatabase getDatabase() {
-        if (database == null) {
-            // Obtener el cliente de MongoDB
-            MongoClient client = getMongoClient();
+    public static MongoDatabase getDatabase() throws DAOException {
+    try {
+        // Obtener el cliente de MongoDB
+        MongoClient client = getMongoClient();
 
-            // Obtener la base de datos
-            database = client.getDatabase(DATABASE_NAME);
-        }
-        return database;
+        // Obtener la base de datos
+        return client.getDatabase(DATABASE_NAME);
+    } catch (Exception ex) {
+        throw new DAOException("Error al obtener la base de datos MongoDB", ex);
     }
+}
 
     // Método para cerrar la conexión
     public static void close() {
