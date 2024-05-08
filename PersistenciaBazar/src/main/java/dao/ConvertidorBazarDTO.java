@@ -39,5 +39,32 @@ public class ConvertidorBazarDTO {
 
         return productoDTO;
     }
+
+    public Document convertirProductoDTOADocumento(ProductoDTO producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto dado es null");
+        }
+
+        // Realizar las validaciones necesarias
+        validarCamposProducto(producto);
+
+        // Crear un documento MongoDB con los campos del producto
+        Document documentoProducto = new Document()
+            .append("codigoBarras", producto.getCodigoBarras())
+            .append("codigoInterno", producto.getCodigoInterno())
+            .append("nombre", producto.getNombre())
+            .append("precio", producto.getPrecio())
+            .append("fechaRegistro", producto.getFechaRegistro().toString());
+
+        return documentoProducto;
+    }
+
+    // Método para validar los campos del producto
+    private void validarCamposProducto(ProductoDTO producto) {
+        if (producto.getCodigoBarras() == null || producto.getCodigoInterno() == null || producto.getNombre() == null
+                || producto.getPrecio() <= 0 || producto.getFechaRegistro() == null) {
+            throw new IllegalArgumentException("El producto tiene campos nulos o inválidos");
+        }
+    }
     
 }
