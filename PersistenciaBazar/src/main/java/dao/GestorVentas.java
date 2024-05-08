@@ -144,7 +144,7 @@ public class GestorVentas implements IGestorVentas {
                     "consultaVentasPeriodo", Venta.class);
             
             consulta.setParameter("fechaInicio", fechaInicio);
-            consulta.setParameter("fechaFin", fechaInicio);
+            consulta.setParameter("fechaFin", fechaFin);
             
             List<Venta> ventas = consulta.getResultList();
             
