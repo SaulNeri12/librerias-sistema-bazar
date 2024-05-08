@@ -23,7 +23,7 @@ import objetosNegocio.VentaDTO;
  */
 public class ConvertidorBazarDTO {
 
-     public ProductoDTO convertirDocumentoAProductoDTO(Document productoDoc) {
+    public ProductoDTO convertirDocumentoAProductoDTO(Document productoDoc) {
         ProductoDTO productoDTO = new ProductoDTO();
 
         // Obtener los campos del documento y asignarlos al DTO
@@ -31,11 +31,19 @@ public class ConvertidorBazarDTO {
         productoDTO.setCodigoInterno(productoDoc.getString("codigoInterno"));
         productoDTO.setNombre(productoDoc.getString("nombre"));
         productoDTO.setPrecio(productoDoc.getDouble("precio"));
-        
+
         // Convertir la fecha de registro de Date a LocalDateTime
         Date fechaRegistroDate = productoDoc.getDate("fechaRegistro");
-        LocalDateTime fechaRegistro = fechaRegistroDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        productoDTO.setFechaRegistro(fechaRegistro);
+        if (fechaRegistroDate != null) {
+            LocalDateTime fechaRegistro = fechaRegistroDate.toInstant().atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+            productoDTO.setFechaRegistro(fechaRegistro);
+        } else {
+            // Si la fecha de registro es nula, asignar una fecha predeterminada o manejar
+            // el caso según sea necesario
+            // En este ejemplo, se asigna la fecha y hora actual
+            productoDTO.setFechaRegistro(LocalDateTime.now());
+        }
 
         return productoDTO;
     }
@@ -50,11 +58,11 @@ public class ConvertidorBazarDTO {
 
         // Crear un documento MongoDB con los campos del producto
         Document documentoProducto = new Document()
-            .append("codigoBarras", producto.getCodigoBarras())
-            .append("codigoInterno", producto.getCodigoInterno())
-            .append("nombre", producto.getNombre())
-            .append("precio", producto.getPrecio())
-            .append("fechaRegistro", producto.getFechaRegistro().toString());
+                .append("codigoBarras", producto.getCodigoBarras())
+                .append("codigoInterno", producto.getCodigoInterno())
+                .append("nombre", producto.getNombre())
+                .append("precio", producto.getPrecio())
+                .append("fechaRegistro", producto.getFechaRegistro().toString());
 
         return documentoProducto;
     }
@@ -66,5 +74,5 @@ public class ConvertidorBazarDTO {
             throw new IllegalArgumentException("El producto tiene campos nulos o inválidos");
         }
     }
-    
+
 }

@@ -1,8 +1,10 @@
 package pruebas;
+
 import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import conexion.MongoDBConexion;
+import dao.GestorProductos;
 import dao.excepciones.DAOException;
 import objetosNegocio.ProductoDTO;
 import java.time.LocalDateTime;
@@ -12,7 +14,15 @@ import java.util.List;
 public class pruebasMongo {
 
     public static void main(String[] args) throws DAOException {
-        // Crear un producto de prueba
+
+       //TODO: registrar - listo
+       //      modificar/editar - listo
+       //      eliminar - listo
+       //      consultarTodos - listo
+       //      falta consultar por codigoInterno, por nombre, por precio en Ascendente y en descendente.
+       //      falta consultar por fecha de registro en Ascendente y en descendente.
+
+        /*  Crear un producto de prueba
         ProductoDTO producto = new ProductoDTO();
         producto.setCodigoBarras(123456789L);
         producto.setCodigoInterno("PROD001");
@@ -22,14 +32,55 @@ public class pruebasMongo {
 
         // Insertar el producto en la base de datos MongoDB
         insertarProducto(producto);
+        */
 
-        // Consultar todos los productos
-        List<ProductoDTO> productos = consultarTodosProductos();
 
-        // Imprimir los productos
-        System.out.println("Productos registrados:");
-        for (ProductoDTO prod : productos) {
-            System.out.println(prod);
+        /*
+         * Consultar todos los productos
+         * List<ProductoDTO> productos = consultarTodosProductos();
+         * 
+         * // Imprimir los productos
+         * System.out.println("Productos registrados:");
+         * for (ProductoDTO prod : productos) {
+         * System.out.println(prod);
+         * }
+         */
+
+        // Eliminar un producto
+        /*
+         * GestorProductos gestorProductos = new GestorProductos();
+         * String codigoInterno="PROD001";
+         * 
+         * try {
+         * gestorProductos.eliminarProducto(codigoInterno);
+         * System.out.println("Producto eliminado correctamente");
+         * } catch (Exception e) {
+         * System.out.println("Error al eliminar el producto: "+e.getMessage());
+         * }
+         */
+
+          GestorProductos gestorProductos = new GestorProductos();
+          try {
+            // Crear un nuevo producto para insertar en la base de datos
+            ProductoDTO productoNuevo = new ProductoDTO();
+            productoNuevo.setCodigoBarras(123456789L);
+            productoNuevo.setCodigoInterno("PROD001");
+            productoNuevo.setNombre("Producto de Prueba");
+            productoNuevo.setPrecio(20.5f);
+            productoNuevo.setFechaRegistro(LocalDateTime.now());
+    
+            // Insertar el nuevo producto en la base de datos
+            //gestorProductos.registrarProducto(productoNuevo);
+            //System.out.println("Producto registrado exitosamente.");
+    
+            productoNuevo.setPrecio(25.5f);
+            gestorProductos.actualizarProducto(productoNuevo);
+            System.out.println("Producto actualizado exitosamente.");
+    
+
+    
+        } catch (DAOException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
