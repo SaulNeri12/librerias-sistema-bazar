@@ -1,12 +1,4 @@
-package entidades.convertidor;
-
-import entidades.DetalleVenta;
-import entidades.Direccion;
-import entidades.InventarioProducto;
-import entidades.Producto;
-import entidades.Proveedor;
-import entidades.Usuario;
-import entidades.Venta;
+package dao;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -31,10 +23,7 @@ import objetosNegocio.VentaDTO;
  */
 public class ConvertidorBazarDTO {
 
-    public ConvertidorBazarDTO() {
-    }
-
-    public ProductoDTO convertirDocumentoAProductoDTO(Document productoDoc) {
+     public ProductoDTO convertirDocumentoAProductoDTO(Document productoDoc) {
         ProductoDTO productoDTO = new ProductoDTO();
 
         // Obtener los campos del documento y asignarlos al DTO
@@ -42,7 +31,7 @@ public class ConvertidorBazarDTO {
         productoDTO.setCodigoInterno(productoDoc.getString("codigoInterno"));
         productoDTO.setNombre(productoDoc.getString("nombre"));
         productoDTO.setPrecio(productoDoc.getDouble("precio"));
-
+        
         // Convertir la fecha de registro de Date a LocalDateTime
         Date fechaRegistroDate = productoDoc.getDate("fechaRegistro");
         LocalDateTime fechaRegistro = fechaRegistroDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -50,4 +39,5 @@ public class ConvertidorBazarDTO {
 
         return productoDTO;
     }
+    
 }

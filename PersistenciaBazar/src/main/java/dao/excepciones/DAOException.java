@@ -1,4 +1,4 @@
-package subsistemas.excepciones;
+package dao.excepciones;
 
 /**
  * Excepcion que ocurre en el acceso a datos en los subsistemas.
