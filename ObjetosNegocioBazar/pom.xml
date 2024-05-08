@@ -11,4 +11,11 @@
         <maven.compiler.target>18</maven.compiler.target>
         <exec.mainClass>com.mycompany.objetosnegociobazar.ObjetosNegocioBazar</exec.mainClass>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.10.1</version>
+        </dependency>
+    </dependencies>
 </project>
