@@ -125,14 +125,6 @@ public class GestorUsuarios implements IGestorUsuarios {
             throw new DAOException("El usuario especificado es null");
         }
 
-        if (usuario.getNombre() == null || usuario.getNombre().isBlank()
-                || usuario.getApellido() == null || usuario.getApellido().isBlank()) {
-            throw new DAOException("El usuario debe tener un nombre valido");
-        }
-        if (usuario.getContrasena() == null || usuario.getContrasena().equals("")) {
-            throw new DAOException("Introduzca una contraseña valida");
-        }
-
         if (usuario.getDireccion() == null) {
             throw new DAOException("El usuario debe tener una direccion");
         }
