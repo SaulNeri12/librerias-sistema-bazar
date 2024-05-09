@@ -4,9 +4,9 @@ import dao.GestorProveedores;
 import dao.GestorUsuarios;
 import java.time.LocalDateTime;
 import java.util.List;
-import objetosNegocio.DireccionDTO;
-import objetosNegocio.ProveedorDTO;
-import objetosNegocio.UsuarioDTO;
+import objetosDTO.DireccionDTO;
+import objetosDTO.ProveedorDTO;
+import objetosDTO.UsuarioDTO;
 import subsistemas.excepciones.DAOException;
 
 /**

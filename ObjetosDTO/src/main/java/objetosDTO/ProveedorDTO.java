@@ -1,7 +1,7 @@
 /*
  * ProveedorDTO.java
  */
-package objetosNegocio;
+package objetosDTO;
 
 import java.time.LocalDateTime;
 

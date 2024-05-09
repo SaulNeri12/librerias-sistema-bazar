@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import objetosNegocio.DetalleVentaDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.DetalleVentaDTO;
+import objetosDTO.VentaDTO;
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorVentas;
 
@@ -144,7 +144,7 @@ public class GestorVentas implements IGestorVentas {
                     "consultaVentasPeriodo", Venta.class);
             
             consulta.setParameter("fechaInicio", fechaInicio);
-            consulta.setParameter("fechaFin", fechaInicio);
+            consulta.setParameter("fechaFin", fechaFin);
             
             List<Venta> ventas = consulta.getResultList();
             

@@ -1,7 +1,7 @@
 /*
  * DetalleVentaDTO.java
  */
-package objetosNegocio;
+package objetosDTO;
 
 /**
  * Contiene la informacion de venta de un producto, perteneciente a una venta.

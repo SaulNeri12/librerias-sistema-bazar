@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import objetosNegocio.ProveedorDTO;
+import objetosDTO.ProveedorDTO;
 
 /**
  * 

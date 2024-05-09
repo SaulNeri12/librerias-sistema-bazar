@@ -9,7 +9,7 @@ import entidades.Proveedor;
 import entidades.convertidor.ConvertidorBazarDTO;
 import java.util.ArrayList;
 import javax.persistence.NoResultException;
-import objetosNegocio.ProveedorDTO;
+import objetosDTO.ProveedorDTO;
 import subsistemas.excepciones.DAOException;
 
 import subsistemas.interfaces.IGestorProveedores;

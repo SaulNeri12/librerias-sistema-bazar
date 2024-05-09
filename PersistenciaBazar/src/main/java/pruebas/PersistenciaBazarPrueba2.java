@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import objetosNegocio.DetalleVentaDTO;
-import objetosNegocio.DireccionDTO;
-import objetosNegocio.ProductoDTO;
-import objetosNegocio.UsuarioDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.DetalleVentaDTO;
+import objetosDTO.DireccionDTO;
+import objetosDTO.ProductoDTO;
+import objetosDTO.UsuarioDTO;
+import objetosDTO.VentaDTO;
 import persistencia.PersistenciaBazar;
 import persistencia.excepciones.PersistenciaBazarException;
 
@@ -31,10 +31,9 @@ public class PersistenciaBazarPrueba2 {
         PersistenciaBazar persistencia = PersistenciaBazar.getInstance();
         
         
-        //pruebasUsuarios(persistencia);
+        pruebasUsuarios(persistencia);
         pruebasProductos(persistencia);
-        //pruebasVentas(persistencia);
-        
+        pruebasVentas(persistencia);
         
     }
     
@@ -42,9 +41,9 @@ public class PersistenciaBazarPrueba2 {
         UsuarioDTO usuario = new UsuarioDTO();
         usuario.setNombre("Pedro");
         usuario.setApellido("Lopez");
-        usuario.setTelefono("6442269619");
+        usuario.setTelefono("6444223344");
         usuario.setContrasena("admin12345");
-        usuario.setPuesto(UsuarioDTO.Puesto.CAJERO);
+        usuario.setPuesto(UsuarioDTO.Puesto.ADMIN);
         
         DireccionDTO direccion = new DireccionDTO();
         

@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import objetosNegocio.UsuarioDTO;
+import objetosDTO.UsuarioDTO;
 import subsistemas.excepciones.DAOException;
 import subsistemas.interfaces.IGestorUsuarios;
 
@@ -123,14 +123,6 @@ public class GestorUsuarios implements IGestorUsuarios {
     public void registrarUsuario(UsuarioDTO usuario) throws DAOException {
         if (usuario == null) {
             throw new DAOException("El usuario especificado es null");
-        }
-
-        if (usuario.getNombre() == null || usuario.getNombre().isBlank()
-                || usuario.getApellido() == null || usuario.getApellido().isBlank()) {
-            throw new DAOException("El usuario debe tener un nombre valido");
-        }
-        if (usuario.getContrasena() == null || usuario.getContrasena().equals("")) {
-            throw new DAOException("Introduzca una contraseña valida");
         }
 
         if (usuario.getDireccion() == null) {

@@ -6,7 +6,7 @@ package entidades;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import objetosNegocio.DireccionDTO;
+import objetosDTO.DireccionDTO;
 
 /**
  *
