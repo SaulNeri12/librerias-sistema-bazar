@@ -2,8 +2,8 @@
 package subsistemas.interfaces;
 
 import subsistemas.excepciones.DAOException;
-import objetosNegocio.InventarioProductoDTO;
-import objetosNegocio.ProductoDTO;
+import objetosDTO.InventarioProductoDTO;
+import objetosDTO.ProductoDTO;
 
 /**
  * Define las operaciones basicas para el manejo de inventario de productos.

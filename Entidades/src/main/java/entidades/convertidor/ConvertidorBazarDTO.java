@@ -9,13 +9,13 @@ import entidades.Usuario;
 import entidades.Venta;
 import java.util.List;
 import java.util.stream.Collectors;
-import objetosNegocio.DetalleVentaDTO;
-import objetosNegocio.DireccionDTO;
-import objetosNegocio.InventarioProductoDTO;
-import objetosNegocio.ProductoDTO;
-import objetosNegocio.ProveedorDTO;
-import objetosNegocio.UsuarioDTO;
-import objetosNegocio.VentaDTO;
+import objetosDTO.DetalleVentaDTO;
+import objetosDTO.DireccionDTO;
+import objetosDTO.InventarioProductoDTO;
+import objetosDTO.ProductoDTO;
+import objetosDTO.ProveedorDTO;
+import objetosDTO.UsuarioDTO;
+import objetosDTO.VentaDTO;
 
 /**
  * Convierte objetos negocio DTO a objetos negocio Entidad

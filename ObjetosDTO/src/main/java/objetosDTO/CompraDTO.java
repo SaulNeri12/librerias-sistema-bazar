@@ -1,7 +1,7 @@
 /*
  * CompraDTO.java
  */
-package objetosNegocio;
+package objetosDTO;
 
 import java.io.Serializable;
 

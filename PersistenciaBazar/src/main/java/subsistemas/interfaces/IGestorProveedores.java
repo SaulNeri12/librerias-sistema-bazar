@@ -3,7 +3,7 @@ package subsistemas.interfaces;
 
 
 import java.util.List;
-import objetosNegocio.ProveedorDTO;
+import objetosDTO.ProveedorDTO;
 import subsistemas.excepciones.DAOException;
 
 /**

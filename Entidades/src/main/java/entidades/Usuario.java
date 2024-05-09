@@ -18,7 +18,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import objetosNegocio.UsuarioDTO;
+import objetosDTO.UsuarioDTO;
 
 /**
  * Clase de entidad con a información de usuarios en la base de datos

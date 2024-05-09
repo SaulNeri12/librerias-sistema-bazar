@@ -1,7 +1,7 @@
 /*
  * InventarioProductoDTO.java
  */
-package objetosNegocio;
+package objetosDTO;
 
 /**
  *

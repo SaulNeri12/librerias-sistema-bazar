@@ -5,7 +5,7 @@ import subsistemas.excepciones.DAOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import objetosNegocio.VentaDTO;
+import objetosDTO.VentaDTO;
 
 /**
  * Define las operaciones basicas para gestionar ventas en el sistema.
