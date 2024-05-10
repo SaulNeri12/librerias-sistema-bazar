@@ -2,6 +2,7 @@ package dao;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,16 +33,12 @@ public class ConvertidorBazarDTO {
         productoDTO.setNombre(productoDoc.getString("nombre"));
         productoDTO.setPrecio(productoDoc.getDouble("precio"));
 
-        // Convertir la fecha de registro de Date a LocalDateTime
-        Date fechaRegistroDate = productoDoc.getDate("fechaRegistro");
-        if (fechaRegistroDate != null) {
-            LocalDateTime fechaRegistro = fechaRegistroDate.toInstant().atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
+        // Convertir la fecha de registro de String a LocalDateTime
+        String fechaRegistroStr = productoDoc.getString("fechaRegistro");
+        if (fechaRegistroStr != null) {
+            LocalDateTime fechaRegistro = LocalDateTime.parse(fechaRegistroStr, DateTimeFormatter.ISO_DATE_TIME);
             productoDTO.setFechaRegistro(fechaRegistro);
         } else {
-            // Si la fecha de registro es nula, asignar una fecha predeterminada o manejar
-            // el caso según sea necesario
-            // En este ejemplo, se asigna la fecha y hora actual
             productoDTO.setFechaRegistro(LocalDateTime.now());
         }
 
