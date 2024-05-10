@@ -1,6 +1,9 @@
 package dao;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.Document;
@@ -11,6 +14,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 
 import conexion.MongoDBConexion;
@@ -90,8 +94,6 @@ public class GestorProductos {
         }
     }
 
-    
-
     /**
      * Actualiza un producto en la base de datos.
      *
@@ -140,26 +142,111 @@ public class GestorProductos {
     }
 
     public List<ProductoDTO> consultarPorNombre(String nombre) throws DAOException {
-    List<ProductoDTO> productosEncontrados = new ArrayList<>();
-    try {
-        String nombreNormalizado = nombre.trim().toLowerCase();
+        List<ProductoDTO> productosEncontrados = new ArrayList<>();
+        try {
+            String nombreNormalizado = nombre.trim().toLowerCase();
 
-        Bson filtro = Filters.eq("nombre", nombreNormalizado);
+            Bson filtro = Filters.eq("nombre", nombreNormalizado);
 
-        FindIterable<Document> productosDocs = productosCollection.find(filtro);
+            FindIterable<Document> productosDocs = productosCollection.find(filtro);
 
-        if (!productosDocs.iterator().hasNext()) {
-            throw new DAOException("No se encontró ningún producto con el nombre especificado");
+            if (!productosDocs.iterator().hasNext()) {
+                throw new DAOException("No se encontró ningún producto con el nombre especificado");
+            }
+
+            for (Document productoDoc : productosDocs) {
+                ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+                productosEncontrados.add(productoDTO);
+            }
+        } catch (Exception ex) {
+            throw new DAOException("Error al consultar el producto por su nombre", ex);
         }
-
-        for (Document productoDoc : productosDocs) {
-            ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
-            productosEncontrados.add(productoDTO);
-        }
-    } catch (Exception ex) {
-        throw new DAOException("Error al consultar el producto por su nombre", ex);
+        return productosEncontrados;
     }
-    return productosEncontrados;
-}
+
+    public List<ProductoDTO> consultarPorPrecioAscendente(float precioLimite) throws DAOException {
+        List<ProductoDTO> productosEncontrados = new ArrayList<>();
+        try {
+
+            Bson filtro = Filters.lte("precio", precioLimite);
+
+
+            Bson ordenAscendente = Sorts.ascending("precio");
+
+
+            FindIterable<Document> productosDocs = productosCollection.find(filtro).sort(ordenAscendente);
+
+
+            for (Document productoDoc : productosDocs) {
+                ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+                productosEncontrados.add(productoDTO);
+            }
+        } catch (Exception ex) {
+            throw new DAOException("Error al consultar productos por precio ascendente", ex);
+        }
+        return productosEncontrados;
+    }
+
+    public List<ProductoDTO> consultarPorPrecioDescendente(float precioLimite) throws DAOException {
+        List<ProductoDTO> productosEncontrados = new ArrayList<>();
+        try {
+
+            Bson filtro = Filters.gte("precio", precioLimite);
+
+            Bson ordenDescendente = Sorts.descending("precio");
+
+            FindIterable<Document> productosDocs = productosCollection.find(filtro).sort(ordenDescendente);
+
+            for (Document productoDoc : productosDocs) {
+                ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+                productosEncontrados.add(productoDTO);
+            }
+        } catch (Exception ex) {
+            throw new DAOException("Error al consultar productos por precio descendente", ex);
+        }
+        return productosEncontrados;
+    }
+
+    public List<ProductoDTO> consultarPorFechaAscendente(LocalDateTime fechaLimite) throws DAOException {
+        List<ProductoDTO> productosEncontrados = new ArrayList<>();
+        try {
+
+            Bson filtro = Filters.gte("fechaRegistro",
+                    Date.from(fechaLimite.atZone(ZoneId.systemDefault()).toInstant()));
+
+            Bson ordenAscendente = Sorts.ascending("fechaRegistro");
+
+            FindIterable<Document> productosDocs = productosCollection.find(filtro).sort(ordenAscendente);
+
+            for (Document productoDoc : productosDocs) {
+                ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+                productosEncontrados.add(productoDTO);
+            }
+        } catch (Exception ex) {
+            throw new DAOException("Error al consultar productos por fecha ascendente", ex);
+        }
+        return productosEncontrados;
+    }
+
+    public List<ProductoDTO> consultarPorFechaDescendente(LocalDateTime fechaLimite) throws DAOException {
+        List<ProductoDTO> productosEncontrados = new ArrayList<>();
+        try {
+
+            Bson filtro = Filters.lte("fechaRegistro",
+                    Date.from(fechaLimite.atZone(ZoneId.systemDefault()).toInstant()));
+
+            Bson ordenDescendente = Sorts.descending("fechaRegistro");
+
+            FindIterable<Document> productosDocs = productosCollection.find(filtro).sort(ordenDescendente);
+
+            for (Document productoDoc : productosDocs) {
+                ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+                productosEncontrados.add(productoDTO);
+            }
+        } catch (Exception ex) {
+            throw new DAOException("Error al consultar productos por fecha descendente", ex);
+        }
+        return productosEncontrados;
+    }
 
 }
