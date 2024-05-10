@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -142,27 +143,30 @@ public class GestorProductos {
     }
 
     public List<ProductoDTO> consultarPorNombre(String nombre) throws DAOException {
-        List<ProductoDTO> productosEncontrados = new ArrayList<>();
-        try {
-            String nombreNormalizado = nombre.trim().toLowerCase();
+    try {
+        // Crear el filtro para encontrar los productos que contienen el nombre especificado
+        Bson filtro = Filters.regex("nombre", Pattern.compile(nombre, Pattern.CASE_INSENSITIVE));
 
-            Bson filtro = Filters.eq("nombre", nombreNormalizado);
+        // Ejecutar la consulta
+        FindIterable<Document> productosDocs = productosCollection.find(filtro);
 
-            FindIterable<Document> productosDocs = productosCollection.find(filtro);
-
-            if (!productosDocs.iterator().hasNext()) {
-                throw new DAOException("No se encontró ningún producto con el nombre especificado");
-            }
-
-            for (Document productoDoc : productosDocs) {
-                ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
-                productosEncontrados.add(productoDTO);
-            }
-        } catch (Exception ex) {
-            throw new DAOException("Error al consultar el producto por su nombre", ex);
+        // Verificar si se encontraron productos
+        if (!productosDocs.iterator().hasNext()) {
+            throw new DAOException("No se encontraron productos que contengan el nombre especificado");
         }
-        return productosEncontrados;
+
+        // Convertir los documentos a DTOs y guardarlos en una lista
+        List<ProductoDTO> productosDTO = new ArrayList<>();
+        for (Document productoDoc : productosDocs) {
+            ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+            productosDTO.add(productoDTO);
+        }
+
+        return productosDTO;
+    } catch (Exception ex) {
+        throw new DAOException("Error al consultar los productos por nombre", ex);
     }
+}
 
     public List<ProductoDTO> consultarPorPrecioAscendente(float precioLimite) throws DAOException {
         List<ProductoDTO> productosEncontrados = new ArrayList<>();
