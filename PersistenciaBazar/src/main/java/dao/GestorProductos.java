@@ -6,6 +6,7 @@ import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -104,23 +105,61 @@ public class GestorProductos {
             throw new DAOException("El producto dado es null");
         }
         try {
-            // Buscar el producto en la base de datos por su código interno
             Document query = new Document("codigoInterno", productoDTO.getCodigoInterno());
             Document productoDoc = productosCollection.find(query).first();
 
-            // Verificar si el producto existe
             if (productoDoc == null) {
                 throw new DAOException("No se encontró el producto a actualizar");
             }
 
-            // Actualizar los campos del producto con los nuevos valores
             productoDoc.put("nombre", productoDTO.getNombre());
             productoDoc.put("precio", productoDTO.getPrecio());
 
-            // Actualizar el documento en la colección
             productosCollection.replaceOne(query, productoDoc);
         } catch (Exception ex) {
             throw new DAOException("Error al actualizar el producto", ex);
         }
     }
+
+    public ProductoDTO consultarPorCodigoInterno(String codigoInterno) throws DAOException {
+        try {
+            Bson filtro = Filters.eq("codigoInterno", codigoInterno);
+
+            Document productoDoc = productosCollection.find(filtro).first();
+
+            if (productoDoc == null) {
+                throw new DAOException("No se encontró ningún producto con el código interno especificado");
+            }
+
+            ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+            return productoDTO;
+
+        } catch (Exception ex) {
+            throw new DAOException("Error al consultar el producto por su código interno", ex);
+        }
+    }
+
+    public List<ProductoDTO> consultarPorNombre(String nombre) throws DAOException {
+    List<ProductoDTO> productosEncontrados = new ArrayList<>();
+    try {
+        String nombreNormalizado = nombre.trim().toLowerCase();
+
+        Bson filtro = Filters.eq("nombre", nombreNormalizado);
+
+        FindIterable<Document> productosDocs = productosCollection.find(filtro);
+
+        if (!productosDocs.iterator().hasNext()) {
+            throw new DAOException("No se encontró ningún producto con el nombre especificado");
+        }
+
+        for (Document productoDoc : productosDocs) {
+            ProductoDTO productoDTO = convertidor.convertirDocumentoAProductoDTO(productoDoc);
+            productosEncontrados.add(productoDTO);
+        }
+    } catch (Exception ex) {
+        throw new DAOException("Error al consultar el producto por su nombre", ex);
+    }
+    return productosEncontrados;
+}
+
 }
